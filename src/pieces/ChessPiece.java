@@ -51,4 +51,8 @@ public abstract class ChessPiece {
     public Coordinates getPos(){
         return pos;
     }
+
+    public boolean canMoveTo(Coordinates cell) {
+        return availableMoves.contains(cell);
+    }
 }

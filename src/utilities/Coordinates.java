@@ -45,38 +45,38 @@ public class Coordinates {
         y = c.y;
     }
 
-    public boolean equals(Coordinates c) {
-        return (x == c.x && y == c.y);
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        final Coordinates other = (Coordinates)obj;
+        if (x != other.x) return false;
+        return y == other.y;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + this.x;
+        hash = 67 * hash + this.y;
+        return hash;
+    }
+
+    @Override
     public String toString() {
         String row;
         switch (x) {
-            case 0:
-                row = "a";
-                break;
-            case 1:
-                row = "b";
-                break;
-            case 2:
-                row = "c";
-                break;
-            case 3:
-                row = "d";
-                break;
-            case 4:
-                row = "e";
-                break;
-            case 5:
-                row = "f";
-                break;
-            case 6:
-                row = "g";
-                break;
-            case 7:
-                row = "h";
-                break;
+            case 0 -> row = "a";
+            case 1 -> row = "b";
+            case 2 -> row = "c";
+            case 3 -> row = "d";
+            case 4 -> row = "e";
+            case 5 -> row = "f";
+            case 6 -> row = "g";
+            case 7 -> row = "h";
+            default -> row = "";
         }
-        return x + Integer.toString(y);
+        return row + Integer.toString(y);
     }
 }

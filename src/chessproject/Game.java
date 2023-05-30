@@ -20,12 +20,16 @@ public class Game {
     private static ChessPiece selectedPiece = null;
 
     public static void move(Coordinates cell) {
+        ChessPiece pieceToMove = selectedPiece;
+        if (!pieceToMove.canMoveTo(cell)){
+            return;
+        }
+        
         ChessPiece pieceAtCell = GameBoard.at(cell);
         if (pieceAtCell != null){
             pieceTaken(pieceAtCell);
         }
         
-        ChessPiece pieceToMove = selectedPiece;
         GameBoard.move(pieceToMove.getPos(), cell);
         pieceToMove.move(cell);
         BoardView boardView = BoardView.getBoardView();
