@@ -34,6 +34,10 @@ public abstract class ChessPiece {
     public boolean isWhite(){
         return color == WorB.WHITE;
     }
+    
+    public boolean isColor(WorB color){
+        return this.color == color;
+    }
 
     public String getName() {
         return (isWhite() ? name:name.toLowerCase());

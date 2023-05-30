@@ -85,4 +85,8 @@ public class Coordinates {
         }
         return row + Integer.toString(y);
     }
+
+    public boolean equals(int xCoord, int yCoord) {
+        return (x==xCoord && y==yCoord);
+    }
 }

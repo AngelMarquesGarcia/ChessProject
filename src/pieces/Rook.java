@@ -55,7 +55,7 @@ public class Rook extends ChessPiece {
                 coords.add(newPos.clone());
                 newPos.sum(move);
             }
-            if (!GameBoard.at(newPos).color.equals(color)){
+            if (!GameBoard.at(newPos).isColor(color)){
                 coords.add(newPos);
             }
         } catch (IndexOutOfBoundsException ex) {

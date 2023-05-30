@@ -46,27 +46,26 @@ public class Knight extends ChessPiece {
      * @param color
      */
     private static void tryMoves(List<Coordinates> coords, Coordinates move, Coordinates pos, WorB color) {
-            Coordinates newPos = pos.clone();
-            int x = move.x;
-            int y = move.y;
-            int b0 = 1;
-            int b1 = 1;
-            do {
-                newPos.sum(b1 * x, b0 * y);
-                try { 
-                    ChessPiece piece = GameBoard.at(newPos);
-                    if (piece == null || piece.color != color) {
-                        coords.add(newPos.clone());
-                    }
-                } catch (IndexOutOfBoundsException ex) {
+        Coordinates newPos = pos.clone();
+        int x = move.x;
+        int y = move.y;
+        int b0 = 1;
+        int b1 = 1;
+        do {
+            newPos.sum(b1 * x, b0 * y);
+            try {
+                ChessPiece piece = GameBoard.at(newPos);
+                if (piece == null || piece.color != color) {
+                    coords.add(newPos.clone());
                 }
-                newPos.copy(pos);
-                b0 *= -1;
-                if (b0 > 0) {
-                    b1 *= -1;
-                }
-            } while (b1 != 1 || b0 != 1);
-        
+            } catch (IndexOutOfBoundsException ex) {
+            }
+            newPos.copy(pos);
+            b0 *= -1;
+            if (b0 > 0) {
+                b1 *= -1;
+            }
+        } while (b1 != 1 || b0 != 1);
     }
 
     private static final String className = "N";
