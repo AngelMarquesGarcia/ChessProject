@@ -49,11 +49,10 @@ public class Rook extends ChessPiece {
      */
     private static void tryMoves(List<Coordinates> coords, Coordinates move, Coordinates pos, WorB color) {
         try {
-            Coordinates newPos = pos.clone(pos);
+            Coordinates newPos = pos.clone();
             newPos.sum(move);
             while (GameBoard.at(newPos) == null){
-                coords.add(newPos);
-                newPos = newPos.clone(newPos);
+                coords.add(newPos.clone());
                 newPos.sum(move);
             }
             if (!GameBoard.at(newPos).color.equals(color)){

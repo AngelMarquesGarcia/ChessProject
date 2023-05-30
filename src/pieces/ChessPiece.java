@@ -28,7 +28,7 @@ public abstract class ChessPiece {
     
     public void move(Coordinates newPos){
         pos.copy(newPos);
-        updateAvailableMoves();
+        //updateAvailableMoves();
     }
     
     public boolean isWhite(){

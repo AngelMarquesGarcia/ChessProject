@@ -35,9 +35,15 @@ public class Coordinates {
         x += c.x;
         y += c.y;
     }
+    
+    public void sum(int xCoord, int yCoord) {
+        x += xCoord;
+        y += yCoord;
+    }
 
-    public Coordinates clone(Coordinates c) {
-        return new Coordinates(c.x, c.y, false);
+    @Override
+    public Coordinates clone() {
+        return new Coordinates(x, y, false);
     }
 
     public void copy(Coordinates c) {
