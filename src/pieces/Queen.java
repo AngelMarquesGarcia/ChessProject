@@ -18,6 +18,8 @@ public class Queen extends ChessPiece {
     
     public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c){
         List<Coordinates> coords = new ArrayList<>();
+        coords.addAll(Rook.updateAvailableMoves(p, c));
+        coords.addAll(Bishop.updateAvailableMoves(p, c));
         return coords;
     }
 
