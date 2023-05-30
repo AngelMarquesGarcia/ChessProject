@@ -12,17 +12,27 @@ import javax.swing.*;
  * @author Ángel Marqués García 
  */
 public class InfoMenu extends JPanel {
+    private static JPanel takenByBlack;
+    private static JPanel takenByWhite;
 
     public InfoMenu() {
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        JPanel takenByBlack = new TakenPieces();
-        JPanel takenByWhite = new TakenPieces();
+        takenByBlack = new TakenPieces();
+        takenByWhite = new TakenPieces();
         JPanel menu = new GameMenu();
         
         add(takenByBlack);
         add(menu);
         add(takenByWhite);
+    }
+    
+    public static TakenPieces getTakenByBlack(){
+        return (TakenPieces) takenByBlack;
+    }
+    
+    public static TakenPieces getTakenByWhite(){
+        return (TakenPieces) takenByWhite;
     }
 
 }

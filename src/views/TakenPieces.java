@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import pieces.ChessPiece;
 
 /**
  *
@@ -26,10 +27,10 @@ public class TakenPieces extends JPanel {
     private final Dimension BOXSIZE = new Dimension(200, 50);
     private Map<String, BufferedImage> sprites = new HashMap<>();
     private ArrayList<String> takenPieces = new ArrayList<>();
-    private final int PIECEWIDTH = 25; 
+    private final int PIECEWIDTH = 25;
     
     public TakenPieces() {
-        takenPieces.add("q");
+        /*takenPieces.add("q");
         takenPieces.add("r");
         takenPieces.add("N");
         takenPieces.add("P");
@@ -38,7 +39,7 @@ public class TakenPieces extends JPanel {
         takenPieces.add("b");
         takenPieces.add("K");
         takenPieces.add("n");
-        takenPieces.add("q");
+        takenPieces.add("q");*/
         
         setPreferredSize(BOXSIZE);
         setSize(BOXSIZE);
@@ -46,6 +47,14 @@ public class TakenPieces extends JPanel {
         loadSprites();
         
         this.setBackground(Color.red);
+    }
+    
+    public void addTakenPiece(ChessPiece p){
+        String name = p.getName();
+        if (!p.isWhite()){
+            name = name.toLowerCase();
+        }
+        takenPieces.add(name);
     }
     
     @Override

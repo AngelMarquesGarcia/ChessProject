@@ -47,7 +47,7 @@ public class GameBoard {
             }
     }
     
-    public static ChessPiece identifyPiece(String id){
+    private static ChessPiece identifyPiece(String id){
         ChessPiece value = null;
         switch (id){         
             case "K" -> value = new King(WorB.WHITE);
@@ -72,5 +72,9 @@ public class GameBoard {
         ChessPiece asd = GameBoard.gameBoard[5][0];
         GameBoard.gameBoard[pos1.y][pos1.x] = null;
         GameBoard.gameBoard[pos2.y][pos2.x] = piece;
+    }
+    
+    public static ChessPiece at(Coordinates c){
+        return gameBoard[c.y][c.x];
     }
 }

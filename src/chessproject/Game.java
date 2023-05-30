@@ -9,6 +9,8 @@ import pieces.ChessPiece;
 import utilities.Coordinates;
 import views.AppContainer;
 import views.BoardView;
+import views.InfoMenu;
+import views.TakenPieces;
 
 /**
  *
@@ -18,11 +20,26 @@ public class Game {
     private static ChessPiece selectedPiece = null;
 
     public static void move(Coordinates cell) {
-        ChessPiece piece = selectedPiece;
-        GameBoard.move(piece.getPos(), cell);
-        piece.move(cell);
+        ChessPiece pieceAtCell = GameBoard.at(cell);
+        if (pieceAtCell != null){
+            pieceTaken(pieceAtCell);
+        }
+        
+        ChessPiece pieceToMove = selectedPiece;
+        GameBoard.move(pieceToMove.getPos(), cell);
+        pieceToMove.move(cell);
         BoardView boardView = BoardView.getBoardView();
         AppContainer.getAppContainer().repaint();
+    }
+
+    private static void pieceTaken(ChessPiece piece) {
+        TakenPieces taken;
+        if (piece.isWhite()){
+            taken = InfoMenu.getTakenByBlack();
+        } else {
+            taken = InfoMenu.getTakenByWhite();
+        }
+        taken.addTakenPiece(piece);
     }
 
     public Game(){
