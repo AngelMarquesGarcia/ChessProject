@@ -5,6 +5,7 @@
 
 package chessproject;
 
+import java.util.List;
 import pieces.ChessPiece;
 import utilities.Coordinates;
 import views.AppContainer;
@@ -21,7 +22,8 @@ public class Game {
 
     public static void move(Coordinates cell) {
         ChessPiece pieceToMove = selectedPiece;
-        if (!pieceToMove.canMoveTo(cell)){
+        List<Coordinates> availableMoves = selectedPiece.updateAvailableMoves();
+        if (!availableMoves.contains(cell)){
             return;
         }
         

@@ -6,7 +6,6 @@
 package pieces;
 
 import utilities.Coordinates;
-import java.util.ArrayList;
 import java.util.List;
 import utilities.WorB;
 
@@ -16,24 +15,16 @@ import utilities.WorB;
  */
 public abstract class ChessPiece {
     protected Coordinates pos;
-    //private String sprite;
     protected WorB color;
     protected String name;
-    protected List<Coordinates> availableMoves;
     
     public ChessPiece(WorB c){
         pos = new Coordinates(9,9,false);
         color = c;
         name = "";
-        availableMoves = new ArrayList<>();
     }
     
-    public List<Coordinates> getAvailableMoves(){
-        return availableMoves;
-    }
-    
-    
-    public abstract void updateAvailableMoves();
+    public abstract List<Coordinates> updateAvailableMoves();
     
     public void move(Coordinates newPos){
         pos.copy(newPos);
@@ -50,9 +41,5 @@ public abstract class ChessPiece {
     
     public Coordinates getPos(){
         return pos;
-    }
-
-    public boolean canMoveTo(Coordinates cell) {
-        return availableMoves.contains(cell);
     }
 }

@@ -29,10 +29,8 @@ public class Pawn extends ChessPiece {
     }
     
     @Override
-    public void updateAvailableMoves() {
-        List<Coordinates> moves = Pawn.updateAvailableMoves(pos, color);
-        availableMoves.clear();
-        availableMoves.addAll(moves);
+    public List<Coordinates> updateAvailableMoves() {
+        return Pawn.updateAvailableMoves(pos, color);
     }
 
 }

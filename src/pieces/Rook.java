@@ -72,10 +72,8 @@ public class Rook extends ChessPiece {
     }
 
     @Override
-    public void updateAvailableMoves() {
-        List<Coordinates> moves = Rook.updateAvailableMoves(pos, color);
-        availableMoves.clear();
-        availableMoves.addAll(moves);
+    public List<Coordinates> updateAvailableMoves() {
+        return Rook.updateAvailableMoves(pos, color);
     }
 
 }

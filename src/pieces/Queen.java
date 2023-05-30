@@ -31,10 +31,11 @@ public class Queen extends ChessPiece {
     }
     
     @Override
-    public void updateAvailableMoves() {
-        List<Coordinates> moves = Queen.updateAvailableMoves(pos, color);
+    public List<Coordinates> updateAvailableMoves() {
+        return Queen.updateAvailableMoves(pos, color);
+        /*List<Coordinates> moves = Queen.updateAvailableMoves(pos, color);
         availableMoves.clear();
-        availableMoves.addAll(moves);
+        availableMoves.addAll(moves);*/
     }
 
 }

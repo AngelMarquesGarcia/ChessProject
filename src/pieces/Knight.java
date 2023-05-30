@@ -29,10 +29,8 @@ public class Knight extends ChessPiece {
     }
     
     @Override
-    public void updateAvailableMoves() {
-        List<Coordinates> moves = Knight.updateAvailableMoves(pos, color);
-        availableMoves.clear();
-        availableMoves.addAll(moves);
+    public List<Coordinates> updateAvailableMoves() {
+        return Knight.updateAvailableMoves(pos, color);
     }
 
 }
