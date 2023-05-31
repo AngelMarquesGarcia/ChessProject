@@ -73,6 +73,7 @@ public class Game {
         //que queden detrás de la pieza. Si la línea es diagonal y 
         //hay un alfil, hay dos atacantes. Si es recta y hay una torre,
         //dos atacantes.
+
     }
     
     public static boolean isCheckMate(WorB color){
@@ -169,7 +170,9 @@ public class Game {
     public static void move(Coordinates cell) {
         ChessPiece pieceToMove = selectedPiece;
         if (!availableMoves.contains(cell)){
-            return; //esto no se debería dar nunca
+            selectedPiece = null;
+            AppContainer.getAppContainer().repaint();
+            return; 
         } 
         ChessPiece pieceAtCell = gameBoard.at(cell);
         if (pieceAtCell != null){
@@ -184,6 +187,8 @@ public class Game {
             kingChecked(WorB.WHITE);
         }
         
+        selectedPiece = null;        
+        availableMoves.clear();
         whiteToPlay = ! whiteToPlay;
         
         AppContainer.getAppContainer().repaint();
@@ -211,13 +216,13 @@ public class Game {
     }
     
     public static void setSelectedPiece(ChessPiece p){
-        selectedPiece = p;
-        if (p != null){
+        if (p != null && p.isWhite() == whiteToPlay){ //the turn system is disabled if we remove the second condition
+            selectedPiece = p;
             availableMoves = p.updateAvailableMoves();
             cullAvailableMoves();
             highlightAvailableMoves();
+            AppContainer.getAppContainer().repaint();
         }
-        AppContainer.getAppContainer().repaint();
     }
     
     public static ChessPiece getSelectedPiece(){

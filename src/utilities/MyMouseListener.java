@@ -69,7 +69,6 @@ public class MyMouseListener implements MouseListener {
                 Game.setSelectedPiece(piece);
             } else {
                 Game.move(cell);
-                Game.setSelectedPiece(null);
             }
         }
 

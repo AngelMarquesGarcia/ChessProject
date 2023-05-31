@@ -33,12 +33,11 @@ public class GameBoard {
         int bestDistance = 18;
         ChessPiece bestPiece = null;
         for (Coordinates c: line){
-            Coordinates d = c.sub(pos);
+            Coordinates d = c.clone().sub(pos);
             int dist = d.x+d.y;
             if (dist < bestDistance){
                 bestDistance = dist;
                 bestPiece = gameBoard.at(c);
-                 
             }
         }
         return bestPiece;

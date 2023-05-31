@@ -19,33 +19,37 @@ public class Coordinates {
         int mod = (inverted ? -1:1);
         List<Coordinates> coords = new ArrayList<>();
         checkHorizontalLine(coords, pos1, pos2,mod);
-        if (coords.isEmpty())
+        if (!coords.isEmpty())
             return coords;
         checkDiagonalLine(coords,pos1,pos2,mod);
-        coords.add(pos1);
+        if (!inverted)
+            coords.add(pos1.clone());
         return coords;
     }
 
     private static void addLine(List<Coordinates> coords, Coordinates pos1, Coordinates pos2, int xStep, int yStep) {
         Coordinates p1 = pos1.clone();
-        while (!p1.equals(pos2)){
+        while (!p1.equals(pos2) && isLegal(p1)){
             coords.add(p1.clone());
             p1.sum(xStep,yStep);
         }
     }
 
     private static void checkHorizontalLine(List<Coordinates> coords, Coordinates pos1, Coordinates pos2, int mod) {
-        int xStep = 0;
-        int yStep = 0;
-        if (pos1.x == pos2.x)
-            yStep = (pos1.y > pos2.y ? -1:1);
-        else if (pos1.y == pos2.y)
-            xStep = (pos1.x > pos2.x ? -1:1);
-        addLine(coords, pos1, pos2, mod*xStep, mod*yStep);
+        Coordinates c = pos2.clone().sub(pos1);
+        if (c.x == 0 || c.y == 0){ 
+            int xStep = 0;
+            int yStep = 0;
+            if (pos1.x == pos2.x)
+                yStep = (pos1.y > pos2.y ? -1:1);
+            else if (pos1.y == pos2.y)
+                xStep = (pos1.x > pos2.x ? -1:1);
+            addLine(coords, pos1, pos2, mod*xStep, mod*yStep);
+        }
     }
 
     private static void checkDiagonalLine(List<Coordinates> coords, Coordinates pos1, Coordinates pos2, int mod) {
-        Coordinates c = pos2.sub(pos1);
+        Coordinates c = pos2.clone().sub(pos1);
         if (Math.abs(c.x) == Math.abs(c.y)){ //they are in the same diagonal
             int xStep = (c.x < 0 ? -1:1);
             int yStep = (c.y < 0 ? -1:1);
@@ -54,8 +58,8 @@ public class Coordinates {
         
     }
 
-    public static List<Coordinates> getFullLine(Coordinates prevPos, Coordinates pos) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private static boolean isLegal(Coordinates c) {
+        return (c.y >= 0 && c.y < 8) && (c.x >= 0 && c.x < 8);
     }
 
     public int x;
