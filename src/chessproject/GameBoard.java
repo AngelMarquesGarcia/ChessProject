@@ -21,10 +21,11 @@ import utilities.WorB;
  * @author Ángel Marqués García
  */
 public class GameBoard {
-    public static ChessPiece[][] getBoard(){ return gameBoard;}
-
+  
     private static ChessPiece[][] gameBoard = new ChessPiece[8][8];
-
+    
+    public static ChessPiece[][] getBoard(){ return gameBoard;}
+    
     public static void createBoard() {
         String configuration = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         createBoard(configuration);

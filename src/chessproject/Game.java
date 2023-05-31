@@ -19,10 +19,11 @@ import views.TakenPieces;
  */
 public class Game {
     private static ChessPiece selectedPiece = null;
+    private static List<Coordinates> availableMoves;
 
     public static void move(Coordinates cell) {
         ChessPiece pieceToMove = selectedPiece;
-        List<Coordinates> availableMoves = selectedPiece.updateAvailableMoves();
+        //List<Coordinates> availableMoves = selectedPiece.updateAvailableMoves();
         if (!availableMoves.contains(cell)){
             return;
         }
@@ -48,6 +49,21 @@ public class Game {
         taken.addTakenPiece(piece);
     }
 
+    /**
+     * Orders BoardView to highlight the availableMoves
+     */
+    private static void highlightAvailableMoves() {
+        BoardView boardView = BoardView.getBoardView();
+        boardView.highlight(availableMoves);
+    }
+
+    /**
+     * Iterates through availableMoves, and removes ilegal moves
+     */
+    private static void cullAvailableMoves() {
+        System.out.println("Game.cullAvailableMoves not supported yet.");
+    }
+
     public Game(){
         
     }
@@ -58,6 +74,12 @@ public class Game {
     
     public static void setSelectedPiece(ChessPiece p){
         selectedPiece = p;
+        if (p != null){
+            availableMoves = p.updateAvailableMoves();
+            cullAvailableMoves();
+            highlightAvailableMoves();
+        }
+        AppContainer.getAppContainer().repaint();
     }
     
     public static ChessPiece getSelectedPiece(){
