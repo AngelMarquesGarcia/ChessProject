@@ -18,6 +18,16 @@ import views.TakenPieces;
  * @author Ángel Marqués García 
  */
 public class Game {
+    
+    //these would presumably be the ones to keep track of turns and stuff
+    public Game(){
+        
+    }
+    
+    void doStuff() {
+
+    }
+    
     private static ChessPiece selectedPiece = null;
     private static List<Coordinates> availableMoves;
 
@@ -62,14 +72,6 @@ public class Game {
      */
     private static void cullAvailableMoves() {
         System.out.println("Game.cullAvailableMoves not supported yet.");
-    }
-
-    public Game(){
-        
-    }
-    
-    void doStuff() {
-
     }
     
     public static void setSelectedPiece(ChessPiece p){
