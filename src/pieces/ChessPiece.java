@@ -15,12 +15,14 @@ import utilities.WorB;
  */
 public abstract class ChessPiece implements Comparable<ChessPiece>{
     protected Coordinates pos;
+    private Coordinates prevPos;
     protected WorB color;
     protected String name;
     protected int value;
     
     public ChessPiece(WorB c){
         pos = new Coordinates(9,9,false);
+        prevPos = new Coordinates(9,9,false);
         color = c;
         name = "";
     }
@@ -28,6 +30,7 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
     public abstract List<Coordinates> updateAvailableMoves();
     
     public void move(Coordinates newPos){
+        prevPos.copy(pos);
         pos.copy(newPos);
         //updateAvailableMoves();
     }
@@ -45,7 +48,11 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
     }
     
     public Coordinates getPos(){
-        return pos;
+        return pos.clone();
+    }
+    
+    public Coordinates getPrevPos(){
+        return prevPos.clone();
     }
 
     @Override

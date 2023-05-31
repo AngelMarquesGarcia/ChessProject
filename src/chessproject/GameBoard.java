@@ -7,7 +7,9 @@ package chessproject;
 import java.util.ArrayList;
 import pieces.ChessPiece;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import pieces.Bishop;
 import pieces.King;
 import pieces.Knight;
@@ -26,19 +28,46 @@ import utilities.WorB;
  * @author Ángel Marqués García
  */
 public class GameBoard {
+
+    public static ChessPiece getClosestPiece(Coordinates pos, List<Coordinates> line, GameBoard gameBoard) {
+        int bestDistance = 18;
+        ChessPiece bestPiece = null;
+        for (Coordinates c: line){
+            Coordinates d = c.sub(pos);
+            int dist = d.x+d.y;
+            if (dist < bestDistance){
+                bestDistance = dist;
+                bestPiece = gameBoard.at(c);
+                 
+            }
+        }
+        return bestPiece;
+    }
   
     private ChessPiece[][] gameBoard = new ChessPiece[8][8];
     private List<ChessPiece> whitePieces = new ArrayList<>(); 
     private List<ChessPiece> blackPieces = new ArrayList<>();
     private List<ChessPiece> whiteTaken = new ArrayList<>(); 
     private List<ChessPiece> blackTaken = new ArrayList<>();
+    private ChessPiece whiteKing;
+    private ChessPiece blackKing;
     
     public ChessPiece[][] getBoard(){ return gameBoard;}
     public List<ChessPiece> getPieces(WorB color){
-        return (color==WorB.WHITE ? whitePieces:blackPieces);
-    }
+        return (color==WorB.WHITE ? whitePieces:blackPieces);}
     public List<ChessPiece> getTaken(WorB color){ 
         return (color==WorB.WHITE ? whiteTaken:blackTaken);}
+    public ChessPiece getKing(WorB color){ 
+        return (color==WorB.WHITE ? whiteKing:blackKing);}
+    
+    public Set<Coordinates> getAllMoves(WorB color){
+        List<ChessPiece> pieces = (color==WorB.WHITE ? whitePieces:blackPieces);
+        Set<Coordinates> coords = new HashSet<>();
+        for (ChessPiece piece: pieces){
+            coords.addAll(piece.updateAvailableMoves());
+        }
+        return coords;
+    }
     
     public GameBoard(String board){
         setUpBoard(board);
@@ -67,20 +96,27 @@ public class GameBoard {
     
     private ChessPiece identifyPiece(String id){
         ChessPiece value = null;
-        switch (id){         
-            case "K" -> value = new King(WorB.WHITE);
+        switch (id){
             case "Q" -> value = new Queen(WorB.WHITE);
             case "R" -> value = new Rook(WorB.WHITE);
             case "B" -> value = new Bishop(WorB.WHITE);
             case "N" -> value = new Knight(WorB.WHITE);
             case "P" -> value = new Pawn(WorB.WHITE);
             
-            case "k" -> value = new King(WorB.BLACK);
             case "q" -> value = new Queen(WorB.BLACK);
             case "r" -> value = new Rook(WorB.BLACK);
             case "b" -> value = new Bishop(WorB.BLACK);
             case "n" -> value = new Knight(WorB.BLACK);
             case "p" -> value = new Pawn(WorB.BLACK);
+            
+            case "K" -> {
+                value = new King(WorB.WHITE);
+                whiteKing = value;
+            }
+            case "k" -> {
+                value = new King(WorB.BLACK);
+                blackKing = value;
+            }
         }
         return value;
     }

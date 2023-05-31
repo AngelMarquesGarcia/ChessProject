@@ -1,6 +1,8 @@
 package utilities;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 import views.BoardView;
 
 /*
@@ -12,6 +14,49 @@ import views.BoardView;
  * @author Ángel Marqués García
  */
 public class Coordinates {
+
+    public static List<Coordinates> getLine(Coordinates pos1, Coordinates pos2, boolean inverted) {
+        int mod = (inverted ? -1:1);
+        List<Coordinates> coords = new ArrayList<>();
+        checkHorizontalLine(coords, pos1, pos2,mod);
+        if (coords.isEmpty())
+            return coords;
+        checkDiagonalLine(coords,pos1,pos2,mod);
+        coords.add(pos1);
+        return coords;
+    }
+
+    private static void addLine(List<Coordinates> coords, Coordinates pos1, Coordinates pos2, int xStep, int yStep) {
+        Coordinates p1 = pos1.clone();
+        while (!p1.equals(pos2)){
+            coords.add(p1.clone());
+            p1.sum(xStep,yStep);
+        }
+    }
+
+    private static void checkHorizontalLine(List<Coordinates> coords, Coordinates pos1, Coordinates pos2, int mod) {
+        int xStep = 0;
+        int yStep = 0;
+        if (pos1.x == pos2.x)
+            yStep = (pos1.y > pos2.y ? -1:1);
+        else if (pos1.y == pos2.y)
+            xStep = (pos1.x > pos2.x ? -1:1);
+        addLine(coords, pos1, pos2, mod*xStep, mod*yStep);
+    }
+
+    private static void checkDiagonalLine(List<Coordinates> coords, Coordinates pos1, Coordinates pos2, int mod) {
+        Coordinates c = pos2.sub(pos1);
+        if (Math.abs(c.x) == Math.abs(c.y)){ //they are in the same diagonal
+            int xStep = (c.x < 0 ? -1:1);
+            int yStep = (c.y < 0 ? -1:1);
+            addLine(coords, pos1, pos2, mod*xStep, mod*yStep);
+        }
+        
+    }
+
+    public static List<Coordinates> getFullLine(Coordinates prevPos, Coordinates pos) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
     public int x;
     public int y;
@@ -88,5 +133,11 @@ public class Coordinates {
 
     public boolean equals(int xCoord, int yCoord) {
         return (x==xCoord && y==yCoord);
+    }
+
+    public Coordinates sub(Coordinates c) {
+        x -= c.x;
+        y -= c.y;
+        return this;
     }
 }
