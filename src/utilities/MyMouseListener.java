@@ -58,7 +58,7 @@ public class MyMouseListener implements MouseListener {
     }
 
     private void cellClicked(Coordinates cell) {
-        ChessPiece[][] gameBoard = GameBoard.getBoard();
+        ChessPiece[][] gameBoard = Game.getGameBoard().getBoard();
         ChessPiece piece = gameBoard[cell.y][cell.x];
         if (Game.getSelectedPiece() == null) {
             Game.setSelectedPiece(piece);

@@ -4,6 +4,7 @@
  */
 package pieces;
 
+import chessproject.Game;
 import chessproject.GameBoard;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +52,11 @@ public class Knight extends ChessPiece {
         int y = move.y;
         int b0 = 1;
         int b1 = 1;
+        GameBoard gameBoard = Game.getGameBoard();
         do {
             newPos.sum(b1 * x, b0 * y);
             try {
-                ChessPiece piece = GameBoard.at(newPos);
+                ChessPiece piece = gameBoard.at(newPos);
                 if (piece == null || piece.color != color) {
                     coords.add(newPos.clone());
                 }
@@ -69,10 +71,12 @@ public class Knight extends ChessPiece {
     }
 
     private static final String className = "N";
+    private static final int v = 3;
 
     public Knight(WorB color) {
         super(color);
         name = className;
+        value = v;
     }
 
     @Override

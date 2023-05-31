@@ -6,6 +6,7 @@
 package views;
 
 import javax.swing.*;
+import utilities.WorB;
 
 /**
  *
@@ -18,8 +19,8 @@ public class InfoMenu extends JPanel {
     public InfoMenu() {
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        takenByBlack = new TakenPieces();
-        takenByWhite = new TakenPieces();
+        takenByBlack = new TakenPieces(WorB.BLACK);
+        takenByWhite = new TakenPieces(WorB.WHITE);
         JPanel menu = new GameMenu();
         
         add(takenByBlack);
@@ -33,6 +34,10 @@ public class InfoMenu extends JPanel {
     
     public static TakenPieces getTakenByWhite(){
         return (TakenPieces) takenByWhite;
+    }
+    
+    public static TakenPieces getTakenBy(WorB color){
+        return (TakenPieces) (color == WorB.WHITE ? takenByWhite:takenByBlack);
     }
 
 }

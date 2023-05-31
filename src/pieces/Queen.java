@@ -24,10 +24,12 @@ public class Queen extends ChessPiece {
     }
 
     private static final String className = "Q";
+    private static final int v = 9;
     
     public Queen(WorB color) {
         super(color);
         name = className;
+        value = v;
     }
     
     @Override

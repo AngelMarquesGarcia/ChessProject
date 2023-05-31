@@ -7,6 +7,7 @@ package views;
  *    MouseMotionEventDemo.java
  */
 
+import chessproject.Game;
 import chessproject.GameBoard;
 import javax.swing.*;
 import java.awt.Dimension;
@@ -44,7 +45,6 @@ public class BoardView extends JPanel {
     }
 
     public BoardView() {
-        GameBoard.createBoard();
         setPreferredSize(BOARDSIZE);
         setSize(BOARDSIZE);
         setVisible(true);
@@ -83,7 +83,7 @@ public class BoardView extends JPanel {
     }
 
     private void drawPosition(Graphics g) {
-        ChessPiece[][] gameBoard = GameBoard.getBoard();
+        ChessPiece[][] gameBoard = Game.getGameBoard().getBoard();
         for(int i = 0; i < 8;i++){
             for (int j = 0; j < 8;j++){
                 //if (i == 8 || j == 8) continue;

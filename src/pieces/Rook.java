@@ -5,6 +5,7 @@
 
 package pieces;
 
+import chessproject.Game;
 import chessproject.GameBoard;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,13 +50,14 @@ public class Rook extends ChessPiece {
      */
     private static void tryMoves(List<Coordinates> coords, Coordinates move, Coordinates pos, WorB color) {
         try {
+            GameBoard gameBoard = Game.getGameBoard();
             Coordinates newPos = pos.clone();
             newPos.sum(move);
-            while (GameBoard.at(newPos) == null){
+            while (gameBoard.at(newPos) == null){
                 coords.add(newPos.clone());
                 newPos.sum(move);
             }
-            if (!GameBoard.at(newPos).isColor(color)){
+            if (!gameBoard.at(newPos).isColor(color)){
                 coords.add(newPos);
             }
         } catch (IndexOutOfBoundsException ex) {
@@ -64,10 +66,12 @@ public class Rook extends ChessPiece {
     }
 
     private static final String className = "R";
+    private static final int v = 5;
     
     public Rook(WorB color) {
         super(color);
         name = className;
+        value = v;
     }
 
     @Override

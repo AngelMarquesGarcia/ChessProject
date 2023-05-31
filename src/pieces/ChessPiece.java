@@ -13,10 +13,11 @@ import utilities.WorB;
  *
  * @author Ángel Marqués García 
  */
-public abstract class ChessPiece {
+public abstract class ChessPiece implements Comparable<ChessPiece>{
     protected Coordinates pos;
     protected WorB color;
     protected String name;
+    protected int value;
     
     public ChessPiece(WorB c){
         pos = new Coordinates(9,9,false);
@@ -45,5 +46,10 @@ public abstract class ChessPiece {
     
     public Coordinates getPos(){
         return pos;
+    }
+
+    @Override
+    public int compareTo(ChessPiece piece) {
+        return Integer.compare(value, piece.value);
     }
 }

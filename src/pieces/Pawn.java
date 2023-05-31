@@ -4,6 +4,7 @@
  */
 package pieces;
 
+import chessproject.Game;
 import chessproject.GameBoard;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,13 +33,14 @@ public class Pawn extends ChessPiece {
 
     private static void tryTake(List<Coordinates> coords, Coordinates p, WorB c) {
         int yMovement = (c == WorB.BLACK ? 1 : -1);
+        GameBoard gameBoard = Game.getGameBoard();
         Coordinates newPos;
         ChessPiece piece;
         // try one direction
         try {
             newPos = p.clone();
             newPos.sum(1, yMovement);
-            piece = GameBoard.at(newPos);
+            piece = gameBoard.at(newPos);
             if (piece != null && !piece.isColor(c)) {
                 coords.add(newPos.clone());
             }
@@ -47,7 +49,7 @@ public class Pawn extends ChessPiece {
         try {
             newPos = p.clone();
             newPos.sum(-1, yMovement);
-            piece = GameBoard.at(newPos);
+            piece = gameBoard.at(newPos);
             if (piece != null && !piece.isColor(c)) {
                 coords.add(newPos.clone());
             }
@@ -69,12 +71,13 @@ public class Pawn extends ChessPiece {
      */
     private static void tryMoves(List<Coordinates> coords, Coordinates move, Coordinates pos, WorB color) {
         try {
+            GameBoard gameBoard = Game.getGameBoard();
             Coordinates newPos = pos.clone();
             newPos.sum(move);
-            if (GameBoard.at(newPos) == null) {
+            if (gameBoard.at(newPos) == null) {
                 coords.add(newPos.clone());
                 newPos.sum(move);
-                if (isFirstMove(pos, color) && GameBoard.at(newPos) == null) {
+                if (isFirstMove(pos, color) && gameBoard.at(newPos) == null) {
                     coords.add(newPos);
                 }
             }
@@ -83,10 +86,12 @@ public class Pawn extends ChessPiece {
     }
 
     private static final String className = "P";
+    private static final int v = 1;
 
     public Pawn(WorB color) {
         super(color);
         name = className;
+        value = v;
     }
 
     @Override

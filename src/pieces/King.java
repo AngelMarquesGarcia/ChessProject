@@ -5,6 +5,7 @@
 
 package pieces;
 
+import chessproject.Game;
 import chessproject.GameBoard;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,9 +54,10 @@ public class King extends ChessPiece {
      */
     private static void tryMoves(List<Coordinates> coords, Coordinates move, Coordinates pos, WorB color) {
         try {
+            GameBoard gameBoard = Game.getGameBoard();
             Coordinates newPos = pos.clone();
             newPos.sum(move);
-            ChessPiece piece = GameBoard.at(newPos);
+            ChessPiece piece = gameBoard.at(newPos);
             if (piece == null || ! piece.isColor(color)){
                 coords.add(newPos);
             }
@@ -65,10 +67,12 @@ public class King extends ChessPiece {
     }
 
     private static final String className = "K";
+    private static final int v = 4;
     
     public King(WorB color) {
         super(color);
         name = className;
+        value = v;
     }
     
     @Override
