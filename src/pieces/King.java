@@ -9,6 +9,7 @@ import chessproject.Game;
 import chessproject.GameBoard;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import utilities.Coordinates;
 import utilities.WorB;
 
@@ -18,11 +19,16 @@ import utilities.WorB;
  */
 public class King extends ChessPiece {
     
-    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c){
+    private static final String className = "K";
+    private static final int v = 4;
+    
+    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pinned){
         List<Coordinates> coords = new ArrayList<>();
         Coordinates[] moves = getMoveset();
+        Set<Coordinates> attackedCells = Game.getGameBoard().getAllAttackedCells(WorB.opposite(c));
+        cantBeCloseToEnemyKing(attackedCells, c);
         for (Coordinates move : moves) {
-            tryMoves(coords, move, p, c);
+            tryMoves(coords, move, p, c, attackedCells);
         }
         return coords;
     }
@@ -52,11 +58,13 @@ public class King extends ChessPiece {
      * @param pos
      * @param color 
      */
-    private static void tryMoves(List<Coordinates> coords, Coordinates move, Coordinates pos, WorB color) {
-        try {
-            GameBoard gameBoard = Game.getGameBoard();
-            Coordinates newPos = pos.clone();
-            newPos.sum(move);
+    private static void tryMoves(List<Coordinates> coords, Coordinates move, Coordinates pos, WorB color, Set<Coordinates> attackedCells) {
+        GameBoard gameBoard = Game.getGameBoard();
+        Coordinates newPos = pos.clone();
+        newPos.sum(move);
+        if (attackedCells.contains(newPos))
+            return;
+        try { //probablemente sea más eficiente gameBoard.isLegal(newPos) que lanzar y pillar una excepción
             ChessPiece piece = gameBoard.at(newPos);
             if (piece == null || ! piece.isColor(color)){
                 coords.add(newPos);
@@ -66,9 +74,17 @@ public class King extends ChessPiece {
         }
     }
 
-    private static final String className = "K";
-    private static final int v = 4;
+    private static void cantBeCloseToEnemyKing(Set<Coordinates> attackedCells, WorB c) {
+        Coordinates kingPos = Game.getGameBoard().getKing(WorB.opposite(c)).getPos();
+        Coordinates[] coords = getMoveset();
+        for (Coordinates move: coords){
+            attackedCells.add(kingPos.clone().sum(move));
+        }
+    }
     
+    //////////////////////////////INSTANCE METHODS//////////////////////////////
+    //////////////////////////////INSTANCE METHODS//////////////////////////////
+    //////////////////////////////INSTANCE METHODS//////////////////////////////
     public King(WorB color) {
         super(color);
         name = className;
@@ -77,7 +93,7 @@ public class King extends ChessPiece {
     
     @Override
     public List<Coordinates> updateAvailableMoves() {
-        return King.updateAvailableMoves(pos, color);
+        return King.updateAvailableMoves(pos, color, pinned);
     }
 
 }

@@ -7,7 +7,9 @@ package pieces;
 import chessproject.Game;
 import chessproject.GameBoard;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import utilities.Coordinates;
 import utilities.WorB;
 
@@ -17,20 +19,22 @@ import utilities.WorB;
  */
 public class Knight extends ChessPiece {
 
-    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c) {
+    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pin) {
         List<Coordinates> coords = new ArrayList<>();
-        Coordinates[] moves = getMoveset();
+        Set<Coordinates> moves = getMoveset();
+        ChessPiece.cullMoveSet(moves, pin);
+        Set<Coordinates> goodMoves = Game.getGoodMoves();
         for (Coordinates move : moves) {
-            tryMoves(coords, move, p, c);
+            tryMoves(coords, move, p, c, goodMoves);
         }
         return coords;
     }
-
-    private static Coordinates[] getMoveset() {
-        Coordinates[] moveset = new Coordinates[2];
-        moveset[0] = new Coordinates(2, 1, false);
-        moveset[1] = new Coordinates(1, 2, false);
-
+    
+    private static Set<Coordinates> getMoveset() {
+        Set<Coordinates> moveset = new HashSet<>();
+        moveset.add(new Coordinates(2, 1, false));
+        moveset.add(new Coordinates(1, 2, false));
+        
         return moveset;
     }
 
@@ -46,7 +50,9 @@ public class Knight extends ChessPiece {
      * @param pos
      * @param color
      */
-    private static void tryMoves(List<Coordinates> coords, Coordinates move, Coordinates pos, WorB color) {
+    private static void tryMoves(List<Coordinates> coords, Coordinates move, Coordinates pos, WorB color, Set<Coordinates> goodMoves) {
+        if (move == null || move.equals(0,0))
+            return;
         Coordinates newPos = pos.clone();
         int x = move.x;
         int y = move.y;
@@ -58,7 +64,8 @@ public class Knight extends ChessPiece {
             try {
                 ChessPiece piece = gameBoard.at(newPos);
                 if (piece == null || piece.color != color) {
-                    coords.add(newPos.clone());
+                    if (goodMoves == null || goodMoves.contains(newPos))
+                        coords.add(newPos.clone());
                 }
             } catch (IndexOutOfBoundsException ex) {
             }
@@ -81,7 +88,7 @@ public class Knight extends ChessPiece {
 
     @Override
     public List<Coordinates> updateAvailableMoves() {
-        return Knight.updateAvailableMoves(pos, color);
+        return Knight.updateAvailableMoves(pos, color, pinned);
     }
 
 }

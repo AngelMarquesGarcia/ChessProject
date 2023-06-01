@@ -16,10 +16,10 @@ import utilities.WorB;
  */
 public class Queen extends ChessPiece {
     
-    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c){
+    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pin){
         List<Coordinates> coords = new ArrayList<>();
-        coords.addAll(Rook.updateAvailableMoves(p, c));
-        coords.addAll(Bishop.updateAvailableMoves(p, c));
+        coords.addAll(Rook.updateAvailableMoves(p, c, pin));
+        coords.addAll(Bishop.updateAvailableMoves(p, c, pin));
         return coords;
     }
 
@@ -34,8 +34,8 @@ public class Queen extends ChessPiece {
     
     @Override
     public List<Coordinates> updateAvailableMoves() {
-        return Queen.updateAvailableMoves(pos, color);
-        /*List<Coordinates> moves = Queen.updateAvailableMoves(pos, color);
+        return Queen.updateAvailableMoves(pos, color, pinned);
+        /*List<Coordinates> moves = Queen.updateAvailableMoves(pos, color, pinned);
         availableMoves.clear();
         availableMoves.addAll(moves);*/
     }

@@ -1,5 +1,6 @@
 package utilities;
 
+import chessproject.GameBoard;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +16,20 @@ import views.BoardView;
  */
 public class Coordinates {
 
+    /**
+     * returns a list of coordinates that span from pos1 to pos2.
+     * pos1 is included, pos2 is excluded.
+     * If inverted is true, it gives a list of all coordinates along the line between pos1 and pos2
+     * that are behind pos2.
+     * @param pos1
+     * @param pos2
+     * @param inverted
+     * @return 
+     */
     public static List<Coordinates> getLine(Coordinates pos1, Coordinates pos2, boolean inverted) {
         int mod = (inverted ? -1:1);
         List<Coordinates> coords = new ArrayList<>();
         checkHorizontalLine(coords, pos1, pos2,mod);
-        if (!coords.isEmpty())
-            return coords;
         checkDiagonalLine(coords,pos1,pos2,mod);
         if (!inverted)
             coords.add(pos1.clone());
@@ -29,7 +38,7 @@ public class Coordinates {
 
     private static void addLine(List<Coordinates> coords, Coordinates pos1, Coordinates pos2, int xStep, int yStep) {
         Coordinates p1 = pos1.clone();
-        while (!p1.equals(pos2) && isLegal(p1)){
+        while (!p1.equals(pos2) && GameBoard.isLegal(p1)){
             coords.add(p1.clone());
             p1.sum(xStep,yStep);
         }
@@ -58,9 +67,6 @@ public class Coordinates {
         
     }
 
-    private static boolean isLegal(Coordinates c) {
-        return (c.y >= 0 && c.y < 8) && (c.x >= 0 && c.x < 8);
-    }
 
     public int x;
     public int y;
@@ -80,9 +86,10 @@ public class Coordinates {
         }
     }
 
-    public void sum(Coordinates c) {
+    public Coordinates sum(Coordinates c) {
         x += c.x;
         y += c.y;
+        return this;
     }
     
     public void sum(int xCoord, int yCoord) {

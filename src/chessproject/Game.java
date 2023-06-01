@@ -6,6 +6,7 @@
 package chessproject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import pieces.ChessPiece;
@@ -27,6 +28,7 @@ public class Game {
     private static int movesWithNoPawnOrCapture = 0;
     private static String enPassant = "-"; //could potentially be Coordinates
     private static boolean whiteToPlay = true;
+    private static Set<Coordinates> goodMoves = null;
     
     private static List<ChessPiece> checkers = new ArrayList<>();
     
@@ -66,34 +68,31 @@ public class Game {
             checkers.add(piece);
         }
         return isCheck;
-        //se puede optimizar.
-        //Only way 2 pieces check is discovered attack
-        //Si hacemos una línea entre la posición de la pieza
-        //que se acaba de meter y el rey, podemos comprobar los espacios
-        //que queden detrás de la pieza. Si la línea es diagonal y 
-        //hay un alfil, hay dos atacantes. Si es recta y hay una torre,
-        //dos atacantes.
-
     }
     
     public static boolean isCheckMate(WorB color){
         ChessPiece king = gameBoard.getKing(color);
         if (!king.updateAvailableMoves().isEmpty())
-            return false;
-        if (checkers.size() == 1){ //
-            ChessPiece attacker = checkers.get(0);
-            Set<Coordinates> allMoves = gameBoard.getAllMoves(color);
-            //si se puede comer la pieza return false
-                //if (allMoves.contains(attacker.getPos()))
-                //    return true;
-            //si se puede bloquear return false
-            List<Coordinates> line = Coordinates.getLine(attacker.getPos(), king.getPos(), false);
-            for (Coordinates c: line){
-                if(allMoves.contains(c))
-                    return false;
-            }
+            return false; //false not checkmate, King moves available
+        if (checkers.size()==2){
+            return true; //true, checkmate. King is checked by two pieces and can't move
         }
-        return true;
+        ChessPiece attacker = checkers.get(0);
+        goodMoves = new HashSet<>();
+        goodMoves.addAll(Coordinates.getLine(attacker.getPos(), king.getPos(), false));
+        Set<Coordinates> allMoves = gameBoard.getAllMoves(color);
+        goodMoves = allMoves; //MIGHT improve performance on succesive updateAvailableMoves(). Maybe not since it's a set.
+        return allMoves.isEmpty();
+    }
+    private static void kingChecked(WorB color) {
+        if (isCheckMate(color)){
+            checkMate(color);
+        }
+        /**Tenemos un set en goodMoves con los movimientos que nos salvarían
+        *Es jaque mate si 
+        *   1. El rey no se puede mover
+        *   2. Ninguna de las otras piezas puede moverse a algún sitio de goodMoves
+        */ 
     }
     
     public static void createGame(String configuration) {
@@ -180,14 +179,15 @@ public class Game {
         }
         gameBoard.move(pieceToMove.getPos(), cell);
         pieceToMove.move(cell);
+        goodMoves = null;
         
         if (whiteToPlay && isInCheck(WorB.BLACK)){
             kingChecked(WorB.BLACK);
         } else if (!whiteToPlay && isInCheck(WorB.WHITE)){
             kingChecked(WorB.WHITE);
         }
-        
-        selectedPiece = null;        
+
+        selectedPiece = null; //goodMoves = null;
         availableMoves.clear();
         whiteToPlay = ! whiteToPlay;
         
@@ -212,7 +212,7 @@ public class Game {
      * Iterates through availableMoves, and removes ilegal moves
      */
     private static void cullAvailableMoves() {
-        System.out.println("Game.cullAvailableMoves not supported yet.");
+        System.out.println("Game.cullAvailableMoves not supported yet. And most likely it will never be.");
     }
     
     public static void setSelectedPiece(ChessPiece p){
@@ -228,32 +228,17 @@ public class Game {
     public static ChessPiece getSelectedPiece(){
         return selectedPiece;
     }
+    
+    public static Set<Coordinates> getGoodMoves(){
+        return goodMoves;
+    }
 
-    private static void kingChecked(WorB color) {
-        System.out.println("Game.kingChecked not supported yet");
+    public static List<ChessPiece> getCheckers() {
+        return checkers;
+    }
+
+    private static void checkMate(WorB color) {
+        System.out.println("-------------------------------Game Over-------------------------------");
+        System.out.println("-------------------------------Game Over-------------------------------");
     }
 }
-
-
-/*//se puede optimizar
-    public static boolean isInCheck(WorB color){
-        checkers.clear();
-        List<ChessPiece> pieces = gameBoard.getPieces(WorB.opposite(color));
-        ChessPiece king = gameBoard.getKing(color);
-        boolean isCheck = false;
-        for (ChessPiece piece: pieces){
-            if (piece.updateAvailableMoves().contains(king.getPos())){
-                isCheck = true;
-                checkers.add(piece);
-                //se puede optimizar.
-                //Only way 2 pieces check is discovered attack
-                //Si hacemos una línea entre la posición de la pieza
-                //que se acaba de meter y el rey, podemos comprobar los espacios
-                //que queden detrás de la pieza. Si la línea es diagonal y 
-                //hay un alfil, hay dos atacantes. Si es recta y hay una torre,
-                //dos atacantes.
-                
-            }
-        }
-        return isCheck;
-    }*/

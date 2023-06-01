@@ -28,6 +28,8 @@ import utilities.WorB;
  * @author Ángel Marqués García
  */
 public class GameBoard {
+    public static final int BOARD_WIDTH = 8;
+    public static final int BOARD_HEIGHT = 8;
 
     public static ChessPiece getClosestPiece(Coordinates pos, List<Coordinates> line, GameBoard gameBoard) {
         int bestDistance = 18;
@@ -42,8 +44,12 @@ public class GameBoard {
         }
         return bestPiece;
     }
+
+    public static boolean isLegal(Coordinates c) {
+        return (c.y >= 0 && c.y < BOARD_HEIGHT) && (c.x >= 0 && c.x < BOARD_WIDTH);
+    }
   
-    private ChessPiece[][] gameBoard = new ChessPiece[8][8];
+    private ChessPiece[][] gameBoard = new ChessPiece[BOARD_HEIGHT][BOARD_WIDTH];
     private List<ChessPiece> whitePieces = new ArrayList<>(); 
     private List<ChessPiece> blackPieces = new ArrayList<>();
     private List<ChessPiece> whiteTaken = new ArrayList<>(); 
@@ -64,6 +70,23 @@ public class GameBoard {
         Set<Coordinates> coords = new HashSet<>();
         for (ChessPiece piece: pieces){
             coords.addAll(piece.updateAvailableMoves());
+        }
+        return coords;
+    }
+    
+    /**
+     * returns a set of all Coordinates that are being attacked by a piece or pawn.
+     * It does not take into consideration Coordinates being attacked by the enemy king.
+     * @param color
+     * @return 
+     */
+    public Set<Coordinates> getAllAttackedCells(WorB color){
+        List<ChessPiece> pieces = (color==WorB.WHITE ? whitePieces:blackPieces);
+        ChessPiece king = (color==WorB.WHITE ? whiteKing:blackKing);
+        Set<Coordinates> coords = new HashSet<>();
+        for (ChessPiece piece: pieces){
+            if (piece != king)
+               coords.addAll(piece.updateAttackedCells());
         }
         return coords;
     }
