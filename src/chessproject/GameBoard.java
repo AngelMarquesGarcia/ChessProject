@@ -4,9 +4,12 @@
  */
 package chessproject;
 
+import java.util.ArrayList;
 import pieces.ChessPiece;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import pieces.Bishop;
 import pieces.King;
 import pieces.Knight;
@@ -17,22 +20,84 @@ import utilities.Coordinates;
 import utilities.WorB;
 
 /**
- *
+ *If it was found to be neccesary to have multiple boards/games at once, it could be done as follows.
+ * Turn all fields non-static. Create a new static field Map< String, ChessPiece[][]>.
+ * Whenever a new board is created, insert it into the map with an id.
+ * Whenever a board is needed, retrieve it from the map with its id.
+ * 
  * @author Ángel Marqués García
  */
 public class GameBoard {
-    public static ChessPiece[][] getBoard(){ return gameBoard;}
+    public static final int BOARD_WIDTH = 8;
+    public static final int BOARD_HEIGHT = 8;
 
-    private static ChessPiece[][] gameBoard = new ChessPiece[8][8];
+    public static ChessPiece getClosestPiece(Coordinates pos, List<Coordinates> line, GameBoard gameBoard) {
+        int bestDistance = 18;
+        ChessPiece bestPiece = null;
+        for (Coordinates c: line){
+            Coordinates d = c.clone().sub(pos);
+            int dist = d.x+d.y;
+            if (dist < bestDistance){
+                bestDistance = dist;
+                bestPiece = gameBoard.at(c);
+            }
+        }
+        return bestPiece;
+    }
 
-    public static void createBoard() {
-        String configuration = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-        createBoard(configuration);
+    public static boolean isLegal(Coordinates c) {
+        return (c.y >= 0 && c.y < BOARD_HEIGHT) && (c.x >= 0 && c.x < BOARD_WIDTH);
+    }
+  
+    private ChessPiece[][] gameBoard = new ChessPiece[BOARD_HEIGHT][BOARD_WIDTH];
+    private List<ChessPiece> whitePieces = new ArrayList<>(); 
+    private List<ChessPiece> blackPieces = new ArrayList<>();
+    private List<ChessPiece> whiteTaken = new ArrayList<>(); 
+    private List<ChessPiece> blackTaken = new ArrayList<>();
+    private ChessPiece whiteKing;
+    private ChessPiece blackKing;
+    
+    public ChessPiece[][] getBoard(){ return gameBoard;}
+    public List<ChessPiece> getPieces(WorB color){
+        return (color==WorB.WHITE ? whitePieces:blackPieces);}
+    public List<ChessPiece> getTaken(WorB color){ 
+        return (color==WorB.WHITE ? whiteTaken:blackTaken);}
+    public ChessPiece getKing(WorB color){ 
+        return (color==WorB.WHITE ? whiteKing:blackKing);}
+    
+    public Set<Coordinates> getAllMoves(WorB color){
+        List<ChessPiece> pieces = (color==WorB.WHITE ? whitePieces:blackPieces);
+        Set<Coordinates> coords = new HashSet<>();
+        for (ChessPiece piece: pieces){
+            coords.addAll(piece.updateAvailableMoves());
+        }
+        return coords;
     }
     
-    public static void createBoard(String configuration) {
+    /**
+     * returns a set of all Coordinates that are being attacked by a piece or pawn.
+     * It does not take into consideration Coordinates being attacked by the enemy king.
+     * @param color
+     * @return 
+     */
+    public Set<Coordinates> getAllAttackedCells(WorB color){
+        List<ChessPiece> pieces = (color==WorB.WHITE ? whitePieces:blackPieces);
+        ChessPiece king = (color==WorB.WHITE ? whiteKing:blackKing);
+        Set<Coordinates> coords = new HashSet<>();
+        for (ChessPiece piece: pieces){
+            if (piece != king)
+               coords.addAll(piece.updateAttackedCells());
+        }
+        return coords;
+    }
+    
+    public GameBoard(String board){
+        setUpBoard(board);
+    }
+    
+    private void setUpBoard(String board) {
         List<String> numbers = Arrays.asList( "1","2","3","4","5","6","7","8" );
-        String[] rows = configuration.split("/");
+        String[] rows = board.split("/");
         for (int i=0;i<rows.length;i++)
             for (int j=0;j<rows[i].length();j++){
                 String piece = rows[i].substring(j, j+1);
@@ -41,40 +106,68 @@ public class GameBoard {
                     continue;
                 } 
                 ChessPiece p = identifyPiece(piece);
-                if (p != null) 
+                if (p != null){
                     p.move(new Coordinates(j,i,false));
+                    if (p.isWhite()) 
+                        whitePieces.add(p);
+                    else blackPieces.add(p);
+                }
                 gameBoard[i][j] = p;
             }
     }
     
-    private static ChessPiece identifyPiece(String id){
+    private ChessPiece identifyPiece(String id){
         ChessPiece value = null;
-        switch (id){         
-            case "K" -> value = new King(WorB.WHITE);
+        switch (id){
             case "Q" -> value = new Queen(WorB.WHITE);
             case "R" -> value = new Rook(WorB.WHITE);
             case "B" -> value = new Bishop(WorB.WHITE);
             case "N" -> value = new Knight(WorB.WHITE);
             case "P" -> value = new Pawn(WorB.WHITE);
             
-            case "k" -> value = new King(WorB.BLACK);
             case "q" -> value = new Queen(WorB.BLACK);
             case "r" -> value = new Rook(WorB.BLACK);
             case "b" -> value = new Bishop(WorB.BLACK);
             case "n" -> value = new Knight(WorB.BLACK);
             case "p" -> value = new Pawn(WorB.BLACK);
+            
+            case "K" -> {
+                value = new King(WorB.WHITE);
+                whiteKing = value;
+            }
+            case "k" -> {
+                value = new King(WorB.BLACK);
+                blackKing = value;
+            }
         }
         return value;
     }
     
-    public static void move(Coordinates pos1, Coordinates pos2){
-        ChessPiece piece = GameBoard.gameBoard[pos1.y][pos1.x];
-        ChessPiece asd = GameBoard.gameBoard[5][0];
-        GameBoard.gameBoard[pos1.y][pos1.x] = null;
-        GameBoard.gameBoard[pos2.y][pos2.x] = piece;
+    public void move(Coordinates pos1, Coordinates pos2){
+        ChessPiece piece = gameBoard[pos1.y][pos1.x];
+        gameBoard[pos1.y][pos1.x] = null;
+        gameBoard[pos2.y][pos2.x] = piece;
     }
     
-    public static ChessPiece at(Coordinates c){
+    public ChessPiece at(Coordinates c){
         return gameBoard[c.y][c.x];
     }
+    
+        public void addTakenPiece(ChessPiece piece) {
+        if (piece.isWhite()){
+            whiteTaken.add(piece);
+        } else
+            blackTaken.add(piece);
+    }
+    
+    /*
+    public  void createBoard() {
+        String configuration = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        createBoard(configuration);
+    }
+    
+    public void createBoard(String board) {
+        setUpBoard(board);
+    }
+    */  
 }

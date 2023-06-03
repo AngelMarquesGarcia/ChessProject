@@ -7,6 +7,7 @@ package views;
  *    MouseMotionEventDemo.java
  */
 
+import chessproject.Game;
 import chessproject.GameBoard;
 import javax.swing.*;
 import java.awt.Dimension;
@@ -15,21 +16,24 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import pieces.ChessPiece;
+import utilities.Coordinates;
 import utilities.MyMouseListener;
 
 public class BoardView extends JPanel {
     public static final Dimension BOARDSIZE = new Dimension(500, 500);
     private int sizeX;
     private int sizeY;
-    private int startX = 0; //creo que sobrarán
-    private int startY = 0;
     private final Color COLOR1 = Color.MAGENTA;
     private final Color COLOR2 = Color.CYAN;
+    private final Color HIGHLIGHT_COLOR = Color.ORANGE;
     private Map<String, BufferedImage> sprites = new HashMap<>();
+    private List<Coordinates> highlights = new ArrayList<>();
 
     private static BoardView boardView;
     
@@ -41,7 +45,6 @@ public class BoardView extends JPanel {
     }
 
     public BoardView() {
-        GameBoard.createBoard();
         setPreferredSize(BOARDSIZE);
         setSize(BOARDSIZE);
         setVisible(true);
@@ -58,7 +61,47 @@ public class BoardView extends JPanel {
     public void paint(Graphics g){
         drawBoard(g);
         drawPosition(g);
+        drawHighlights(g);
     }
+    
+    private void setSizes() {
+        Dimension size = getSize();
+        size.setSize(new Dimension(size.width-10, size.height-10));
+        sizeX = size.width/8;
+        sizeY = size.height/8;    
+    }
+
+    private void drawBoard(Graphics g) {
+        for(int i = 0; i <= 8;i++){
+            for (int j = 0; j <= 8;j++){
+                if (i == 8 || j == 8) continue;
+                if ((i+j) % 2 == 0){ g.setColor(COLOR1);
+                } else {g.setColor(COLOR2);}
+                g.fillRect(i*sizeX, j*sizeY, sizeX,sizeY);
+            }
+        }    
+    }
+
+    private void drawPosition(Graphics g) {
+        ChessPiece[][] gameBoard = Game.getGameBoard().getBoard();
+        for(int i = 0; i < 8;i++){
+            for (int j = 0; j < 8;j++){
+                //if (i == 8 || j == 8) continue;
+                ChessPiece piece = gameBoard[i][j];
+                if (piece != null){ 
+                    String name = piece.getName();
+                    g.drawImage(sprites.get(name), j*sizeX, i*sizeY,sizeX,sizeY, this); 
+                }
+            }
+        }    
+        //g.drawImage(sprites.get("k"), startX * sizeX, startY*sizeY,sizeX,sizeY, this);    
+    }
+
+    public void highlight(List<Coordinates> availableMoves) {
+        highlights.clear();
+        highlights.addAll(availableMoves);
+    }
+    
     
     public final void loadSprites(){
         BufferedImage bi;
@@ -102,44 +145,24 @@ public class BoardView extends JPanel {
     public Dimension getPreferredSize() {
         return BOARDSIZE;
     }
-    
-    //creo que sobrará
-    public void moveImage(String sq){
-        startX = Integer.parseInt(sq.substring(0,1));
-        startY = Integer.parseInt(sq.substring(2));
-    }
 
-    private void setSizes() {
-        Dimension size = getSize();
-        size.setSize(new Dimension(size.width-10, size.height-10));
-        sizeX = size.width/8;
-        sizeY = size.height/8;    
+    private void drawHighlights(Graphics g) {
+        if (highlights.isEmpty()) return;
+        g.setColor(HIGHLIGHT_COLOR);
+        for (Coordinates cell: highlights){
+            int x = cell.x;
+            int y = cell.y;
+            int startOfCellX = x * sizeX;
+            int startOFCellY = y * sizeY;
+            int middlePointX = sizeX/2;
+            int middlePointY = sizeY/2;
+            int circleWidth = sizeX/4;
+            int circleHeight = sizeY/4;
+            int centerX = startOfCellX + middlePointX - circleWidth/2;
+            int centerY = startOFCellY + middlePointY - circleHeight/2;
+            g.fillOval(centerX, centerY, circleWidth, circleHeight);
+        }
+        highlights.clear();
     }
-
-    private void drawBoard(Graphics g) {
-        for(int i = 0; i <= 8;i++){
-            for (int j = 0; j <= 8;j++){
-                if (i == 8 || j == 8) continue;
-                if ((i+j) % 2 == 0){ g.setColor(COLOR1);
-                } else {g.setColor(COLOR2);}
-                g.fillRect(i*sizeX, j*sizeY, sizeX,sizeY);
-            }
-        }    
-    }
-
-    private void drawPosition(Graphics g) {
-        ChessPiece[][] gameBoard = GameBoard.getBoard();
-        for(int i = 0; i < 8;i++){
-            for (int j = 0; j < 8;j++){
-                //if (i == 8 || j == 8) continue;
-                ChessPiece piece = gameBoard[i][j];
-                if (piece != null){ 
-                    String name = piece.getName();
-                    g.drawImage(sprites.get(name), j*sizeX, i*sizeY,sizeX,sizeY, this); 
-                }
-            }
-        }    
-        //g.drawImage(sprites.get("k"), startX * sizeX, startY*sizeY,sizeX,sizeY, this);    
-    }
-    
 }
+

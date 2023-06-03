@@ -5,18 +5,21 @@
 
 package views;
 
+import chessproject.Game;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import pieces.ChessPiece;
+import utilities.WorB;
 
 /**
  *
@@ -26,21 +29,11 @@ public class TakenPieces extends JPanel {
 
     private final Dimension BOXSIZE = new Dimension(200, 50);
     private Map<String, BufferedImage> sprites = new HashMap<>();
-    private ArrayList<String> takenPieces = new ArrayList<>();
     private final int PIECEWIDTH = 25;
+    private final WorB color;
     
-    public TakenPieces() {
-        /*takenPieces.add("q");
-        takenPieces.add("r");
-        takenPieces.add("N");
-        takenPieces.add("P");
-        takenPieces.add("P");
-        takenPieces.add("p");
-        takenPieces.add("b");
-        takenPieces.add("K");
-        takenPieces.add("n");
-        takenPieces.add("q");*/
-        
+    public TakenPieces(WorB c) {
+        color = c;
         setPreferredSize(BOXSIZE);
         setSize(BOXSIZE);
         setVisible(true);
@@ -49,22 +42,16 @@ public class TakenPieces extends JPanel {
         this.setBackground(Color.red);
     }
     
-    public void addTakenPiece(ChessPiece p){
-        String name = p.getName();
-        if (!p.isWhite()){
-            name = name.toLowerCase();
-        }
-        takenPieces.add(name);
-    }
-    
     @Override
     public void paint(Graphics g){
+        List<ChessPiece> takenPieces = Game.getGameBoard().getTaken(color);
+        Collections.sort(takenPieces, Collections.reverseOrder());
         int y = 0;
         g.setColor(Color.red);
         g.fillRect(0, 0, 200, 50);
         int i = 0;
-        for (String piece: takenPieces){
-            BufferedImage bi = sprites.get(piece);
+        for (ChessPiece piece: takenPieces){
+            BufferedImage bi = sprites.get(piece.getName());
             g.drawImage(bi, i * PIECEWIDTH, y,PIECEWIDTH,PIECEWIDTH, this);   
             i++;
             if ((i+1) * PIECEWIDTH > BOXSIZE.width){

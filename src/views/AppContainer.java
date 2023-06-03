@@ -31,8 +31,6 @@ public class AppContainer extends JPanel {
         
         setPreferredSize(new Dimension(450, 450));
         appContainer = this;
-        
-        
     }
 
 }

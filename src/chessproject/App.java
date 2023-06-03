@@ -24,8 +24,7 @@ public class App {
                 createAndShowGUI();
             }
         });
-        Game g = new Game();
-        g.doStuff();
+        Game.createGame();
     }
     
     /**
