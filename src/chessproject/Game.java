@@ -63,6 +63,7 @@ public class Game {
         }
         List<Coordinates> line = Coordinates.getLine(selectedPiece.getPrevPos(), king.getPos(), true);
         ChessPiece piece = GameBoard.getClosestPiece(king.getPos(), line, gameBoard);
+        
         if (piece != null && ! piece.isColor(color) && piece.updateAvailableMoves().contains(king.getPos())){
             isCheck = true;
             checkers.add(piece);
@@ -87,6 +88,10 @@ public class Game {
     private static void kingChecked(WorB color) {
         if (isCheckMate(color)){
             checkMate(color);
+        } else if (goodMoves == null){
+            ChessPiece attacker = checkers.get(0);
+            goodMoves = new HashSet<>();
+            goodMoves.addAll(Coordinates.getLine(attacker.getPos(), gameBoard.getKing(color).getPos(), false));
         }
         /**Tenemos un set en goodMoves con los movimientos que nos salvarían
         *Es jaque mate si 

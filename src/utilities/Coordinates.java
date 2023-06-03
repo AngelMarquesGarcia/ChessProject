@@ -19,8 +19,9 @@ public class Coordinates {
     /**
      * returns a list of coordinates that span from pos1 to pos2.
      * pos1 is included, pos2 is excluded.
-     * If inverted is true, it gives a list of all coordinates along the line between pos1 and pos2
+     * <p>If inverted is true, it gives a list of all coordinates along the line between pos1 and pos2
      * that are behind pos2.
+     * <p> ORDER is ALWAYS away from pos1. It starts at pos1 and creeps toward pos2.
      * @param pos1
      * @param pos2
      * @param inverted
@@ -31,8 +32,8 @@ public class Coordinates {
         List<Coordinates> coords = new ArrayList<>();
         checkHorizontalLine(coords, pos1, pos2,mod);
         checkDiagonalLine(coords,pos1,pos2,mod);
-        if (!inverted)
-            coords.add(pos1.clone());
+        //if (!inverted)
+        //    coords.add(pos1.clone());
         return coords;
     }
 
