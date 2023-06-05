@@ -20,6 +20,7 @@ import utilities.WorB;
 public class Knight extends ChessPiece {
 
     public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pin) {
+        pin = Game.checkForPin(p,c);
         List<Coordinates> coords = new ArrayList<>();
         Set<Coordinates> moves = getMoveset();
         ChessPiece.cullMoveSet(moves, pin);

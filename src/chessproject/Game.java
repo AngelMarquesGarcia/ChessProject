@@ -246,4 +246,40 @@ public class Game {
         System.out.println("-------------------------------Game Over-------------------------------");
         System.out.println("-------------------------------Game Over-------------------------------");
     }
+
+    public static Coordinates checkForPin(Coordinates p, WorB c) {
+        GameBoard gameBoard = Game.getGameBoard();
+        
+        Coordinates enemyKingPos = gameBoard.getKing(c).getPos();
+        List<Coordinates> line = Coordinates.getLine(p, enemyKingPos, false);
+        if (!line.isEmpty()) line.remove(0);
+        for (Coordinates pos : line) {
+            ChessPiece piece = gameBoard.at(pos);
+            if (piece != null) { //look between me and my king. When you find a piece, check if it is my king. If it's not, I can't be pinned
+                if (pos.equals(enemyKingPos)) {
+                    break;
+                } else return null;
+            }
+        }
+        
+        line = Coordinates.getLine(p, gameBoard.getKing(c).getPos(), true);
+        if (!line.isEmpty()) line.remove(0);
+        Coordinates dir = Coordinates.getDir(p, gameBoard.getKing(c).getPos());
+        for (Coordinates pos : line) {
+            ChessPiece piece = gameBoard.at(pos);
+            if (piece != null) {
+                if (piece.isColor(c)) {
+                    break;
+                } else {
+                    String pieceName = piece.getName().toUpperCase();
+                    if ((dir.x == 0 || dir.y == 0) && (pieceName.equals("R") || "Q".equals(pieceName))) {
+                        return dir;
+                    } else if ((Math.abs(dir.x) == 1 && Math.abs(dir.y) == 1) && (pieceName.equals("B") || "Q".equals(pieceName))) {
+                        return dir;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -19,10 +19,11 @@ import utilities.WorB;
 public class Pawn extends ChessPiece {
 
     public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pin) {
+        pin = Game.checkForPin(p,c);
         List<Coordinates> coords = new ArrayList<>();
         int yMovement = (c == WorB.BLACK ? 1 : -1);
         Coordinates move = new Coordinates(0, yMovement, false);
-        if (pin != null && !move.equals(pin))
+        if (pin != null && !(move.equals(pin) || move.equals(new Coordinates(pin.x, pin.y*-1, false))))
             move = null;
         Set<Coordinates> goodMoves = Game.getGoodMoves();
         tryMoves(coords, move, p, c, goodMoves);
