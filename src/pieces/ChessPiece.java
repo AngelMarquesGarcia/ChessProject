@@ -19,9 +19,10 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
 
     static void cullMoveSet(Set<Coordinates> moves, Coordinates pin) {
         if (pin != null){
-            if (moves.contains(pin)){
+            if (moves.contains(pin) || moves.contains(pin.mult(-1))){
                 moves.clear();
                 moves.add(pin.clone());
+                moves.add(pin.clone().mult(-1));
             } else{
                 moves.clear();
             }

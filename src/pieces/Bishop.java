@@ -20,7 +20,7 @@ import utilities.WorB;
 public class Bishop extends ChessPiece {
 
     public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pin) {
-        
+        pin = Game.checkForPin(p,c);
         List<Coordinates> coords = new ArrayList<>();
         if (Game.getCheckers().size() == 2){
             return coords;

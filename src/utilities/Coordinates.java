@@ -65,7 +65,16 @@ public class Coordinates {
             int yStep = (c.y < 0 ? -1:1);
             addLine(coords, pos1, pos2, mod*xStep, mod*yStep);
         }
-        
+    }
+    
+    public static Coordinates getDir(Coordinates pos1, Coordinates pos2) {
+        Coordinates dir = pos2.sub(pos1);
+        int min = Math.min(dir.x, dir.y);
+        if (min == 0)
+            min = Math.max(dir.x,dir.y);
+        dir.x = dir.x/min;
+        dir.y = dir.y/min;
+        return dir;
     }
 
 
@@ -150,6 +159,12 @@ public class Coordinates {
     public Coordinates sub(Coordinates c) {
         x -= c.x;
         y -= c.y;
+        return this;
+    }
+
+    public Coordinates mult(int i) {
+        x *= i;
+        y *= i;
         return this;
     }
 }
