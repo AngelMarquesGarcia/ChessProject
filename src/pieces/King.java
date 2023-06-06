@@ -66,9 +66,10 @@ public class King extends ChessPiece {
             return;
         try { //probablemente sea más eficiente gameBoard.isLegal(newPos) que lanzar y pillar una excepción
             ChessPiece piece = gameBoard.at(newPos);
-            if (piece == null || ! piece.isColor(color)){
+            if (piece == null || ! piece.isColor(color)){ 
                 coords.add(newPos);
             }
+            //coords.add(newPos);
         } catch (IndexOutOfBoundsException ex) {
 
         }

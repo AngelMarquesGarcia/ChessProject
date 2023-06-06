@@ -24,7 +24,7 @@ public class Knight extends ChessPiece {
         List<Coordinates> coords = new ArrayList<>();
         Set<Coordinates> moves = getMoveset();
         ChessPiece.cullMoveSet(moves, pin);
-        Set<Coordinates> goodMoves = Game.getGoodMoves();
+        Set<Coordinates> goodMoves = (Game.getCheckedKing() == c ? Game.getGoodMoves():null);
         for (Coordinates move : moves) {
             tryMoves(coords, move, p, c, goodMoves);
         }
@@ -64,10 +64,12 @@ public class Knight extends ChessPiece {
             newPos.sum(b1 * x, b0 * y);
             try {
                 ChessPiece piece = gameBoard.at(newPos);
-                if (piece == null || piece.color != color) {
+                /*if (piece == null || piece.color != color) {
                     if (goodMoves == null || goodMoves.contains(newPos))
                         coords.add(newPos.clone());
-                }
+                }*/
+                if (goodMoves == null || goodMoves.contains(newPos))
+                        coords.add(newPos.clone());
             } catch (IndexOutOfBoundsException ex) {
             }
             newPos.copy(pos);

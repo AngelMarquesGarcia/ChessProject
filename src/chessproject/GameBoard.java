@@ -85,7 +85,7 @@ public class GameBoard {
         ChessPiece king = (color==WorB.WHITE ? whiteKing:blackKing);
         Set<Coordinates> coords = new HashSet<>();
         for (ChessPiece piece: pieces){
-            if (piece != king)
+            if (piece != king) //this is so that it doesn't infinitely recurse
                coords.addAll(piece.updateAttackedCells());
         }
         return coords;

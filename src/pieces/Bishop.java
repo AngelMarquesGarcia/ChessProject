@@ -27,7 +27,7 @@ public class Bishop extends ChessPiece {
         }
         Set<Coordinates> moves = getMoveset();
         ChessPiece.cullMoveSet(moves, pin);
-        Set<Coordinates> goodMoves = Game.getGoodMoves();
+        Set<Coordinates> goodMoves = (Game.getCheckedKing() == c ? Game.getGoodMoves():null);
         for (Coordinates move : moves) {
             tryMoves(coords, move, p, c, goodMoves);
         }
@@ -74,7 +74,7 @@ public class Bishop extends ChessPiece {
                     coords.add(newPos.clone());
                 newPos.sum(move);
             }
-            if (!gameBoard.at(newPos).isColor(color)){
+            if (goodMoves == null || goodMoves.contains(newPos)){ //!gameBoard.at(newPos).isColor(color) && (goodMoves == null || goodMoves.contains(newPos))
                 coords.add(newPos);
             }
         } catch (IndexOutOfBoundsException ex) {

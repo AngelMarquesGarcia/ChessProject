@@ -25,7 +25,7 @@ public class Pawn extends ChessPiece {
         Coordinates move = new Coordinates(0, yMovement, false);
         if (pin != null && !(move.equals(pin) || move.equals(new Coordinates(pin.x, pin.y*-1, false))))
             move = null;
-        Set<Coordinates> goodMoves = Game.getGoodMoves();
+        Set<Coordinates> goodMoves = (Game.getCheckedKing() == c ? Game.getGoodMoves():null);
         tryMoves(coords, move, p, c, goodMoves);
 
         tryTake(coords, p, c);
@@ -52,7 +52,7 @@ public class Pawn extends ChessPiece {
             newPos = p.clone();
             newPos.sum(1, yMovement);
             piece = gameBoard.at(newPos);
-            if (piece != null && !piece.isColor(c)) {
+            if (piece != null /*&& !piece.isColor(c)*/) {
                 coords.add(newPos.clone());
             }
         } catch (IndexOutOfBoundsException ex) {}
@@ -61,7 +61,7 @@ public class Pawn extends ChessPiece {
             newPos = p.clone();
             newPos.sum(-1, yMovement);
             piece = gameBoard.at(newPos);
-            if (piece != null && !piece.isColor(c)) {
+            if (piece != null /*&& !piece.isColor(c)*/) {
                 coords.add(newPos.clone());
             }
         } catch (IndexOutOfBoundsException ex) {}

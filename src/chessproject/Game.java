@@ -29,6 +29,7 @@ public class Game {
     private static String enPassant = "-"; //could potentially be Coordinates
     private static boolean whiteToPlay = true;
     private static Set<Coordinates> goodMoves = null;
+    private static WorB checkedKing = null;
     
     private static List<ChessPiece> checkers = new ArrayList<>();
     
@@ -86,6 +87,7 @@ public class Game {
         return allMoves.isEmpty();
     }
     private static void kingChecked(WorB color) {
+        checkedKing = color;
         if (isCheckMate(color)){
             checkMate(color);
         } else if (goodMoves == null){
@@ -184,6 +186,7 @@ public class Game {
         }
         gameBoard.move(pieceToMove.getPos(), cell);
         pieceToMove.move(cell);
+        checkedKing = null;
         goodMoves = null;
         
         if (whiteToPlay && isInCheck(WorB.BLACK)){
@@ -218,6 +221,14 @@ public class Game {
      */
     private static void cullAvailableMoves() {
         System.out.println("Game.cullAvailableMoves not supported yet. And most likely it will never be.");
+        GameBoard gameBoard = Game.getGameBoard();
+        ArrayList<Coordinates>  copy = (ArrayList<Coordinates>) availableMoves;
+        copy = (ArrayList<Coordinates>) copy.clone();
+        for (Coordinates move:copy){
+            if (gameBoard.at(move) != null && gameBoard.at(move).isWhite() == selectedPiece.isWhite()){
+                availableMoves.remove(move);
+        }
+        }
     }
     
     public static void setSelectedPiece(ChessPiece p){
@@ -281,5 +292,9 @@ public class Game {
             }
         }
         return null;
+    }
+
+    public static WorB getCheckedKing() {
+        return checkedKing;
     }
 }
