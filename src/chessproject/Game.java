@@ -14,6 +14,7 @@ import utilities.Coordinates;
 import utilities.WorB;
 import views.AppContainer;
 import views.BoardView;
+import views.GameMenu;
 
 /**
  *
@@ -106,6 +107,7 @@ public class Game {
     }
     
     public static void createGame(String configuration) {
+        GameMenu.reset();
         completed = false;
         String[] parts = configuration.split(" ");
         gameBoard = new GameBoard(parts[0]);
@@ -231,6 +233,8 @@ public class Game {
         availableMoves.clear();
         whiteToPlay = ! whiteToPlay;
         
+        GameMenu.addHalfMove(currentMove);
+        
         AppContainer.getAppContainer().repaint();
         
         System.out.println(toStringFEN());
@@ -347,7 +351,7 @@ public class Game {
     }
 
     public static void undoLastMove() {
-        
+        GameMenu.removeHalfMove();
         if (currentMoveNum > 1 && !whiteToPlay)
             currentMoveNum--;
        

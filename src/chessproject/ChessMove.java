@@ -12,7 +12,7 @@ import utilities.Coordinates;
  *
  * @author Ángel Marqués García 
  */
-class ChessMove {
+public class ChessMove {
     private Coordinates iniPos;
     private Coordinates finPos;
     private ChessPiece movedPiece;
@@ -37,8 +37,39 @@ class ChessMove {
         String takenName = finPos.toString();
         String checkSign = (isCheck?"+":"");
         checkSign = (isCheckMate?"#":checkSign);
-        return pieceName + from  + takes + takenName + checkSign;
-        
+        return pieceName + from  + takes + takenName + checkSign; 
+    }
+
+    public boolean isIsShortCastle() {
+        return isShortCastle;
+    }
+
+    public void setIsShortCastle(boolean isShortCastle) {
+        this.isShortCastle = isShortCastle;
+    }
+
+    public boolean isIsLongCastle() {
+        return isLongCastle;
+    }
+
+    public void setIsLongCastle(boolean isLongCastle) {
+        this.isLongCastle = isLongCastle;
+    }
+
+    public boolean isIsCheck() {
+        return isCheck;
+    }
+
+    public void setIsCheck(boolean isCheck) {
+        this.isCheck = isCheck;
+    }
+
+    public boolean isIsCheckMate() {
+        return isCheckMate;
+    }
+
+    public void setIsCheckMate(boolean isCheckMate) {
+        this.isCheckMate = isCheckMate;
     }
 
     public void setFenBoardAfter(String fenBoardAfter) {

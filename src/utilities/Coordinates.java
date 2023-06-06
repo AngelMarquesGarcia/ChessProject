@@ -149,7 +149,7 @@ public class Coordinates {
             case 7 -> row = "h";
             default -> row = "";
         }
-        return row + Integer.toString(y);
+        return row + Integer.toString(8-y);
     }
 
     public boolean equals(int xCoord, int yCoord) {
