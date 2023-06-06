@@ -15,6 +15,8 @@ import pieces.ChessPiece;
  * @author Ángel Marqués García 
  */
 public class App {
+    private static JFrame frame;
+    public static JFrame getFrame(){return frame;}
     
     public App(){
         //Schedule a job for the event dispatch thread:
@@ -34,7 +36,7 @@ public class App {
      */
     private static void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("Chess App");
+        frame = new JFrame("Chess App");
         frame.setSize(800, 800);
         frame.setPreferredSize(new Dimension(800, 600));
         //frame.setResizable(false);

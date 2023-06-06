@@ -35,8 +35,9 @@ public class Game {
     
     private static ChessPiece selectedPiece = null;
     private static List<Coordinates> availableMoves;
+    private static boolean completed;
 
-    public static void createGame() {
+    public static void createGame() { 
         String configuration = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         createGame(configuration);
     }
@@ -103,6 +104,7 @@ public class Game {
     }
     
     public static void createGame(String configuration) {
+        completed = false;
         String[] parts = configuration.split(" ");
         gameBoard = new GameBoard(parts[0]);
         setUpVariables(parts);
@@ -110,6 +112,15 @@ public class Game {
     
     public static GameBoard getGameBoard(){
         return gameBoard;
+    }
+    
+    public static void restart(String fen){
+        if (fen == null || "".equals(fen)){
+            createGame();
+        } else{
+            createGame(fen);
+        }
+        AppContainer.getAppContainer().repaint();
     }
     
     private static void setUpVariables(String[] parts) {
@@ -232,7 +243,7 @@ public class Game {
     }
     
     public static void setSelectedPiece(ChessPiece p){
-        if (p != null && p.isWhite() == whiteToPlay){ //the turn system is disabled if we remove the second condition
+        if (!completed && p != null && p.isWhite() == whiteToPlay){ //the turn system is disabled if we remove the second condition
             selectedPiece = p;
             availableMoves = p.updateAvailableMoves();
             cullAvailableMoves();
@@ -296,5 +307,25 @@ public class Game {
 
     public static WorB getCheckedKing() {
         return checkedKing;
+    }
+
+    public static void lock() {
+        completed = true;
+    }
+
+    public static boolean getWhiteToPlay() {
+        return whiteToPlay;
+    }
+
+    public static void removeFocus() {
+        selectedPiece = null; //goodMoves = null;
+        if (availableMoves != null)
+            availableMoves.clear();    
+        AppContainer.getAppContainer().repaint();
+
+    }
+
+    public static void undoLastMove() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

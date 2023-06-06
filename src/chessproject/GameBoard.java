@@ -98,22 +98,26 @@ public class GameBoard {
     private void setUpBoard(String board) {
         List<String> numbers = Arrays.asList( "1","2","3","4","5","6","7","8" );
         String[] rows = board.split("/");
-        for (int i=0;i<rows.length;i++)
+        int x;
+        for (int i=0;i<rows.length;i++){
+            x = 0;
             for (int j=0;j<rows[i].length();j++){
                 String piece = rows[i].substring(j, j+1);
                 if (numbers.contains(piece)){
-                    j += Integer.parseInt(piece) -1;
+                    x += Integer.parseInt(piece); //-1
                     continue;
                 } 
                 ChessPiece p = identifyPiece(piece);
                 if (p != null){
-                    p.move(new Coordinates(j,i,false));
+                    p.move(new Coordinates(x,i,false));
                     if (p.isWhite()) 
                         whitePieces.add(p);
                     else blackPieces.add(p);
                 }
-                gameBoard[i][j] = p;
+                gameBoard[i][x] = p;
+                x++;
             }
+        }
     }
     
     private ChessPiece identifyPiece(String id){
