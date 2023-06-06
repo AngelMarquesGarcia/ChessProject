@@ -20,11 +20,11 @@ import views.BoardView;
  * @author Ángel Marqués García 
  */
 public class Game {
-    
+    private static List<ChessTurn> history = new ArrayList<>();
     private static GameBoard gameBoard;
     private static boolean[] whiteCastle = new boolean[]{true,true};
     private static boolean[] blackCastle = new boolean[]{true,true};
-    private static int currentMove = 0;
+    private static int currentMoveNum = 0;
     private static int movesWithNoPawnOrCapture = 0;
     private static String enPassant = "-"; //could potentially be Coordinates
     private static boolean whiteToPlay = true;
@@ -36,6 +36,8 @@ public class Game {
     private static ChessPiece selectedPiece = null;
     private static List<Coordinates> availableMoves;
     private static boolean completed;
+    
+    private static ChessTurn currentTurn;
 
     public static void createGame() { 
         String configuration = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -134,7 +136,7 @@ public class Game {
         }   }
         enPassant = parts[3].strip();
         movesWithNoPawnOrCapture = Integer.parseInt(parts[4].strip());
-        currentMove = Integer.parseInt(parts[5].strip());
+        currentMoveNum = Integer.parseInt(parts[5].strip());
     }
     
     public static String toStringFEN(){
@@ -153,7 +155,7 @@ public class Game {
         if (conf.endsWith(" ")) conf += "-";
         conf += " " + enPassant; //(enPassant==null ? "-":enPassant.toString());
         conf += " " + Integer.toString(movesWithNoPawnOrCapture);
-        conf += " " + Integer.toString(currentMove);
+        conf += " " + Integer.toString(currentMoveNum);
         return conf;
     }
     
@@ -185,7 +187,12 @@ public class Game {
     }
     
     public static void move(Coordinates cell) {
+        movesWithNoPawnOrCapture++;
+        ChessMove currentMove = new ChessMove(selectedPiece.getPos(), cell, selectedPiece);
         ChessPiece pieceToMove = selectedPiece;
+        if (selectedPiece.getName().toLowerCase().equals("p")){
+            movesWithNoPawnOrCapture = 0;
+        }
         if (!availableMoves.contains(cell)){
             selectedPiece = null;
             AppContainer.getAppContainer().repaint();
@@ -193,10 +200,24 @@ public class Game {
         } 
         ChessPiece pieceAtCell = gameBoard.at(cell);
         if (pieceAtCell != null){
+            movesWithNoPawnOrCapture = 0;
             pieceTaken(pieceAtCell);
+            currentMove.setTakenPiece(pieceAtCell);
         }
+        
         gameBoard.move(pieceToMove.getPos(), cell);
         pieceToMove.move(cell);
+        currentMove.setFenBoardAfter(toStringFEN());
+        
+        if (whiteToPlay){
+            currentMoveNum++;
+            currentTurn = new ChessTurn(currentMoveNum);
+            history.add(currentTurn);
+            currentTurn.setWhiteMove(currentMove);
+        } else {
+            currentTurn.setBlackMove(currentMove);
+        }
+        
         checkedKing = null;
         goodMoves = null;
         
@@ -205,7 +226,7 @@ public class Game {
         } else if (!whiteToPlay && isInCheck(WorB.WHITE)){
             kingChecked(WorB.WHITE);
         }
-
+        
         selectedPiece = null; //goodMoves = null;
         availableMoves.clear();
         whiteToPlay = ! whiteToPlay;
@@ -326,6 +347,38 @@ public class Game {
     }
 
     public static void undoLastMove() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+        if (currentMoveNum > 1 && !whiteToPlay)
+            currentMoveNum--;
+       
+        ChessMove moveToUndo;
+        if (whiteToPlay){ //deshacemos un movimiento negro
+            moveToUndo = currentTurn.pop(WorB.BLACK);
+        } else { //deshacemos un movimiento blanco
+            moveToUndo = currentTurn.pop(WorB.WHITE);
+            if (currentMoveNum > 1)
+                history.remove(history.size()-1);
+            currentTurn = history.get(history.size()-1);
+        }
+        if (movesWithNoPawnOrCapture > 0)
+            movesWithNoPawnOrCapture--;
+        
+        selectedPiece = moveToUndo.getMovedPiece();
+        gameBoard.move(moveToUndo.getFinPos(), moveToUndo.getIniPos());
+        selectedPiece.move(moveToUndo.getIniPos());
+        selectedPiece = null;
+        
+        ChessPiece takenPiece = moveToUndo.getTakenPiece();
+        gameBoard.place(takenPiece, moveToUndo.getFinPos());
+        if (takenPiece != null)
+            gameBoard.removeTakenPiece(takenPiece);
+        whiteToPlay = !whiteToPlay;
+        
+        AppContainer.getAppContainer().repaint();
+        
+    }
+
+    public static boolean canUndo() {
+        return currentMoveNum > 1 || !whiteToPlay;
     }
 }

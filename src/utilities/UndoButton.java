@@ -33,6 +33,10 @@ public class UndoButton extends JButton implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Game.removeFocus();
+        if (!Game.canUndo()){
+            JOptionPane.showMessageDialog(App.getFrame(), "It is not possible to undo, as there are no moves to undo", "Cannot Undo", 0);
+            return;
+        }
         System.out.println("Undo Button Clicked");
         boolean whiteResigns = Game.getWhiteToPlay();
         String player = (whiteResigns ? "White":"Black");

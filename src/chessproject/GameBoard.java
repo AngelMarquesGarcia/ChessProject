@@ -157,7 +157,7 @@ public class GameBoard {
         return gameBoard[c.y][c.x];
     }
     
-        public void addTakenPiece(ChessPiece piece) {
+    public void addTakenPiece(ChessPiece piece) {
         if (piece.isWhite()){
             whiteTaken.add(piece);
         } else
@@ -174,4 +174,16 @@ public class GameBoard {
         setUpBoard(board);
     }
     */  
+
+    public void place(ChessPiece takenPiece, Coordinates finPos) {
+        gameBoard[finPos.y][finPos.x] = takenPiece;
+    }
+
+    public void removeTakenPiece(ChessPiece piece) {
+        if (piece.isWhite()){
+            whiteTaken.remove(piece);
+        } else
+            blackTaken.remove(piece);
+       
+    }
 }
