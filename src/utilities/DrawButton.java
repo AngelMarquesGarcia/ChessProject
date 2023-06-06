@@ -5,6 +5,7 @@
 
 package utilities;
 
+import chessproject.App;
 import chessproject.Game;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -36,16 +37,16 @@ public class DrawButton extends JButton implements ActionListener {
         boolean whiteResigns = Game.getWhiteToPlay();
         String player = (whiteResigns ? "White":"Black");
         String opponent = (!whiteResigns ? "White ":"Black");
-        int option = JOptionPane.showConfirmDialog(this, 
+        int option = JOptionPane.showConfirmDialog(App.getFrame(), 
                 player + " offers a draw. " + opponent +  ", do you accept it?", 
                 "Draw Offer", 
                 0, 
                 1); //0 yes, 1 no
         if (option == 0){
-            JOptionPane.showMessageDialog(this, "Draw Accepted", "Draw Offer", 1);
+            JOptionPane.showMessageDialog(App.getFrame(), "Draw Accepted", "Draw Offer", 1);
             Game.lock();
         } else {
-            JOptionPane.showMessageDialog(this, "Draw Declined", "Draw Offer", 1);
+            JOptionPane.showMessageDialog(App.getFrame(), "Draw Declined", "Draw Offer", 1);
         }
         System.out.println(option);
         

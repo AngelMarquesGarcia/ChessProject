@@ -5,6 +5,7 @@
 
 package utilities;
 
+import chessproject.App;
 import chessproject.Game;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -36,7 +37,7 @@ public class ResignButton extends JButton implements ActionListener {
         boolean whiteResigns = Game.getWhiteToPlay();
         String player = (whiteResigns ? "White":"Black");
         String opponent = (!whiteResigns ? "White ":"Black");
-        int option = JOptionPane.showConfirmDialog(this, 
+        int option = JOptionPane.showConfirmDialog(App.getFrame(), 
                 player + ", are you sure you want to resign?", 
                 "Resignation Letter", 
                 0, 
@@ -44,7 +45,7 @@ public class ResignButton extends JButton implements ActionListener {
         if (option == 0){
             
             String msg = player + " has resigned, " + opponent + " wins"; //String msg = (whiteResigns ? "White has resigned, Black wins":"Black has resigned, White wins");
-            JOptionPane.showMessageDialog(this, msg, "Resignation", 1);
+            JOptionPane.showMessageDialog(App.getFrame(), msg, "Resignation", 1);
             Game.lock();
         } else {
             //JOptionPane.showMessageDialog(this, "Draw Declined", "Resignation", 1);

@@ -5,6 +5,7 @@
 
 package utilities;
 
+import chessproject.App;
 import chessproject.Game;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -37,7 +38,7 @@ public class UndoButton extends JButton implements ActionListener {
         String player = (whiteResigns ? "White":"Black");
         String opponent = (!whiteResigns ? "White":"Black");
         String msg = player + " wants to undo their last move. " + opponent + ", do you allow it?";
-        int option = JOptionPane.showConfirmDialog(this, msg, "titulo", 0, 2); //0 yes, 1 no
+        int option = JOptionPane.showConfirmDialog(App.getFrame(), msg, "titulo", 0, 2); //0 yes, 1 no
         System.out.println(option);
         
         if (option == 0)
