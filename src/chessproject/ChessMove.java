@@ -22,6 +22,7 @@ public class ChessMove {
     private boolean isLongCastle;
     private boolean isCheck;
     private boolean isCheckMate;
+    private ChessPiece promotion = null;
 
     public String getFenBoardAfter() {
         return fenBoardAfter;
@@ -31,6 +32,7 @@ public class ChessMove {
     public String toString(){
         if (isShortCastle){return "O-O";}
         if (isLongCastle){return "O-O-O";}
+        if (promotion != null){return finPos.toString() + promotion.getName().toUpperCase(); }
         String pieceName = movedPiece.getName().toUpperCase();
         String from = iniPos.toString();
         String takes = (takenPiece==null? "":"x");
@@ -125,5 +127,13 @@ public class ChessMove {
         if (isShortCastle) return 1;
         if (isLongCastle) return 2;
         return 0;
+    }
+
+    public void setPromotion(ChessPiece piece) {
+        promotion = piece;
+    }
+
+    public boolean isPromotion() {
+        return (promotion!=null);
     }
 }

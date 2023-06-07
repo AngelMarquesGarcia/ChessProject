@@ -9,7 +9,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import pieces.Bishop;
 import pieces.ChessPiece;
+import pieces.Knight;
+import pieces.Queen;
+import pieces.Rook;
 import utilities.Coordinates;
 import utilities.WorB;
 import views.AppContainer;
@@ -40,6 +44,8 @@ public class Game {
     
     private static ChessTurn currentTurn;
     private static int startingMoveNum;
+    
+    private static final String[] possiblePromotions =  new String[]{"Rook","Bishop","Knight", "Queen"};
 
     public static boolean[] getCastle(WorB color){
         return (color==WorB.WHITE ? whiteCastle:blackCastle);
@@ -117,6 +123,7 @@ public class Game {
     public static void createGame(String configuration) {
         try{
             GameMenu.reset();
+            history.clear();
             completed = false;
             String[] parts = configuration.split(" ");
             gameBoard = new GameBoard(parts[0]);
@@ -205,6 +212,12 @@ public class Game {
     }
     
     public static void move(Coordinates cell) {
+        if (!availableMoves.contains(cell)){ //does this ever happen? I don't think it should. It does happen, and I think it's wrong
+            selectedPiece = null;
+            AppContainer.getAppContainer().repaint();
+            return; 
+        } 
+        
         movesWithNoPawnOrCapture++;
         ChessMove currentMove = new ChessMove(selectedPiece.getPos(), cell, selectedPiece);
         updateEnPassant(cell, currentMove);
@@ -213,11 +226,7 @@ public class Game {
         if (selectedPiece.getName().toLowerCase().equals("p")){
             movesWithNoPawnOrCapture = 0;
         }
-        if (!availableMoves.contains(cell)){ //does this ever happen? I don't think it should. It does happen, and I think it's wrong
-            selectedPiece = null;
-            AppContainer.getAppContainer().repaint();
-            return; 
-        } 
+
         ChessPiece pieceAtCell = gameBoard.at(cell);
         if (pieceAtCell != null){
             movesWithNoPawnOrCapture = 0;
@@ -231,6 +240,13 @@ public class Game {
         doCastling(isCastle);
         currentMove.setCastle(isCastle);
         currentMove.setFenBoardAfter(toStringFEN());
+        
+        ChessPiece promoted = null;
+        if (((whiteToPlay && cell.y == 0) || (!whiteToPlay && cell.y == 7)) && selectedPiece.getName().toUpperCase().equals("P")){
+            promoted = promotePawn(selectedPiece);
+            selectedPiece = promoted;
+        }
+        currentMove.setPromotion(promoted);
         
         if (whiteToPlay){
             currentMoveNum++;
@@ -261,10 +277,7 @@ public class Game {
         
         AppContainer.getAppContainer().repaint();
         //System.out.println("Just did a move. Current move: " + Integer.toString(currentMoveNum));
-        //System.out.println(toStringFEN());
-        System.out.println(blackCastle[0]);
-        System.out.println(blackCastle[1]);
-        System.out.println("----------------");
+        System.out.println(toStringFEN());
     }
 
     private static void pieceTaken(ChessPiece piece) {
@@ -397,6 +410,9 @@ public class Game {
             movesWithNoPawnOrCapture--;
         
         selectedPiece = moveToUndo.getMovedPiece();
+        if (moveToUndo.isPromotion()){
+            gameBoard.replace(selectedPiece.getPos(), selectedPiece);
+        }
         gameBoard.move(moveToUndo.getFinPos(), moveToUndo.getIniPos());
         selectedPiece.move(moveToUndo.getIniPos());
         undoCastle(moveToUndo.getCastle());
@@ -564,6 +580,28 @@ public class Game {
         String[] parts = fen.split(" ");
         String enPassantString = parts[3];
         enPassant = interpretEnPassant(enPassantString);
+    }
+
+    private static ChessPiece promotePawn(ChessPiece pawn) {
+        String option = AppContainer.showPromotionOptions(pawn, possiblePromotions);
+        ChessPiece promotion = null;
+        WorB color = (pawn.isWhite() ? WorB.WHITE:WorB.BLACK);
+        if (option==null) option = "Queen";
+        switch (option) {
+            case "Queen" -> promotion = new Queen(color);
+            case "Knight" -> promotion = new Knight(color);
+            case "Rook" -> promotion = new Rook(color);
+            case "Bishop" -> promotion = new Bishop(color);
+            //default is ugly. If you exit the window, you are given a queen? 1 of 2 solutions. 
+            //1. create own JDialog. this might help https://stackoverflow.com/questions/45372376/joptionpane-showinputdialog-without-cancel-button-and-exit-handle
+            //2. make it so that if the user exits the window, undo is called.
+        }
+        promotion.move(pawn.getPrevPos());
+        promotion.move(pawn.getPos());
+        gameBoard.place(promotion, pawn.getPos());
+        gameBoard.addPiece(promotion);
+        gameBoard.removePiece(pawn);
+        return promotion;
     }
         
     

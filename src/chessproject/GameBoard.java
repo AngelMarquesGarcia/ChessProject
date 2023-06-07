@@ -160,8 +160,11 @@ public class GameBoard {
     public void addTakenPiece(ChessPiece piece) {
         if (piece.isWhite()){
             whiteTaken.add(piece);
-        } else
+            whitePieces.remove(piece);
+        } else {
             blackTaken.add(piece);
+            blackPieces.remove(piece);
+        }
     }
     
     /*
@@ -189,5 +192,28 @@ public class GameBoard {
 
     ChessPiece at(int x, int y) {
         return gameBoard[y][x];
+    }
+
+    public void addPiece(ChessPiece promotion) {
+        if (promotion.isWhite()){
+            whitePieces.add(promotion);
+        } else {
+            blackPieces.add(promotion);
+        }
+    }
+
+    public void removePiece(ChessPiece piece) {
+        if (piece.isWhite()){
+            whitePieces.remove(piece);
+        } else {
+            blackPieces.remove(piece);
+        }
+    }
+
+    public void replace(Coordinates pos, ChessPiece piece) {
+        ChessPiece pieceToReplace = at(pos);
+        place(piece, pos);
+        addPiece(piece);
+        removePiece(pieceToReplace);
     }
 }
