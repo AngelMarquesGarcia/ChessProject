@@ -235,6 +235,7 @@ public class Game {
         }
         
         gameBoard.move(pieceToMove.getPos(), cell);
+        AppContainer.getAppContainer().repaint();
         pieceToMove.move(cell);
         int isCastle = checkCastle(selectedPiece);
         doCastling(isCastle);
@@ -263,6 +264,10 @@ public class Game {
         checkedKing = null;
         goodMoves = null;
         
+        WorB color = (pieceToMove.isWhite() ? WorB.BLACK:WorB.WHITE);
+        if (gameBoard.getAllMoves(color).isEmpty()){
+            staleMate(color);
+        } 
         if (whiteToPlay && isInCheck(WorB.BLACK)){
             currentMove.setIsCheck(true);
             kingChecked(WorB.BLACK);
@@ -277,14 +282,10 @@ public class Game {
         whiteToPlay = ! whiteToPlay;
         
         GameMenu.addHalfMove(currentMove);
-        
-        WorB color = (pieceToMove.isWhite() ? WorB.BLACK:WorB.WHITE);
-        if (gameBoard.getAllMoves(color).isEmpty()){
-            staleMate(color);
-        }
+               
         check50MoveRule();
         check3FoldRepetition();
-        AppContainer.getAppContainer().repaint();
+        
         //System.out.println("Just did a move. Current move: " + Integer.toString(currentMoveNum));
         System.out.println(toStringFEN());
     }
