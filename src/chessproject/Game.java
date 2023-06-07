@@ -27,7 +27,7 @@ public class Game {
     private static boolean[] blackCastle = new boolean[]{true,true};
     private static int currentMoveNum = 0;
     private static int movesWithNoPawnOrCapture = 0;
-    private static String enPassant = "-"; //could potentially be Coordinates
+    private static Coordinates enPassant = null; //could potentially be Coordinates
     private static boolean whiteToPlay = true;
     private static Set<Coordinates> goodMoves = null;
     private static WorB checkedKing = null;
@@ -78,6 +78,10 @@ public class Game {
             checkers.add(piece);
         }
         return isCheck;
+    }
+
+    public static Coordinates getEnPassant() {
+        return enPassant;
     }
     
     public static boolean isCheckMate(WorB color){
@@ -147,7 +151,7 @@ public class Game {
                 case 'k' -> blackCastle[0] = true;
                 case 'q' -> blackCastle[1] = true;
         }   }
-        enPassant = parts[3].strip();
+        enPassant = interpretEnPassant(parts[3].strip());
         movesWithNoPawnOrCapture = Integer.parseInt(parts[4].strip());
         startingMoveNum = Integer.parseInt(parts[5].strip());
         currentMoveNum = 1;
@@ -167,7 +171,7 @@ public class Game {
         if (blackCastle[0]) conf += "k";
         if (blackCastle[1]) conf += "q";
         if (conf.endsWith(" ")) conf += "-";
-        conf += " " + enPassant; //(enPassant==null ? "-":enPassant.toString());
+        conf += " " + (enPassant==null ? "-":enPassant.toString()); //enPassant;
         conf += " " + Integer.toString(movesWithNoPawnOrCapture);
         conf += " " + Integer.toString(currentMoveNum+startingMoveNum);
         return conf;
@@ -203,11 +207,13 @@ public class Game {
     public static void move(Coordinates cell) {
         movesWithNoPawnOrCapture++;
         ChessMove currentMove = new ChessMove(selectedPiece.getPos(), cell, selectedPiece);
+        updateEnPassant(cell, currentMove);
+        
         ChessPiece pieceToMove = selectedPiece;
         if (selectedPiece.getName().toLowerCase().equals("p")){
             movesWithNoPawnOrCapture = 0;
         }
-        if (!availableMoves.contains(cell)){
+        if (!availableMoves.contains(cell)){ //does this ever happen? I don't think it should. It does happen, and I think it's wrong
             selectedPiece = null;
             AppContainer.getAppContainer().repaint();
             return; 
@@ -398,17 +404,21 @@ public class Game {
         
         ChessPiece takenPiece = moveToUndo.getTakenPiece();
         gameBoard.place(takenPiece, moveToUndo.getFinPos());
-        if (takenPiece != null)
+        if (takenPiece != null) {
             gameBoard.removeTakenPiece(takenPiece);
+            gameBoard.place(null, moveToUndo.getFinPos());
+            gameBoard.place(takenPiece, takenPiece.getPos());
+        }
         
         whiteToPlay = !whiteToPlay;
         AppContainer.getAppContainer().repaint();
         
-        //reset castling rights
+        //reset castling rights and enPassant
         if (currentMoveNum > 1){
             ChessMove move = (!whiteToPlay ? currentTurn.getWhiteMove():currentTurn.getBlackMove());
             String fen = move.getFenBoardAfter();
             updateCastlingRights(fen);
+            undoEnPassant(fen);
         }
 
     }
@@ -505,6 +515,55 @@ public class Game {
             whiteCastle[0] = false;
             whiteCastle[1] = false;
         }
+    }
+
+    private static void updateEnPassant(Coordinates cell, ChessMove currentMove) {
+        if (cell.equals(enPassant)){
+            takenEnPassant(cell, currentMove);
+            return;
+        }
+        enPassant = null;
+        if (!selectedPiece.getName().toUpperCase().equals("P")) return;
+        Coordinates pos = selectedPiece.getPos();
+        if (Math.abs(pos.y-cell.y) > 1){
+            int y = (whiteToPlay ? cell.y+1:cell.y-1);
+            enPassant = new Coordinates(cell.x, y);
+        }
+    }
+
+    private static Coordinates interpretEnPassant(String strip) {
+        if ("-".equals(strip)) return null;
+        String col = strip.substring(0,1);
+        String row = strip.substring(1,2);
+        int x = 0;
+        int y = 8 - Integer.parseInt(row);
+        switch (col) {
+            case "a" -> x = 0;
+            case "b" -> x = 1;
+            case "c" -> x = 2;
+            case "d" -> x = 3;
+            case "e" -> x = 4;
+            case "f" -> x = 5;
+            case "g" -> x = 6;
+            case "h" -> x = 7;
+        }
+        return new Coordinates(x,y);
+    }
+
+    private static void takenEnPassant(Coordinates cell, ChessMove currentMove) {
+        int x = enPassant.x;
+        int y = enPassant.y + (whiteToPlay ? 1:-1);
+        ChessPiece takenPiece = gameBoard.at(x,y);
+        pieceTaken(takenPiece);
+        currentMove.setTakenPiece(takenPiece);
+        enPassant = null;
+        gameBoard.place(null, new Coordinates(x,y));
+    }
+
+    private static void undoEnPassant(String fen) {
+        String[] parts = fen.split(" ");
+        String enPassantString = parts[3];
+        enPassant = interpretEnPassant(enPassantString);
     }
         
     

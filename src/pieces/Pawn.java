@@ -54,6 +54,8 @@ public class Pawn extends ChessPiece {
             piece = gameBoard.at(newPos);
             if (piece != null /*&& !piece.isColor(c)*/) {
                 coords.add(newPos.clone());
+            } else if (newPos.equals(Game.getEnPassant())){
+                coords.add(newPos.clone());
             }
         } catch (IndexOutOfBoundsException ex) {}
         //try the other direction
@@ -62,6 +64,8 @@ public class Pawn extends ChessPiece {
             newPos.sum(-1, yMovement);
             piece = gameBoard.at(newPos);
             if (piece != null /*&& !piece.isColor(c)*/) {
+                coords.add(newPos.clone());
+            } else if (newPos.equals(Game.getEnPassant())){
                 coords.add(newPos.clone());
             }
         } catch (IndexOutOfBoundsException ex) {}

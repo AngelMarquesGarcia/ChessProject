@@ -121,7 +121,6 @@ public class King extends ChessPiece {
             if (canCastle){
                 coords.add(new Coordinates(2,y));
             }
-            
         }
     }
     
