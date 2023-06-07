@@ -224,8 +224,10 @@ public class Game {
         goodMoves = null;
         
         if (whiteToPlay && isInCheck(WorB.BLACK)){
+            currentMove.setIsCheck(true);
             kingChecked(WorB.BLACK);
         } else if (!whiteToPlay && isInCheck(WorB.WHITE)){
+            currentMove.setIsCheck(true);
             kingChecked(WorB.WHITE);
         }
         

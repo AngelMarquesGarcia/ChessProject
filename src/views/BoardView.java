@@ -8,10 +8,10 @@ package views;
  */
 
 import chessproject.Game;
-import chessproject.GameBoard;
 import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -43,6 +43,8 @@ public class BoardView extends JPanel {
     public static Dimension getBoardSize() {
         return new Dimension(BOARDSIZE);
     }
+    private final int MARGIN = 3;
+    private final int FONT_SIZE = 13;
 
     public BoardView() {
         setPreferredSize(BOARDSIZE);
@@ -62,6 +64,7 @@ public class BoardView extends JPanel {
         drawBoard(g);
         drawPosition(g);
         drawHighlights(g);
+        drawCoordinates(g);
     }
     
     private void setSizes() {
@@ -164,5 +167,34 @@ public class BoardView extends JPanel {
         }
         highlights.clear();
     }
+
+    private void drawCoordinates(Graphics g) {
+        int y = sizeY*8 - MARGIN;
+        int x = MARGIN;
+        
+        
+        
+        String[] letters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"};
+        g.setColor(COLOR2);
+        g.setFont(new Font("TimesRoman", Font.BOLD, FONT_SIZE));
+        
+        //g.setColor(Color.BLACK);
+        //g.setFont(new Font("TimesRoman", Font.BOLD, 2*FONT_SIZE));
+        
+        
+        for(int i = 0; i < 8;i++){
+            if (g.getColor()==COLOR1){ g.setColor(COLOR2);
+            } else {g.setColor(COLOR1);}
+            g.drawString(letters[i], x+i*sizeX,y);
+        }
+        y = 5*MARGIN;
+        x = sizeX*8 - 3*MARGIN;
+        for(int i = 0; i < 9;i++){
+            g.drawString(Integer.toString(9-i), x,y+(i-1)*sizeY);
+            if (g.getColor()==COLOR1){ g.setColor(COLOR2);
+            } else {g.setColor(COLOR1);}
+        }
+    }
+    
 }
 
