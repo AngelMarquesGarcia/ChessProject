@@ -28,6 +28,22 @@ public class AppContainer extends JPanel {
                 imageIcon, 
                 possiblePromotions, "Queen");
     }
+
+    public static void checkMate(WorB color) {
+       JOptionPane.showMessageDialog(appContainer, color + " has been checkmated. " + WorB.opposite(color) + " wins.", "Game Over", 1);
+    }
+
+    public static void showStaleMate(WorB color) {
+        JOptionPane.showMessageDialog(appContainer, "The game results in a draw, as " + color + " cannot move.", "Stalemate", 1);
+    }
+
+    public static void show50MoveDraw() {
+        JOptionPane.showMessageDialog(appContainer, "The game results in a draw by the 50 move rule.", "Draw", 1);
+    }
+
+    public static void show3FoldDraw() {
+        JOptionPane.showMessageDialog(appContainer, "The game results in a draw by the threefold repetition rule.", "Draw", 1);
+    }
     private JPanel board;
     private JPanel infoMenu;
     private static AppContainer appContainer;

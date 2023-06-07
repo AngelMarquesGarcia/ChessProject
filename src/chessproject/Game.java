@@ -239,7 +239,10 @@ public class Game {
         int isCastle = checkCastle(selectedPiece);
         doCastling(isCastle);
         currentMove.setCastle(isCastle);
+        whiteToPlay = !whiteToPlay;
         currentMove.setFenBoardAfter(toStringFEN());
+        whiteToPlay = !whiteToPlay;
+
         
         ChessPiece promoted = null;
         if (((whiteToPlay && cell.y == 0) || (!whiteToPlay && cell.y == 7)) && selectedPiece.getName().toUpperCase().equals("P")){
@@ -275,6 +278,12 @@ public class Game {
         
         GameMenu.addHalfMove(currentMove);
         
+        WorB color = (pieceToMove.isWhite() ? WorB.BLACK:WorB.WHITE);
+        if (gameBoard.getAllMoves(color).isEmpty()){
+            staleMate(color);
+        }
+        check50MoveRule();
+        check3FoldRepetition();
         AppContainer.getAppContainer().repaint();
         //System.out.println("Just did a move. Current move: " + Integer.toString(currentMoveNum));
         System.out.println(toStringFEN());
@@ -332,6 +341,7 @@ public class Game {
     private static void checkMate(WorB color) {
         System.out.println("-------------------------------Game Over-------------------------------");
         System.out.println("-------------------------------Game Over-------------------------------");
+        AppContainer.checkMate(color);
     }
 
     public static Coordinates checkForPin(Coordinates p, WorB c) {
@@ -602,6 +612,52 @@ public class Game {
         gameBoard.addPiece(promotion);
         gameBoard.removePiece(pawn);
         return promotion;
+    }
+
+    private static void staleMate(WorB color) {
+        AppContainer.showStaleMate(color);
+    }
+
+    private static void check50MoveRule() {
+        if (movesWithNoPawnOrCapture >= 50){
+            lock();
+            AppContainer.show50MoveDraw();
+        }
+    }
+
+    private static void check3FoldRepetition() {
+        String currentPos = Game.toStringFEN();
+        currentPos = removeNumbers(currentPos);
+        int counter = 0;
+        for (ChessTurn turn: history){
+            if (counter >= 3) break;
+            ChessMove move = turn.getBlackMove();
+            if (checkEqualBoards(move, currentPos)) counter++;
+            move = turn.getWhiteMove();
+            if (checkEqualBoards(move, currentPos)) counter++;
+        }
+        if (counter >= 3){
+            AppContainer.show3FoldDraw();
+            lock();
+        }
+    }
+    private static boolean checkEqualBoards(ChessMove move, String currentPos){
+        if (move != null){
+            String board = move.getFenBoardAfter();
+            board = removeNumbers(board);
+            if (board.equals(currentPos))
+                return true;
+        }
+        return false;
+    }
+
+    private static String removeNumbers(String board) {
+        String[] parts = board.split(" ");
+        String newBoard = "";
+        for (int i=0; i<parts.length-3;i++){
+            newBoard += parts[i];
+        }
+        return newBoard;
     }
         
     
