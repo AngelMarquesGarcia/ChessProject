@@ -30,19 +30,20 @@ public class King extends ChessPiece {
         for (Coordinates move : moves) {
             tryMoves(coords, move, p, c, attackedCells);
         }
+        tryCastle(coords, p, c, attackedCells);
         return coords;
     }
 
     private static Coordinates[] getMoveset() {
         Coordinates[] moveset = new Coordinates[8];
-        moveset[0] = new Coordinates(1, 1, false);
-        moveset[1] = new Coordinates(1, -1, false);
-        moveset[2] = new Coordinates(-1, 1, false);
-        moveset[3] = new Coordinates(-1, -1, false);
-        moveset[4] = new Coordinates(0, 1, false);
-        moveset[5] = new Coordinates(0, -1, false);
-        moveset[6] = new Coordinates(-1, 0, false);
-        moveset[7] = new Coordinates(1, 0, false);
+        moveset[0] = new Coordinates(1, 1);
+        moveset[1] = new Coordinates(1, -1);
+        moveset[2] = new Coordinates(-1, 1);
+        moveset[3] = new Coordinates(-1, -1);
+        moveset[4] = new Coordinates(0, 1);
+        moveset[5] = new Coordinates(0, -1);
+        moveset[6] = new Coordinates(-1, 0);
+        moveset[7] = new Coordinates(1, 0);
         return moveset;
     }
 
@@ -80,6 +81,47 @@ public class King extends ChessPiece {
         Coordinates[] coords = getMoveset();
         for (Coordinates move: coords){
             attackedCells.add(kingPos.clone().sum(move));
+        }
+    }
+
+    private static void tryCastle(List<Coordinates> coords, Coordinates p, WorB c, Set<Coordinates> attackedCells) {
+        if (Game.getCheckedKing() == c) return;
+        boolean[] castlingRights = Game.getCastle(c);
+        int y = (c == WorB.WHITE ? 7:0);
+        List<Coordinates> line;
+        boolean canCastle = true;
+        if (castlingRights[0]){
+            line = Coordinates.getLine(p, new Coordinates(7,y), false);
+            line.remove(0); 
+            for (Coordinates coord:line){
+                if (attackedCells.contains(coord) || Game.getGameBoard().at(coord) != null){
+                    canCastle = false;
+                    break;
+                }
+            }
+            if (canCastle){
+                coords.add(new Coordinates(6,y));
+            }
+        }
+        if (castlingRights[1]){
+            line = Coordinates.getLine(p, new Coordinates(0,y), false);
+            line.remove(0);
+            int counter = 0;
+            for (Coordinates coord:line){
+                if (Game.getGameBoard().at(coord) != null){
+                    canCastle = false;
+                    break;
+                }
+                if (counter < 2 && attackedCells.contains(line.get(counter))){
+                    canCastle = false;
+                    break;
+                }
+                counter++;
+            }
+            if (canCastle){
+                coords.add(new Coordinates(2,y));
+            }
+            
         }
     }
     

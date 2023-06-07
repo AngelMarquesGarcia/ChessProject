@@ -39,7 +39,11 @@ public class Game {
     private static boolean completed;
     
     private static ChessTurn currentTurn;
+    private static int startingMoveNum;
 
+    public static boolean[] getCastle(WorB color){
+        return (color==WorB.WHITE ? whiteCastle:blackCastle);
+    }    
     public static void createGame() { 
         String configuration = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         createGame(configuration);
@@ -107,11 +111,18 @@ public class Game {
     }
     
     public static void createGame(String configuration) {
-        GameMenu.reset();
-        completed = false;
-        String[] parts = configuration.split(" ");
-        gameBoard = new GameBoard(parts[0]);
-        setUpVariables(parts);
+        try{
+            GameMenu.reset();
+            completed = false;
+            String[] parts = configuration.split(" ");
+            gameBoard = new GameBoard(parts[0]);
+        
+            setUpVariables(parts);
+        } catch (RuntimeException e){
+            System.out.println("----------------------------------La string FEN proporcionada no tiene el formato correcto----------------------------------");
+            System.out.println(e.getClass().getName());
+            createGame();
+        }
     }
     
     public static GameBoard getGameBoard(){
@@ -138,7 +149,8 @@ public class Game {
         }   }
         enPassant = parts[3].strip();
         movesWithNoPawnOrCapture = Integer.parseInt(parts[4].strip());
-        currentMoveNum = Integer.parseInt(parts[5].strip());
+        startingMoveNum = Integer.parseInt(parts[5].strip());
+        currentMoveNum = 1;
     }
     
     public static String toStringFEN(){
@@ -157,7 +169,7 @@ public class Game {
         if (conf.endsWith(" ")) conf += "-";
         conf += " " + enPassant; //(enPassant==null ? "-":enPassant.toString());
         conf += " " + Integer.toString(movesWithNoPawnOrCapture);
-        conf += " " + Integer.toString(currentMoveNum);
+        conf += " " + Integer.toString(currentMoveNum+startingMoveNum);
         return conf;
     }
     
@@ -209,6 +221,9 @@ public class Game {
         
         gameBoard.move(pieceToMove.getPos(), cell);
         pieceToMove.move(cell);
+        int isCastle = checkCastle(selectedPiece);
+        doCastling(isCastle);
+        currentMove.setCastle(isCastle);
         currentMove.setFenBoardAfter(toStringFEN());
         
         if (whiteToPlay){
@@ -230,6 +245,7 @@ public class Game {
             currentMove.setIsCheck(true);
             kingChecked(WorB.WHITE);
         }
+        updateCastlingRightsAfterMove(cell);
         
         selectedPiece = null; //goodMoves = null;
         availableMoves.clear();
@@ -238,8 +254,11 @@ public class Game {
         GameMenu.addHalfMove(currentMove);
         
         AppContainer.getAppContainer().repaint();
-        
-        System.out.println(toStringFEN());
+        //System.out.println("Just did a move. Current move: " + Integer.toString(currentMoveNum));
+        //System.out.println(toStringFEN());
+        System.out.println(blackCastle[0]);
+        System.out.println(blackCastle[1]);
+        System.out.println("----------------");
     }
 
     private static void pieceTaken(ChessPiece piece) {
@@ -258,7 +277,7 @@ public class Game {
      * Iterates through availableMoves, and removes ilegal moves
      */
     private static void cullAvailableMoves() {
-        System.out.println("Game.cullAvailableMoves not supported yet. And most likely it will never be.");
+        //System.out.println("Game.cullAvailableMoves not supported yet. And most likely it will never be.");
         GameBoard gameBoard = Game.getGameBoard();
         ArrayList<Coordinates>  copy = (ArrayList<Coordinates>) availableMoves;
         copy = (ArrayList<Coordinates>) copy.clone();
@@ -356,6 +375,8 @@ public class Game {
         GameMenu.removeHalfMove();
         if (currentMoveNum > 1 && !whiteToPlay)
             currentMoveNum--;
+        
+        //System.out.println("Undone a move. Current move: " + Integer.toString(currentMoveNum));
        
         ChessMove moveToUndo;
         if (whiteToPlay){ //deshacemos un movimiento negro
@@ -372,19 +393,119 @@ public class Game {
         selectedPiece = moveToUndo.getMovedPiece();
         gameBoard.move(moveToUndo.getFinPos(), moveToUndo.getIniPos());
         selectedPiece.move(moveToUndo.getIniPos());
+        undoCastle(moveToUndo.getCastle());
         selectedPiece = null;
         
         ChessPiece takenPiece = moveToUndo.getTakenPiece();
         gameBoard.place(takenPiece, moveToUndo.getFinPos());
         if (takenPiece != null)
             gameBoard.removeTakenPiece(takenPiece);
-        whiteToPlay = !whiteToPlay;
         
+        whiteToPlay = !whiteToPlay;
         AppContainer.getAppContainer().repaint();
         
+        //reset castling rights
+        if (currentMoveNum > 1){
+            ChessMove move = (!whiteToPlay ? currentTurn.getWhiteMove():currentTurn.getBlackMove());
+            String fen = move.getFenBoardAfter();
+            updateCastlingRights(fen);
+        }
+
     }
 
     public static boolean canUndo() {
         return currentMoveNum > 1 || !whiteToPlay;
     }
+
+    /**
+     * Checks if the move that was just done is castling. if it is not, returns 0.
+     * If it is a short castle, returns 1. If it is a long castle, returns 2.
+     * @param selectedPiece
+     * @return 
+     */
+    private static int checkCastle(ChessPiece selectedPiece) {
+        boolean[] castlingRights = (whiteToPlay ? whiteCastle:blackCastle);
+        if (!castlingRights[0] && !castlingRights[1]) return 0; //if can't castle return 0
+        if (!selectedPiece.getName().toUpperCase().equals("K")) return 0; //if selected is not a king, return 0
+        //we just moved a king, so we can no longer castle
+        castlingRights[0] = false;
+        castlingRights[1] = false;
+        int x = 4;
+        int y = (selectedPiece.isWhite() ? 7:0);
+        Coordinates currentPos = selectedPiece.getPos();
+        if (currentPos.equals(x+2,y)){
+            return 1;
+        } else if (currentPos.equals(x-2,y)){
+            return 2;
+        }
+        return 0;
+    }
+
+    private static void doCastling(int castle) {
+        if (castle == 0) return;
+        Coordinates kingPos = selectedPiece.getPos();
+        Coordinates from;
+        Coordinates to;
+        if (castle == 1){
+            from = new Coordinates(7, kingPos.y);
+            to = new Coordinates(kingPos.x-1, kingPos.y);
+        } else {
+            from = new Coordinates(0, kingPos.y);
+            to = new Coordinates(kingPos.x+1, kingPos.y);
+        }
+        ChessPiece pieceToMove = gameBoard.at(from);
+        gameBoard.move(from, to);
+        pieceToMove.move(to);
+    }
+
+    private static void undoCastle(int castle) {
+        if (castle==0) return;
+        Coordinates kingPos = selectedPiece.getPrevPos();
+        ChessPiece rook;
+        Coordinates newPos;
+        if (castle == 1){
+            newPos = new Coordinates(7, kingPos.y);
+            rook = gameBoard.at(kingPos.x-1, kingPos.y);
+            gameBoard.move(rook.getPos(), newPos);
+            rook.move(newPos);
+        } else if (castle == 2){
+            newPos = new Coordinates(0, kingPos.y);
+            rook = gameBoard.at(kingPos.x+1, kingPos.y);
+            gameBoard.move(rook.getPos(), newPos);
+            rook.move(newPos);
+        }
+    }
+
+    private static void updateCastlingRights(String fen) {
+        String[] parts = fen.split(" ");
+        String castle = parts[2];
+        for (int i=0;i<castle.length();i++){
+            switch (castle.charAt(i)) {
+                case 'K' -> whiteCastle[0] = true;
+                case 'Q' -> whiteCastle[1] = true;
+                case 'k' -> blackCastle[0] = true;
+                case 'q' -> blackCastle[1] = true;
+        }   }
+    }
+
+    private static void updateCastlingRightsAfterMove(Coordinates finPos) {
+        Coordinates iniPos = selectedPiece.getPos();
+        if (iniPos.equals(0,0) || finPos.equals(0,0)) 
+            blackCastle[1] = false;
+        if (iniPos.equals(7,0) || finPos.equals(7,0)) 
+            blackCastle[0] = false;
+        if (iniPos.equals(7,7) || finPos.equals(7,7)) 
+            whiteCastle[0] = false;
+        if (iniPos.equals(0,7) || finPos.equals(0,7)) 
+            whiteCastle[1] = false;
+        if (iniPos.equals(4,0)){
+            blackCastle[0] = false;
+            blackCastle[1] = false;
+        } else if (iniPos.equals(4,0)){
+            whiteCastle[0] = false;
+            whiteCastle[1] = false;
+        }
+    }
+        
+    
 }

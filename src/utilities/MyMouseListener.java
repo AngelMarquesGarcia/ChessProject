@@ -53,7 +53,7 @@ public class MyMouseListener implements MouseListener {
         int xCoord = (int) Math.floor(x / sizeX);
         int yCoord = (int) Math.floor(y / sizeY);
 
-        return new Coordinates(xCoord, yCoord, false); //row + yCoord;
+        return new Coordinates(xCoord, yCoord); //row + yCoord;
     }
 
     private void cellClicked(Coordinates cell) {

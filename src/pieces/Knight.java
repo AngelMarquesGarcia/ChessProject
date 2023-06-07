@@ -33,8 +33,8 @@ public class Knight extends ChessPiece {
     
     private static Set<Coordinates> getMoveset() {
         Set<Coordinates> moveset = new HashSet<>();
-        moveset.add(new Coordinates(2, 1, false));
-        moveset.add(new Coordinates(1, 2, false));
+        moveset.add(new Coordinates(2, 1));
+        moveset.add(new Coordinates(1, 2));
         
         return moveset;
     }

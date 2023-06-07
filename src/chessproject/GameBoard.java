@@ -109,7 +109,7 @@ public class GameBoard {
                 } 
                 ChessPiece p = identifyPiece(piece);
                 if (p != null){
-                    p.move(new Coordinates(x,i,false));
+                    p.move(new Coordinates(x,i));
                     if (p.isWhite()) 
                         whitePieces.add(p);
                     else blackPieces.add(p);
@@ -185,5 +185,9 @@ public class GameBoard {
         } else
             blackTaken.remove(piece);
        
+    }
+
+    ChessPiece at(int x, int y) {
+        return gameBoard[y][x];
     }
 }

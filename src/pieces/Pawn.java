@@ -22,8 +22,8 @@ public class Pawn extends ChessPiece {
         pin = Game.checkForPin(p,c);
         List<Coordinates> coords = new ArrayList<>();
         int yMovement = (c == WorB.BLACK ? 1 : -1);
-        Coordinates move = new Coordinates(0, yMovement, false);
-        if (pin != null && !(move.equals(pin) || move.equals(new Coordinates(pin.x, pin.y*-1, false))))
+        Coordinates move = new Coordinates(0, yMovement);
+        if (pin != null && !(move.equals(pin) || move.equals(new Coordinates(pin.x, pin.y*-1))))
             move = null;
         Set<Coordinates> goodMoves = (Game.getCheckedKing() == c ? Game.getGoodMoves():null);
         tryMoves(coords, move, p, c, goodMoves);

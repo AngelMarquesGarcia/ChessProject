@@ -113,6 +113,17 @@ public class ChessMove {
     public void setMovedPiece(ChessPiece movedPiece) {
         this.movedPiece = movedPiece;
     }
-    
-    
+
+    public void setCastle(int castle) {
+        if (castle==1){
+            isShortCastle = true;
+        } else if (castle==2){
+            this.isLongCastle = true;
+        }
+    }
+    public int getCastle(){
+        if (isShortCastle) return 1;
+        if (isLongCastle) return 2;
+        return 0;
+    }
 }

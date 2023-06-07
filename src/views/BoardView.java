@@ -172,15 +172,9 @@ public class BoardView extends JPanel {
         int y = sizeY*8 - MARGIN;
         int x = MARGIN;
         
-        
-        
         String[] letters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"};
         g.setColor(COLOR2);
         g.setFont(new Font("TimesRoman", Font.BOLD, FONT_SIZE));
-        
-        //g.setColor(Color.BLACK);
-        //g.setFont(new Font("TimesRoman", Font.BOLD, 2*FONT_SIZE));
-        
         
         for(int i = 0; i < 8;i++){
             if (g.getColor()==COLOR1){ g.setColor(COLOR2);

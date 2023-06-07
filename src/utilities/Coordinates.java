@@ -81,8 +81,10 @@ public class Coordinates {
     public int x;
     public int y;
 
-    public Coordinates(int xCoord, int yCoord, boolean calc) {
-        if (!calc) {
+    public Coordinates(int xCoord, int yCoord) {
+        x = xCoord;
+        y = yCoord;
+        /*if (!calc) {
             x = xCoord;
             y = yCoord;
         } else {
@@ -93,7 +95,7 @@ public class Coordinates {
 
             x = (int) Math.floor(xCoord / sizeX);
             y = (int) Math.floor(yCoord / sizeY);
-        }
+        }*/
     }
 
     public Coordinates sum(Coordinates c) {
@@ -109,7 +111,7 @@ public class Coordinates {
 
     @Override
     public Coordinates clone() {
-        return new Coordinates(x, y, false);
+        return new Coordinates(x, y);
     }
 
     public void copy(Coordinates c) {

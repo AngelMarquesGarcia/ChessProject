@@ -36,8 +36,8 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
     protected Coordinates pinned;
     
     public ChessPiece(WorB c){
-        pos = new Coordinates(9,9,false);
-        prevPos = new Coordinates(9,9,false);
+        pos = new Coordinates(9,9);
+        prevPos = new Coordinates(9,9);
         color = c;
         name = "";
         pinned = null;

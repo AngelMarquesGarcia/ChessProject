@@ -34,10 +34,10 @@ public class Rook extends ChessPiece {
 
     private static Set<Coordinates> getMoveset() {
         Set<Coordinates> moveset = new HashSet<>();
-        moveset.add(new Coordinates(0, 1, false));
-        moveset.add(new Coordinates(1, 0, false));
-        moveset.add(new Coordinates(0, -1, false));
-        moveset.add(new Coordinates(-1, 0, false));
+        moveset.add(new Coordinates(0, 1));
+        moveset.add(new Coordinates(1, 0));
+        moveset.add(new Coordinates(0, -1));
+        moveset.add(new Coordinates(-1, 0));
         return moveset;
     }
 

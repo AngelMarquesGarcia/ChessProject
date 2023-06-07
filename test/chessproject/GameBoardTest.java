@@ -44,7 +44,7 @@ public class GameBoardTest {
     @Test
     public void testConstructors(){
         GameBoard gameBoard = new GameBoard("rnbqkbnr/ppp1pppp/3p4/4P3/8/8/PPPP1PPP/RNBQKBNR");
-        ChessPiece piece = gameBoard.at(new Coordinates(4, 3, false));
+        ChessPiece piece = gameBoard.at(new Coordinates(4, 3));
         assertNotNull(piece);
         assertEquals(piece.getName(), "P");
         

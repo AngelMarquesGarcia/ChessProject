@@ -43,10 +43,10 @@ public class Bishop extends ChessPiece {
      */
     private static Set<Coordinates>getMoveset() {
         Set<Coordinates> moveset = new HashSet<>();
-        moveset.add(new Coordinates(1, 1, false));
-        moveset.add(new Coordinates(1, -1, false));
-        moveset.add(new Coordinates(-1, 1, false));
-        moveset.add(new Coordinates(-1, -1, false));
+        moveset.add(new Coordinates(1, 1));
+        moveset.add(new Coordinates(1, -1));
+        moveset.add(new Coordinates(-1, 1));
+        moveset.add(new Coordinates(-1, -1));
         return moveset;
     }
 

@@ -39,8 +39,8 @@ public class UndoButton extends JButton implements ActionListener {
         }
         System.out.println("Undo Button Clicked");
         boolean whiteResigns = Game.getWhiteToPlay();
-        String player = (whiteResigns ? "White":"Black");
-        String opponent = (!whiteResigns ? "White":"Black");
+        String player = (!whiteResigns ? "White":"Black");
+        String opponent = (whiteResigns ? "White":"Black");
         String msg = player + " wants to undo their last move. " + opponent + ", do you allow it?";
         int option = JOptionPane.showConfirmDialog(App.getFrame(), msg, "titulo", 0, 2); //0 yes, 1 no
         System.out.println(option);
