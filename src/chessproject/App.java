@@ -35,6 +35,9 @@ public class App {
             }
         });
         Game.createGame();
+        
+        System.out.println("is it bc it's the same method?");
+        
     }
     
     /**
