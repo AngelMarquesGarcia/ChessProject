@@ -59,4 +59,9 @@ public class App {
         frame.pack();
         frame.setVisible(true);
     }
+
+    private int contar(){
+        return 0;
+    }
+
 }
