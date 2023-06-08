@@ -17,7 +17,7 @@ public class ChessProject {
     public static void main(String[] args) {
         // TODO code application logic here
         new App();
-        System.out.println("A ver")
+        System.out.println("A ver");
         
     }
 
