@@ -24,3 +24,6 @@ hs_err_pid*
 replay_pid*
 /build/
 nbproject/private/private.xml
+dist/jdk-20_macos-x64_bin.dmg
+dist/jdk-20_windows-x64_bin.exe
+dist/README.TXT
