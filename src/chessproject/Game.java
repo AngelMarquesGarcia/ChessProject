@@ -54,7 +54,7 @@ public class Game {
      */
     private static boolean isInCheck(WorB color){
         System.out.println("I mean, I better hope so");
-        System.out.println("Que tal, mundo");
+        System.out.println("Que tal,");
         
         checkers.clear();
         ChessPiece king = gameBoard.getKing(color);
