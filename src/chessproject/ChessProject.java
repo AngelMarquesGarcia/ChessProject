@@ -17,7 +17,6 @@ public class ChessProject {
     public static void main(String[] args) {
         // TODO code application logic here
         new App();
-    System.out.println("Al menos no me da problemas si me voy a otro doc, no?")
     }
 
 }
