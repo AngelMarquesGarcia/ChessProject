@@ -59,6 +59,7 @@ public class TakenPieces extends JPanel {
     }
 
     public final void loadSprites() {
+        //same as with BoardView, might not be neccesary if we use GameBoard.whiteTaken
         BufferedImage bi;
         try {
             bi = ImageIO.read(new File("./files/BlackKing.png"));

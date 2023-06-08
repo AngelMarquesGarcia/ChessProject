@@ -11,6 +11,7 @@ import utilities.WorB;
  */
 public class AppContainer extends JPanel {
 
+    //possibly could be moved to App. Evaluate wether App is only gonna be for chess.
     public static String showPromotionOptions(ChessPiece pawn, String[] possiblePromotions) {
         ImageIcon imageIcon = new ImageIcon("./files/promotion5.png"); // load the image to a imageIcon
         Image image = imageIcon.getImage(); // transform it 
@@ -24,8 +25,8 @@ public class AppContainer extends JPanel {
                 possiblePromotions, "Queen");
     }
 
-    public static void checkMate(WorB color) {
-        JOptionPane.showMessageDialog(appContainer, color + " has been checkmated. " + WorB.opposite(color) + " wins.", "Game Over", 1);
+    public static void showCheckMate(WorB color) {
+        JOptionPane.showMessageDialog(appContainer, color + " has been checkmated. " + WorB.not(color) + " wins.", "Game Over", 1);
     }
 
     public static void showStaleMate(WorB color) {
@@ -39,6 +40,7 @@ public class AppContainer extends JPanel {
     public static void show3FoldDraw() {
         JOptionPane.showMessageDialog(appContainer, "The game results in a draw by the threefold repetition rule.", "Draw", 1);
     }
+    
     private JPanel board;
     private JPanel infoMenu;
     private static AppContainer appContainer;

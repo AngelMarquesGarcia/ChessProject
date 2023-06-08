@@ -53,13 +53,21 @@ public class GameBoard {
     private ChessPiece whiteKing;
     private ChessPiece blackKing;
     
-    public ChessPiece[][] getBoard(){ return gameBoard;}
+    
+    //////////////////////////////GETTERS & SETTERS//////////////////////////////
+    //////////////////////////////GETTERS & SETTERS//////////////////////////////
+    public ChessPiece[][] getBoard(){
+        return gameBoard;
+    }
     public List<ChessPiece> getPieces(WorB color){
-        return (color==WorB.WHITE ? whitePieces:blackPieces);}
+        return (color==WorB.WHITE ? whitePieces:blackPieces);
+    }
     public List<ChessPiece> getTaken(WorB color){ 
-        return (color==WorB.WHITE ? whiteTaken:blackTaken);}
+        return (color==WorB.WHITE ? whiteTaken:blackTaken);
+    }
     public ChessPiece getKing(WorB color){ 
-        return (color==WorB.WHITE ? whiteKing:blackKing);}
+        return (color==WorB.WHITE ? whiteKing:blackKing);
+    }
     
     public Set<Coordinates> getAllMoves(WorB color){
         List<ChessPiece> pieces = (color==WorB.WHITE ? whitePieces:blackPieces);
@@ -86,6 +94,16 @@ public class GameBoard {
         }
         return coords;
     }
+    
+    public ChessPiece at(Coordinates c){
+        return gameBoard[c.y][c.x];
+    }
+    public ChessPiece at(int x, int y) {
+        return gameBoard[y][x];
+    }
+
+    //////////////////////////////CONSTRUCTORS//////////////////////////////
+    //////////////////////////////CONSTRUCTORS//////////////////////////////
     
     public GameBoard(String board){
         setUpBoard(board);
@@ -143,16 +161,26 @@ public class GameBoard {
         return value;
     }
     
+    //////////////////////////////BOARD//////////////////////////////
+    //////////////////////////////BOARD//////////////////////////////
     public void move(Coordinates pos1, Coordinates pos2){
         ChessPiece piece = gameBoard[pos1.y][pos1.x];
         gameBoard[pos1.y][pos1.x] = null;
         gameBoard[pos2.y][pos2.x] = piece;
     }
-    
-    public ChessPiece at(Coordinates c){
-        return gameBoard[c.y][c.x];
+    public void place(ChessPiece takenPiece, Coordinates finPos) {
+        //maybe this should be private, and only replace be public
+        gameBoard[finPos.y][finPos.x] = takenPiece;
     }
-    
+    public void replace(Coordinates pos, ChessPiece piece) {
+        ChessPiece pieceToReplace = at(pos);
+        place(piece, pos);
+        addPiece(piece);
+        removePiece(pieceToReplace);
+    }
+
+    //////////////////////////////PIECES//////////////////////////////
+    //////////////////////////////PIECES//////////////////////////////
     public void addTakenPiece(ChessPiece piece) {
         if (piece.isWhite()){
             whiteTaken.add(piece);
@@ -163,21 +191,6 @@ public class GameBoard {
         }
     }
     
-    /*
-    public  void createBoard() {
-        String configuration = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        createBoard(configuration);
-    }
-    
-    public void createBoard(String board) {
-        setUpBoard(board);
-    }
-    */  
-
-    public void place(ChessPiece takenPiece, Coordinates finPos) {
-        gameBoard[finPos.y][finPos.x] = takenPiece;
-    }
-
     public void removeTakenPiece(ChessPiece piece) {
         if (piece.isWhite()){
             whiteTaken.remove(piece);
@@ -185,20 +198,18 @@ public class GameBoard {
             blackTaken.remove(piece);
        
     }
-
-    ChessPiece at(int x, int y) {
-        return gameBoard[y][x];
-    }
-
-    public void addPiece(ChessPiece promotion) {
-        if (promotion.isWhite()){
-            whitePieces.add(promotion);
+    
+    public void addPiece(ChessPiece piece) {
+        if (piece == null){return;}
+        if (piece.isWhite()){
+            whitePieces.add(piece);
         } else {
-            blackPieces.add(promotion);
+            blackPieces.add(piece);
         }
     }
 
     public void removePiece(ChessPiece piece) {
+        if (piece == null){return;}
         if (piece.isWhite()){
             whitePieces.remove(piece);
         } else {
@@ -206,10 +217,4 @@ public class GameBoard {
         }
     }
 
-    public void replace(Coordinates pos, ChessPiece piece) {
-        ChessPiece pieceToReplace = at(pos);
-        place(piece, pos);
-        addPiece(piece);
-        removePiece(pieceToReplace);
-    }
 }

@@ -19,28 +19,31 @@ import utilities.Coordinates;
 import utilities.MyMouseListener;
 
 public class BoardView extends JPanel {
-
-    public static final Dimension BOARDSIZE = new Dimension(500, 500);
-    private int sizeX;
-    private int sizeY;
-    private final Color COLOR1 = Color.MAGENTA;
-    private final Color COLOR2 = Color.CYAN;
-    private final Color HIGHLIGHT_COLOR = Color.ORANGE;
-    private Map<String, BufferedImage> sprites = new HashMap<>();
-    private List<Coordinates> highlights = new ArrayList<>();
-
+    private static final Dimension BOARDSIZE = new Dimension(500, 500);
     private static BoardView boardView;
 
     public static BoardView getBoardView() {
         return boardView;
     }
 
-    public static Dimension getBoardSize() {
+    public static Dimension getBoardSize() { 
         return new Dimension(BOARDSIZE);
     }
+    
+    //////////////////PERSONALIZATION//////////////////
+    private final Color COLOR1 = Color.MAGENTA;
+    private final Color COLOR2 = Color.CYAN;
+    private final Color HIGHLIGHT_COLOR = Color.ORANGE;
+    ///////////////////////FONT///////////////////////
     private final int MARGIN = 3;
     private final int FONT_SIZE = 13;
+    /////////////////OTHER PROPERTIES/////////////////
+    private int sizeX;
+    private int sizeY;
+    private Map<String, BufferedImage> sprites = new HashMap<>();
+    private List<Coordinates> highlights = new ArrayList<>();
 
+    //////////////////////////////CONSTRUCTOR//////////////////////////////
     public BoardView() {
         setPreferredSize(BOARDSIZE);
         setSize(BOARDSIZE);
@@ -54,58 +57,18 @@ public class BoardView extends JPanel {
         boardView = this;
     }
 
-    @Override
-    public void paint(Graphics g) {
-        drawBoard(g);
-        drawPosition(g);
-        drawHighlights(g);
-        drawCoordinates(g);
-    }
-
     private void setSizes() {
         Dimension size = getSize();
         size.setSize(new Dimension(size.width - 10, size.height - 10));
         sizeX = size.width / 8;
         sizeY = size.height / 8;
     }
-
-    private void drawBoard(Graphics g) {
-        for (int i = 0; i <= 8; i++) {
-            for (int j = 0; j <= 8; j++) {
-                if (i == 8 || j == 8) {
-                    continue;
-                }
-                if ((i + j) % 2 == 0) {
-                    g.setColor(COLOR1);
-                } else {
-                    g.setColor(COLOR2);
-                }
-                g.fillRect(i * sizeX, j * sizeY, sizeX, sizeY);
-            }
-        }
-    }
-
-    private void drawPosition(Graphics g) {
-        ChessPiece[][] gameBoard = Game.getGameBoard().getBoard();
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                //if (i == 8 || j == 8) continue;
-                ChessPiece piece = gameBoard[i][j];
-                if (piece != null) {
-                    String name = piece.getName();
-                    g.drawImage(sprites.get(name), j * sizeX, i * sizeY, sizeX, sizeY, this);
-                }
-            }
-        }
-        //g.drawImage(sprites.get("k"), startX * sizeX, startY*sizeY,sizeX,sizeY, this);    
-    }
-
-    public void highlight(List<Coordinates> availableMoves) {
-        highlights.clear();
-        highlights.addAll(availableMoves);
-    }
-
+   
     public final void loadSprites() {
+        //might not be needed. The idea would be, each piece has their sprite, and to show them
+        //BoardView is given the GameBoard with the actual ChessPiece objects, so it can access their sprites
+        //Or even better, it could use what's currently GameBoard.whitePieces and GameBoard.blackPieces
+        //and show all pieces on those lists/sets.
         BufferedImage bi;
         try {
             bi = ImageIO.read(new File("./files/BlackKing.png"));
@@ -139,13 +102,45 @@ public class BoardView extends JPanel {
             e.printStackTrace();
         }
     }
-
-    public Dimension getMinimumSize() {
-        return BOARDSIZE;
+    
+    //////////////////////////////PAINTING//////////////////////////////
+    @Override
+    public void paint(Graphics g) {
+        drawBoard(g);
+        drawPosition(g);
+        drawHighlights(g);
+        drawCoordinates(g);
     }
 
-    public Dimension getPreferredSize() {
-        return BOARDSIZE;
+    private void drawBoard(Graphics g) {
+        for (int i = 0; i <= 8; i++) {
+            for (int j = 0; j <= 8; j++) {
+                if (i == 8 || j == 8) {
+                    continue;
+                }
+                if ((i + j) % 2 == 0) {
+                    g.setColor(COLOR1);
+                } else {
+                    g.setColor(COLOR2);
+                }
+                g.fillRect(i * sizeX, j * sizeY, sizeX, sizeY);
+            }
+        }
+    }
+
+    private void drawPosition(Graphics g) {
+        ChessPiece[][] gameBoard = Game.getGameBoard().getBoard();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                //if (i == 8 || j == 8) continue;
+                ChessPiece piece = gameBoard[i][j];
+                if (piece != null) {
+                    String name = piece.getName();
+                    g.drawImage(sprites.get(name), j * sizeX, i * sizeY, sizeX, sizeY, this);
+                }
+            }
+        }
+        //g.drawImage(sprites.get("k"), startX * sizeX, startY*sizeY,sizeX,sizeY, this);    
     }
 
     private void drawHighlights(Graphics g) {
@@ -197,4 +192,21 @@ public class BoardView extends JPanel {
         }
     }
 
+    //////////////////////////////GETTERS & SETTERS//////////////////////////////
+    public void highlight(List<Coordinates> availableMoves) {
+        highlights.clear();
+        highlights.addAll(availableMoves);
+    }
+       
+    @Override
+    public Dimension getMinimumSize() {
+        return BOARDSIZE;
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return BOARDSIZE;
+    }
+
+    
 }

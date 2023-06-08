@@ -18,11 +18,15 @@ public class ChessMove {
     private boolean isCheck;
     private boolean isCheckMate;
     private ChessPiece promotion = null;
-
-    public String getFenBoardAfter() {
-        return fenBoardAfter;
+    
+    //////////////////////////////CONSTRUCTOR//////////////////////////////
+    public ChessMove(Coordinates iniPos, Coordinates finPos, ChessPiece movedPiece) {
+        this.iniPos = iniPos;
+        this.finPos = finPos;
+        this.movedPiece = movedPiece;
     }
     
+    //////////////////////////////METHODS//////////////////////////////
     @Override
     public String toString(){
         if (isShortCastle){return "O-O";}
@@ -37,6 +41,26 @@ public class ChessMove {
         return pieceName + from  + takes + takenName + checkSign; 
     }
 
+    //////////////////////////////GETTERS & SETTERS//////////////////////////////
+    //////////////////////////////GETTERS & SETTERS//////////////////////////////
+    public void setCastle(int castle) {
+        if (castle==1){
+            isShortCastle = true;
+        } else if (castle==2){
+            this.isLongCastle = true;
+        }
+    }
+    
+    public int getCastle(){
+        if (isShortCastle) return 1;
+        if (isLongCastle) return 2;
+        return 0;
+    }
+
+    public String getFenBoardAfter() {
+        return fenBoardAfter;
+    }
+   
     public boolean isIsShortCastle() {
         return isShortCastle;
     }
@@ -73,12 +97,6 @@ public class ChessMove {
         this.fenBoardAfter = fenBoardAfter;
     }
 
-    public ChessMove(Coordinates iniPos, Coordinates finPos, ChessPiece movedPiece) {
-        this.iniPos = iniPos;
-        this.finPos = finPos;
-        this.movedPiece = movedPiece;
-    }
-
     public void setTakenPiece(ChessPiece takenPiece) {
         this.takenPiece = takenPiece;
     }
@@ -109,19 +127,6 @@ public class ChessMove {
 
     public void setMovedPiece(ChessPiece movedPiece) {
         this.movedPiece = movedPiece;
-    }
-
-    public void setCastle(int castle) {
-        if (castle==1){
-            isShortCastle = true;
-        } else if (castle==2){
-            this.isLongCastle = true;
-        }
-    }
-    public int getCastle(){
-        if (isShortCastle) return 1;
-        if (isLongCastle) return 2;
-        return 0;
     }
 
     public void setPromotion(ChessPiece piece) {

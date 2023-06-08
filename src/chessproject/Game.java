@@ -42,14 +42,93 @@ public class Game {
     
     private static final String[] possiblePromotions =  new String[]{"Rook","Bishop","Knight", "Queen"};
 
+    //////////////////////////////GETTERS & SETTERS//////////////////////////////
+    //////////////////////////////GETTERS & SETTERS//////////////////////////////
     public static boolean[] getCastle(WorB color){
         return (color==WorB.WHITE ? whiteCastle:blackCastle);
-    }    
+    }
+    public static Coordinates getEnPassant() {
+        return enPassant;
+    }
+    public static GameBoard getGameBoard(){
+        return gameBoard;
+    }
+    public static void setSelectedPiece(ChessPiece p){
+        if (!completed && p != null && p.isWhite() == whiteToPlay){ //the turn system is disabled if we remove the second condition
+            selectedPiece = p;
+            availableMoves = p.updateAvailableMoves();
+            cullAvailableMoves();
+            highlightAvailableMoves();
+            AppContainer.getAppContainer().repaint();
+        }
+    }
+    public static ChessPiece getSelectedPiece(){
+        return selectedPiece;
+    }
+    public static Set<Coordinates> getGoodMoves(){
+        return goodMoves;
+    }
+    public static List<ChessPiece> getCheckers() {
+        return checkers;
+    }
+    public static WorB getCheckedKing() {
+        return checkedKing;
+    }
+    public static boolean getWhiteToPlay() {
+        return whiteToPlay;
+    }
+
+    ////////////////////////////////CONSTRUCTORS////////////////////////////////
+    ////////////////////////////////CONSTRUCTORS////////////////////////////////
     public static void createGame() { 
         String configuration = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         createGame(configuration);
     }
     
+    public static void createGame(String configuration) {
+        try{
+            GameMenu.reset();
+            history.clear();
+            completed = false;
+            String[] parts = configuration.split(" ");
+            gameBoard = new GameBoard(parts[0]);
+        
+            setUpVariables(parts);
+        } catch (RuntimeException e){
+            System.out.println("----------------------------------La string FEN proporcionada no tiene el formato correcto----------------------------------");
+            System.out.println(e.getClass().getName());
+            createGame();
+        }
+    }
+    
+    public static void restart(String fen){
+        if (fen == null || "".equals(fen)){
+            createGame();
+        } else{
+            createGame(fen);
+        }
+        AppContainer.getAppContainer().repaint();
+    }
+    
+    ///////////Constructor Help///////////
+    private static void setUpVariables(String[] parts) {
+        whiteToPlay = "w".equals(parts[1].strip());
+        for (int i=0;i<parts[2].length();i++){
+            switch (parts[2].charAt(i)) {
+                case 'K' -> whiteCastle[0] = true;
+                case 'Q' -> whiteCastle[1] = true;
+                case 'k' -> blackCastle[0] = true;
+                case 'q' -> blackCastle[1] = true;
+        }   }
+        enPassant = interpretEnPassant(parts[3].strip());
+        movesWithNoPawnOrCapture = Integer.parseInt(parts[4].strip());
+        startingMoveNum = Integer.parseInt(parts[5].strip());
+        currentMoveNum = 1;
+    }
+    
+    
+    ////////////////////////////////CHECK DETECTION////////////////////////////////
+    ////////////////////////////////CHECK DETECTION////////////////////////////////
     /**
      * Returns true if the king of color is under check, 
      * while adding the pieces checking it to a field.
@@ -80,10 +159,6 @@ public class Game {
         }
         return isCheck;
     }
-
-    public static Coordinates getEnPassant() {
-        return enPassant;
-    }
     
     public static boolean isCheckMate(WorB color){
         ChessPiece king = gameBoard.getKing(color);
@@ -99,6 +174,7 @@ public class Game {
         goodMoves = allMoves; //MIGHT improve performance on succesive updateAvailableMoves(). Maybe not since it's a set.
         return allMoves.isEmpty();
     }
+    
     private static void kingChecked(WorB color) {
         checkedKing = color;
         if (isCheckMate(color)){
@@ -115,97 +191,73 @@ public class Game {
         */ 
     }
     
-    public static void createGame(String configuration) {
-        try{
-            GameMenu.reset();
-            history.clear();
-            completed = false;
-            String[] parts = configuration.split(" ");
-            gameBoard = new GameBoard(parts[0]);
-        
-            setUpVariables(parts);
-        } catch (RuntimeException e){
-            System.out.println("----------------------------------La string FEN proporcionada no tiene el formato correcto----------------------------------");
-            System.out.println(e.getClass().getName());
-            createGame();
+    private static void checkMate(WorB color) {
+        System.out.println("-------------------------------Game Over-------------------------------");
+        System.out.println("-------------------------------Game Over-------------------------------");
+        AppContainer.showCheckMate(color);
+    }
+
+    private static void staleMate(WorB color) {
+        AppContainer.showStaleMate(color);
+    }
+
+    private static void check50MoveRule() {
+        if (movesWithNoPawnOrCapture >= 50){
+            lock();
+            AppContainer.show50MoveDraw();
+        }
+    }
+
+    private static void check3FoldRepetition() {
+        String currentPos = Game.toStringFEN();
+        currentPos = removeNumbers(currentPos);
+        int counter = 0;
+        for (ChessTurn turn: history){
+            if (counter >= 3) break;
+            ChessMove move = turn.getBlackMove();
+            if (checkEqualBoards(move, currentPos)) counter++;
+            move = turn.getWhiteMove();
+            if (checkEqualBoards(move, currentPos)) counter++;
+        }
+        if (counter >= 3){
+            AppContainer.show3FoldDraw();
+            lock();
         }
     }
     
-    public static GameBoard getGameBoard(){
-        return gameBoard;
-    }
-    
-    public static void restart(String fen){
-        if (fen == null || "".equals(fen)){
-            createGame();
-        } else{
-            createGame(fen);
+    private static boolean checkEqualBoards(ChessMove move, String currentPos){
+        if (move != null){
+            String board = move.getFenBoardAfter();
+            board = removeNumbers(board);
+            if (board.equals(currentPos))
+                return true;
         }
+        return false;
+    }
+
+    ////////////////////////////////INTERFACE////////////////////////////////
+    ////////////////////////////////INTERFACE////////////////////////////////
+    private static void pieceTaken(ChessPiece piece) {
+        gameBoard.addTakenPiece(piece);
+    }
+
+    /**
+     * Orders BoardView to highlight the availableMoves
+     */
+    private static void highlightAvailableMoves() {
+        BoardView boardView = BoardView.getBoardView();
+        boardView.highlight(availableMoves);
+    }
+
+    public static void removeFocus() {
+        selectedPiece = null; //goodMoves = null;
+        if (availableMoves != null)
+            availableMoves.clear();    
         AppContainer.getAppContainer().repaint();
     }
-    
-    private static void setUpVariables(String[] parts) {
-        whiteToPlay = "w".equals(parts[1].strip());
-        for (int i=0;i<parts[2].length();i++){
-            switch (parts[2].charAt(i)) {
-                case 'K' -> whiteCastle[0] = true;
-                case 'Q' -> whiteCastle[1] = true;
-                case 'k' -> blackCastle[0] = true;
-                case 'q' -> blackCastle[1] = true;
-        }   }
-        enPassant = interpretEnPassant(parts[3].strip());
-        movesWithNoPawnOrCapture = Integer.parseInt(parts[4].strip());
-        startingMoveNum = Integer.parseInt(parts[5].strip());
-        currentMoveNum = 1;
-    }
-    
-    public static String toStringFEN(){
-        String conf = toStringBoard();
-        conf += toStringFlags();
-        return conf;
-    }
-    private static String toStringFlags(){
-        String conf = "";
-        conf += " " + (whiteToPlay ? "w":"b");
-        conf += " ";
-        if (whiteCastle[0]) conf += "K";
-        if (whiteCastle[1]) conf += "Q";
-        if (blackCastle[0]) conf += "k";
-        if (blackCastle[1]) conf += "q";
-        if (conf.endsWith(" ")) conf += "-";
-        conf += " " + (enPassant==null ? "-":enPassant.toString()); //enPassant;
-        conf += " " + Integer.toString(movesWithNoPawnOrCapture);
-        conf += " " + Integer.toString(currentMoveNum+startingMoveNum);
-        return conf;
-    }
-    
-    private static String toStringBoard() {
-        ChessPiece[][] board = gameBoard.getBoard();
-        String conf = "";
-        int empties = 0;
-        for (ChessPiece[] row: board){
-            if (empties != 0){
-                    conf += empties;
-                    empties = 0;
-                }
-                conf += "/";
-            for (ChessPiece piece: row){
-                if (piece==null){
-                    empties++;
-                    if (empties == 8){ 
-                        conf += Integer.toString(empties);
-                        empties = 0;
-                    }
-                } else {
-                    if (empties != 0){
-                        conf += Integer.toString(empties);
-                        empties = 0;
-                    }
-                    conf += piece.getName();
-        }   }   }
-        return conf.substring(1);
-    }
-    
+
+    ////////////////////////////////MOVEMENT////////////////////////////////
+    ////////////////////////////////MOVEMENT////////////////////////////////
     public static void move(Coordinates cell) {
         if (!availableMoves.contains(cell)){ //does this ever happen? I don't think it should. It does happen, and I think it's wrong
             selectedPiece = null;
@@ -284,19 +336,7 @@ public class Game {
         //System.out.println("Just did a move. Current move: " + Integer.toString(currentMoveNum));
         System.out.println(toStringFEN());
     }
-
-    private static void pieceTaken(ChessPiece piece) {
-        gameBoard.addTakenPiece(piece);
-    }
-
-    /**
-     * Orders BoardView to highlight the availableMoves
-     */
-    private static void highlightAvailableMoves() {
-        BoardView boardView = BoardView.getBoardView();
-        boardView.highlight(availableMoves);
-    }
-
+    
     /**
      * Iterates through availableMoves, and removes ilegal moves
      */
@@ -310,34 +350,6 @@ public class Game {
                 availableMoves.remove(move);
         }
         }
-    }
-    
-    public static void setSelectedPiece(ChessPiece p){
-        if (!completed && p != null && p.isWhite() == whiteToPlay){ //the turn system is disabled if we remove the second condition
-            selectedPiece = p;
-            availableMoves = p.updateAvailableMoves();
-            cullAvailableMoves();
-            highlightAvailableMoves();
-            AppContainer.getAppContainer().repaint();
-        }
-    }
-    
-    public static ChessPiece getSelectedPiece(){
-        return selectedPiece;
-    }
-    
-    public static Set<Coordinates> getGoodMoves(){
-        return goodMoves;
-    }
-
-    public static List<ChessPiece> getCheckers() {
-        return checkers;
-    }
-
-    private static void checkMate(WorB color) {
-        System.out.println("-------------------------------Game Over-------------------------------");
-        System.out.println("-------------------------------Game Over-------------------------------");
-        AppContainer.checkMate(color);
     }
 
     public static Coordinates checkForPin(Coordinates p, WorB c) {
@@ -376,26 +388,85 @@ public class Game {
         return null;
     }
 
-    public static WorB getCheckedKing() {
-        return checkedKing;
-    }
-
     public static void lock() {
         completed = true;
     }
 
-    public static boolean getWhiteToPlay() {
-        return whiteToPlay;
+    /**
+     * Checks if the move that was just done is castling. if it is not, returns 0.
+     * If it is a short castle, returns 1. If it is a long castle, returns 2.
+     * @param selectedPiece
+     * @return 
+     */
+    private static int checkCastle(ChessPiece selectedPiece) {
+        boolean[] castlingRights = (whiteToPlay ? whiteCastle:blackCastle);
+        if (!castlingRights[0] && !castlingRights[1]) return 0; //if can't castle return 0
+        if (!selectedPiece.getName().toUpperCase().equals("K")) return 0; //if selected is not a king, return 0
+        //we just moved a king, so we can no longer castle
+        castlingRights[0] = false;
+        castlingRights[1] = false;
+        int x = 4;
+        int y = (selectedPiece.isWhite() ? 7:0);
+        Coordinates currentPos = selectedPiece.getPos();
+        if (currentPos.equals(x+2,y)){
+            return 1;
+        } else if (currentPos.equals(x-2,y)){
+            return 2;
+        }
+        return 0;
     }
 
-    public static void removeFocus() {
-        selectedPiece = null; //goodMoves = null;
-        if (availableMoves != null)
-            availableMoves.clear();    
-        AppContainer.getAppContainer().repaint();
-
+    private static void doCastling(int castle) {
+        if (castle == 0) return;
+        Coordinates kingPos = selectedPiece.getPos();
+        Coordinates from;
+        Coordinates to;
+        if (castle == 1){
+            from = new Coordinates(7, kingPos.y);
+            to = new Coordinates(kingPos.x-1, kingPos.y);
+        } else {
+            from = new Coordinates(0, kingPos.y);
+            to = new Coordinates(kingPos.x+1, kingPos.y);
+        }
+        ChessPiece pieceToMove = gameBoard.at(from);
+        gameBoard.move(from, to);
+        pieceToMove.move(to);
     }
 
+    private static void takenEnPassant(Coordinates cell, ChessMove currentMove) {
+        int x = enPassant.x;
+        int y = enPassant.y + (whiteToPlay ? 1:-1);
+        ChessPiece takenPiece = gameBoard.at(x,y);
+        pieceTaken(takenPiece);
+        currentMove.setTakenPiece(takenPiece);
+        enPassant = null;
+        gameBoard.place(null, new Coordinates(x,y));
+    }
+
+    private static ChessPiece promotePawn(ChessPiece pawn) {
+        String option = AppContainer.showPromotionOptions(pawn, possiblePromotions);
+        ChessPiece promotion = null;
+        WorB color = (pawn.isWhite() ? WorB.WHITE:WorB.BLACK);
+        if (option==null) option = "Queen";
+        switch (option) {
+            case "Queen" -> promotion = new Queen(color);
+            case "Knight" -> promotion = new Knight(color);
+            case "Rook" -> promotion = new Rook(color);
+            case "Bishop" -> promotion = new Bishop(color);
+            //default is ugly. If you exit the window, you are given a queen? 1 of 2 solutions. 
+            //1. create own JDialog. this might help https://stackoverflow.com/questions/45372376/joptionpane-showinputdialog-without-cancel-button-and-exit-handle
+            //2. make it so that if the user exits the window, undo is called.
+        }
+        promotion.move(pawn.getPrevPos());
+        promotion.move(pawn.getPos());
+        gameBoard.place(promotion, pawn.getPos());
+        gameBoard.addPiece(promotion);
+        gameBoard.removePiece(pawn);
+        return promotion;
+    }
+
+    ////////////////////////////////UNDO////////////////////////////////
+    ////////////////////////////////UNDO////////////////////////////////
     public static void undoLastMove() {
         GameMenu.removeHalfMove();
         if (currentMoveNum > 1 && !whiteToPlay)
@@ -449,47 +520,6 @@ public class Game {
         return currentMoveNum > 1 || !whiteToPlay;
     }
 
-    /**
-     * Checks if the move that was just done is castling. if it is not, returns 0.
-     * If it is a short castle, returns 1. If it is a long castle, returns 2.
-     * @param selectedPiece
-     * @return 
-     */
-    private static int checkCastle(ChessPiece selectedPiece) {
-        boolean[] castlingRights = (whiteToPlay ? whiteCastle:blackCastle);
-        if (!castlingRights[0] && !castlingRights[1]) return 0; //if can't castle return 0
-        if (!selectedPiece.getName().toUpperCase().equals("K")) return 0; //if selected is not a king, return 0
-        //we just moved a king, so we can no longer castle
-        castlingRights[0] = false;
-        castlingRights[1] = false;
-        int x = 4;
-        int y = (selectedPiece.isWhite() ? 7:0);
-        Coordinates currentPos = selectedPiece.getPos();
-        if (currentPos.equals(x+2,y)){
-            return 1;
-        } else if (currentPos.equals(x-2,y)){
-            return 2;
-        }
-        return 0;
-    }
-
-    private static void doCastling(int castle) {
-        if (castle == 0) return;
-        Coordinates kingPos = selectedPiece.getPos();
-        Coordinates from;
-        Coordinates to;
-        if (castle == 1){
-            from = new Coordinates(7, kingPos.y);
-            to = new Coordinates(kingPos.x-1, kingPos.y);
-        } else {
-            from = new Coordinates(0, kingPos.y);
-            to = new Coordinates(kingPos.x+1, kingPos.y);
-        }
-        ChessPiece pieceToMove = gameBoard.at(from);
-        gameBoard.move(from, to);
-        pieceToMove.move(to);
-    }
-
     private static void undoCastle(int castle) {
         if (castle==0) return;
         Coordinates kingPos = selectedPiece.getPrevPos();
@@ -508,6 +538,63 @@ public class Game {
         }
     }
 
+    private static void undoEnPassant(String fen) {
+        String[] parts = fen.split(" ");
+        String enPassantString = parts[3];
+        enPassant = interpretEnPassant(enPassantString);
+    }
+
+    ////////////////////////////////UTILITY////////////////////////////////
+    ////////////////////////////////UTILITY////////////////////////////////
+    
+    public static String toStringFEN(){
+        String conf = toStringBoard();
+        conf += toStringFlags();
+        return conf;
+    }
+    
+    private static String toStringFlags(){
+        String conf = "";
+        conf += " " + (whiteToPlay ? "w":"b");
+        conf += " ";
+        if (whiteCastle[0]) conf += "K";
+        if (whiteCastle[1]) conf += "Q";
+        if (blackCastle[0]) conf += "k";
+        if (blackCastle[1]) conf += "q";
+        if (conf.endsWith(" ")) conf += "-";
+        conf += " " + (enPassant==null ? "-":enPassant.toString()); //enPassant;
+        conf += " " + Integer.toString(movesWithNoPawnOrCapture);
+        conf += " " + Integer.toString(currentMoveNum+startingMoveNum);
+        return conf;
+    }
+    
+    private static String toStringBoard() {
+        ChessPiece[][] board = gameBoard.getBoard();
+        String conf = "";
+        int empties = 0;
+        for (ChessPiece[] row: board){
+            if (empties != 0){
+                    conf += empties;
+                    empties = 0;
+                }
+                conf += "/";
+            for (ChessPiece piece: row){
+                if (piece==null){
+                    empties++;
+                    if (empties == 8){ 
+                        conf += Integer.toString(empties);
+                        empties = 0;
+                    }
+                } else {
+                    if (empties != 0){
+                        conf += Integer.toString(empties);
+                        empties = 0;
+                    }
+                    conf += piece.getName();
+        }   }   }
+        return conf.substring(1);
+    }
+    
     private static void updateCastlingRights(String fen) {
         String[] parts = fen.split(" ");
         String castle = parts[2];
@@ -572,81 +659,6 @@ public class Game {
         return new Coordinates(x,y);
     }
 
-    private static void takenEnPassant(Coordinates cell, ChessMove currentMove) {
-        int x = enPassant.x;
-        int y = enPassant.y + (whiteToPlay ? 1:-1);
-        ChessPiece takenPiece = gameBoard.at(x,y);
-        pieceTaken(takenPiece);
-        currentMove.setTakenPiece(takenPiece);
-        enPassant = null;
-        gameBoard.place(null, new Coordinates(x,y));
-    }
-
-    private static void undoEnPassant(String fen) {
-        String[] parts = fen.split(" ");
-        String enPassantString = parts[3];
-        enPassant = interpretEnPassant(enPassantString);
-    }
-
-    private static ChessPiece promotePawn(ChessPiece pawn) {
-        String option = AppContainer.showPromotionOptions(pawn, possiblePromotions);
-        ChessPiece promotion = null;
-        WorB color = (pawn.isWhite() ? WorB.WHITE:WorB.BLACK);
-        if (option==null) option = "Queen";
-        switch (option) {
-            case "Queen" -> promotion = new Queen(color);
-            case "Knight" -> promotion = new Knight(color);
-            case "Rook" -> promotion = new Rook(color);
-            case "Bishop" -> promotion = new Bishop(color);
-            //default is ugly. If you exit the window, you are given a queen? 1 of 2 solutions. 
-            //1. create own JDialog. this might help https://stackoverflow.com/questions/45372376/joptionpane-showinputdialog-without-cancel-button-and-exit-handle
-            //2. make it so that if the user exits the window, undo is called.
-        }
-        promotion.move(pawn.getPrevPos());
-        promotion.move(pawn.getPos());
-        gameBoard.place(promotion, pawn.getPos());
-        gameBoard.addPiece(promotion);
-        gameBoard.removePiece(pawn);
-        return promotion;
-    }
-
-    private static void staleMate(WorB color) {
-        AppContainer.showStaleMate(color);
-    }
-
-    private static void check50MoveRule() {
-        if (movesWithNoPawnOrCapture >= 50){
-            lock();
-            AppContainer.show50MoveDraw();
-        }
-    }
-
-    private static void check3FoldRepetition() {
-        String currentPos = Game.toStringFEN();
-        currentPos = removeNumbers(currentPos);
-        int counter = 0;
-        for (ChessTurn turn: history){
-            if (counter >= 3) break;
-            ChessMove move = turn.getBlackMove();
-            if (checkEqualBoards(move, currentPos)) counter++;
-            move = turn.getWhiteMove();
-            if (checkEqualBoards(move, currentPos)) counter++;
-        }
-        if (counter >= 3){
-            AppContainer.show3FoldDraw();
-            lock();
-        }
-    }
-    private static boolean checkEqualBoards(ChessMove move, String currentPos){
-        if (move != null){
-            String board = move.getFenBoardAfter();
-            board = removeNumbers(board);
-            if (board.equals(currentPos))
-                return true;
-        }
-        return false;
-    }
-
     private static String removeNumbers(String board) {
         String[] parts = board.split(" ");
         String newBoard = "";
@@ -655,6 +667,5 @@ public class Game {
         }
         return newBoard;
     }
-        
-    
+
 }

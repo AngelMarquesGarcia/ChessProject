@@ -23,17 +23,19 @@ public class InfoMenu extends JPanel {
         add(menu);
         add(takenByWhite);
     }
+    
+    public static TakenPieces getTakenBy(WorB color) {
+        return (TakenPieces) (color == WorB.WHITE ? takenByWhite : takenByBlack);
+    }
 
+    //useless
     public static TakenPieces getTakenByBlack() {
         return (TakenPieces) takenByBlack;
     }
 
+    //useless
     public static TakenPieces getTakenByWhite() {
         return (TakenPieces) takenByWhite;
-    }
-
-    public static TakenPieces getTakenBy(WorB color) {
-        return (TakenPieces) (color == WorB.WHITE ? takenByWhite : takenByBlack);
     }
 
 }

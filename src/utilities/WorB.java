@@ -7,7 +7,7 @@ package utilities;
 public enum WorB {
     WHITE, BLACK;
 
-    public static WorB opposite(WorB c) {
+    public static WorB not(WorB c) {
         if (c == WHITE) {
             return BLACK;
         }

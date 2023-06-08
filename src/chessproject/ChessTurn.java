@@ -12,12 +12,26 @@ public class ChessTurn {
     private int moveNum;
     private ChessMove whiteMove;
     private ChessMove blackMove;
-
+    
+    //////////////////////////////CONSTRUCTOR//////////////////////////////
     public ChessTurn(int moveNum) {
         this.moveNum = moveNum;
     }
     
-    
+    //////////////////////////////METHODS//////////////////////////////
+    public ChessMove pop(WorB color) {
+        ChessMove move;
+        if (color == WorB.WHITE ){
+            move = whiteMove;
+            whiteMove = null;
+        } else {
+            move = blackMove;
+            blackMove = null;
+        }
+        return move;
+    }
+
+    ///////////////////////////GETTERS & SETTERS///////////////////////////
     public int getMoveNum() {
         return moveNum;
     }
@@ -42,15 +56,4 @@ public class ChessTurn {
         this.blackMove = blackMove;
     }
 
-    public ChessMove pop(WorB color) {
-        ChessMove move;
-        if (color == WorB.WHITE ){
-            move = whiteMove;
-            whiteMove = null;
-        } else {
-            move = blackMove;
-            blackMove = null;
-        }
-        return move;
-    }
-}
+ }

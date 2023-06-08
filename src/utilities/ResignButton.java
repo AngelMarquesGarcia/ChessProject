@@ -38,7 +38,6 @@ public class ResignButton extends JButton implements ActionListener {
                 0,
                 3); //0 yes, 1 no
         if (option == 0) {
-
             String msg = player + " has resigned, " + opponent + " wins"; //String msg = (whiteResigns ? "White has resigned, Black wins":"Black has resigned, White wins");
             JOptionPane.showMessageDialog(App.getFrame(), msg, "Resignation", 1);
             Game.lock();

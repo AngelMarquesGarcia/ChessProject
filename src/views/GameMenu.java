@@ -21,7 +21,7 @@ import utilities.UndoButton;
  */
 public class GameMenu extends JPanel {
 
-    private final Dimension BOXSIZE = new Dimension(200, 350);
+    private static final Dimension BOXSIZE = new Dimension(200, 350);
     private static JTextArea textArea;
     private static int halfMoves = 0;
     private static final String HALF_MOVE_SEPARATOR = "    |    ";

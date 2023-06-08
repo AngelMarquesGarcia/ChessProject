@@ -5,7 +5,7 @@ import views.AppContainer;
 import javax.swing.*;
 
 /**
- *
+ * Contains the JFrame, initializes the GUI, and creates a Game.
  * @author Ángel Marqués García
  */
 public class App {

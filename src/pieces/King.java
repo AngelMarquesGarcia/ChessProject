@@ -20,7 +20,7 @@ public class King extends ChessPiece {
     public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pinned){
         List<Coordinates> coords = new ArrayList<>();
         Coordinates[] moves = getMoveset();
-        Set<Coordinates> attackedCells = Game.getGameBoard().getAllAttackedCells(WorB.opposite(c));
+        Set<Coordinates> attackedCells = Game.getGameBoard().getAllAttackedCells(WorB.not(c));
         cantBeCloseToEnemyKing(attackedCells, c);
         for (Coordinates move : moves) {
             tryMoves(coords, move, p, c, attackedCells);
@@ -72,7 +72,7 @@ public class King extends ChessPiece {
     }
 
     private static void cantBeCloseToEnemyKing(Set<Coordinates> attackedCells, WorB c) {
-        Coordinates kingPos = Game.getGameBoard().getKing(WorB.opposite(c)).getPos();
+        Coordinates kingPos = Game.getGameBoard().getKing(WorB.not(c)).getPos();
         Coordinates[] coords = getMoveset();
         for (Coordinates move: coords){
             attackedCells.add(kingPos.clone().sum(move));

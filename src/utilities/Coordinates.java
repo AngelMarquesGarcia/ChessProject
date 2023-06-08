@@ -4,10 +4,6 @@ import chessproject.GameBoard;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 /**
  *
  * @author Ángel Marqués García
@@ -79,10 +75,14 @@ public class Coordinates {
         dir.y = dir.y / min;
         return dir;
     }
-
+    
+    //////////////////////////////PROPERTIES//////////////////////////////
+    //////////////////////////////PROPERTIES//////////////////////////////
     public int x;
     public int y;
 
+    //////////////////////////////CONSTRUCTOR//////////////////////////////
+    //////////////////////////////CONSTRUCTOR//////////////////////////////
     public Coordinates(int xCoord, int yCoord) {
         x = xCoord;
         y = yCoord;
@@ -100,6 +100,8 @@ public class Coordinates {
         }*/
     }
 
+    //////////////////////////////OPERATIONS//////////////////////////////
+    //////////////////////////////OPERATIONS//////////////////////////////
     public Coordinates sum(Coordinates c) {
         x += c.x;
         y += c.y;
@@ -111,6 +113,20 @@ public class Coordinates {
         y += yCoord;
     }
 
+    public Coordinates sub(Coordinates c) {
+        x -= c.x;
+        y -= c.y;
+        return this;
+    }
+
+    public Coordinates mult(int i) {
+        x *= i;
+        y *= i;
+        return this;
+    }
+
+    //////////////////////////////UTILITY//////////////////////////////
+    //////////////////////////////UTILITY//////////////////////////////
     @Override
     public Coordinates clone() {
         return new Coordinates(x, y);
@@ -137,6 +153,10 @@ public class Coordinates {
             return false;
         }
         return y == other.y;
+    }
+
+    public boolean equals(int xCoord, int yCoord) {
+        return (x == xCoord && y == yCoord);
     }
 
     @Override
@@ -172,20 +192,5 @@ public class Coordinates {
         }
         return row + Integer.toString(8 - y);
     }
-
-    public boolean equals(int xCoord, int yCoord) {
-        return (x == xCoord && y == yCoord);
-    }
-
-    public Coordinates sub(Coordinates c) {
-        x -= c.x;
-        y -= c.y;
-        return this;
-    }
-
-    public Coordinates mult(int i) {
-        x *= i;
-        y *= i;
-        return this;
-    }
-}
+    
+ }
