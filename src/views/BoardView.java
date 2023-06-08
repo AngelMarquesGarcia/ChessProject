@@ -1,10 +1,5 @@
 package views;
 
-/*
- * BlankArea.java is used by:
- *    MouseEventDemo.java.
- *    MouseMotionEventDemo.java
- */
 import chessproject.Game;
 import javax.swing.*;
 import java.awt.Dimension;
