@@ -21,6 +21,8 @@ public class App {
         System.out.println("Hola");
         
         
+        System.out.println("Adios");
+        
         //Schedule a job for the event dispatch thread:
         //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
