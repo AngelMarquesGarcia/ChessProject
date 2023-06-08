@@ -21,7 +21,7 @@ public class App {
         System.out.println("Hola, mundo");
         
         
-        System.out.println("Adios");
+        System.out.println("Adios, mundo");
         
         //Schedule a job for the event dispatch thread:
         //creating and showing this application's GUI.
