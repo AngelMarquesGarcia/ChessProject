@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package pieces;
 
 import java.util.ArrayList;
@@ -12,11 +11,11 @@ import utilities.WorB;
 
 /**
  *
- * @author Ángel Marqués García 
+ * @author Ángel Marqués García
  */
 public class Queen extends ChessPiece {
-    
-    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pin){
+
+    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pin) {
         List<Coordinates> coords = new ArrayList<>();
         coords.addAll(Rook.updateAvailableMoves(p, c, pin));
         coords.addAll(Bishop.updateAvailableMoves(p, c, pin));
@@ -25,13 +24,13 @@ public class Queen extends ChessPiece {
 
     private static final String className = "Q";
     private static final int v = 9;
-    
+
     public Queen(WorB color) {
         super(color);
         name = className;
         value = v;
     }
-    
+
     @Override
     public List<Coordinates> updateAvailableMoves() {
         return Queen.updateAvailableMoves(pos, color, pinned);

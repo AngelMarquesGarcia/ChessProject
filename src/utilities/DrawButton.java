@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package utilities;
 
 import chessproject.App;
@@ -16,39 +15,39 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author Ángel Marqués García 
+ * @author Ángel Marqués García
  */
 public class DrawButton extends JButton implements ActionListener {
 
     private static final String RESIGN_PATH = "./files/draw.png";
 
-    public DrawButton (){
+    public DrawButton() {
         ImageIcon imageIcon = new ImageIcon(RESIGN_PATH); // load the image to a imageIcon
         Image image = imageIcon.getImage(); // transform it 
-        Image newimg = image.getScaledInstance(20, 20,  Image.SCALE_SMOOTH); // scale it the smooth way  
+        Image newimg = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH); // scale it the smooth way  
         imageIcon = new ImageIcon(newimg);  // transform it back
         setIcon(imageIcon);
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Game.removeFocus();
         System.out.println("Restart Button Clicked");
         boolean whiteResigns = Game.getWhiteToPlay();
-        String player = (whiteResigns ? "White":"Black");
-        String opponent = (!whiteResigns ? "White ":"Black");
-        int option = JOptionPane.showConfirmDialog(App.getFrame(), 
-                player + " offers a draw. " + opponent +  ", do you accept it?", 
-                "Draw Offer", 
-                0, 
+        String player = (whiteResigns ? "White" : "Black");
+        String opponent = (!whiteResigns ? "White " : "Black");
+        int option = JOptionPane.showConfirmDialog(App.getFrame(),
+                player + " offers a draw. " + opponent + ", do you accept it?",
+                "Draw Offer",
+                0,
                 1); //0 yes, 1 no
-        if (option == 0){
+        if (option == 0) {
             JOptionPane.showMessageDialog(App.getFrame(), "Draw Accepted", "Draw Offer", 1);
             Game.lock();
         } else {
             JOptionPane.showMessageDialog(App.getFrame(), "Draw Declined", "Draw Offer", 1);
         }
         System.out.println(option);
-        
+
     }
 }

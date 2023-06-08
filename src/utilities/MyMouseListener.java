@@ -61,7 +61,7 @@ public class MyMouseListener implements MouseListener {
         ChessPiece piece = gameBoard[cell.y][cell.x];
         if (Game.getSelectedPiece() == null) {
             Game.setSelectedPiece(piece);
-        } else { 
+        } else {
             //if we selected another of our pieces, change the selected piece to that
             //else, try to move there.
             if (piece != null && piece.isWhite() == Game.getSelectedPiece().isWhite()) {

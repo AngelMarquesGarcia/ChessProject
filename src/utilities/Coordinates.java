@@ -1,10 +1,8 @@
 package utilities;
 
 import chessproject.GameBoard;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
-import views.BoardView;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license

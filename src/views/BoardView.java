@@ -1,4 +1,3 @@
-
 package views;
 
 /*
@@ -6,7 +5,6 @@ package views;
  *    MouseEventDemo.java.
  *    MouseMotionEventDemo.java
  */
-
 import chessproject.Game;
 import javax.swing.*;
 import java.awt.Dimension;
@@ -26,6 +24,7 @@ import utilities.Coordinates;
 import utilities.MyMouseListener;
 
 public class BoardView extends JPanel {
+
     public static final Dimension BOARDSIZE = new Dimension(500, 500);
     private int sizeX;
     private int sizeY;
@@ -36,10 +35,11 @@ public class BoardView extends JPanel {
     private List<Coordinates> highlights = new ArrayList<>();
 
     private static BoardView boardView;
-    
-    public static BoardView getBoardView(){
+
+    public static BoardView getBoardView() {
         return boardView;
     }
+
     public static Dimension getBoardSize() {
         return new Dimension(BOARDSIZE);
     }
@@ -54,49 +54,54 @@ public class BoardView extends JPanel {
         //setBorder(BorderFactory.createLineBorder(Color.black));
         loadSprites();
         setSizes();
-        
+
         addMouseListener(new MyMouseListener());
         boardView = this;
     }
-    
+
     @Override
-    public void paint(Graphics g){
+    public void paint(Graphics g) {
         drawBoard(g);
         drawPosition(g);
         drawHighlights(g);
         drawCoordinates(g);
     }
-    
+
     private void setSizes() {
         Dimension size = getSize();
-        size.setSize(new Dimension(size.width-10, size.height-10));
-        sizeX = size.width/8;
-        sizeY = size.height/8;    
+        size.setSize(new Dimension(size.width - 10, size.height - 10));
+        sizeX = size.width / 8;
+        sizeY = size.height / 8;
     }
 
     private void drawBoard(Graphics g) {
-        for(int i = 0; i <= 8;i++){
-            for (int j = 0; j <= 8;j++){
-                if (i == 8 || j == 8) continue;
-                if ((i+j) % 2 == 0){ g.setColor(COLOR1);
-                } else {g.setColor(COLOR2);}
-                g.fillRect(i*sizeX, j*sizeY, sizeX,sizeY);
+        for (int i = 0; i <= 8; i++) {
+            for (int j = 0; j <= 8; j++) {
+                if (i == 8 || j == 8) {
+                    continue;
+                }
+                if ((i + j) % 2 == 0) {
+                    g.setColor(COLOR1);
+                } else {
+                    g.setColor(COLOR2);
+                }
+                g.fillRect(i * sizeX, j * sizeY, sizeX, sizeY);
             }
-        }    
+        }
     }
 
     private void drawPosition(Graphics g) {
         ChessPiece[][] gameBoard = Game.getGameBoard().getBoard();
-        for(int i = 0; i < 8;i++){
-            for (int j = 0; j < 8;j++){
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
                 //if (i == 8 || j == 8) continue;
                 ChessPiece piece = gameBoard[i][j];
-                if (piece != null){ 
+                if (piece != null) {
                     String name = piece.getName();
-                    g.drawImage(sprites.get(name), j*sizeX, i*sizeY,sizeX,sizeY, this); 
+                    g.drawImage(sprites.get(name), j * sizeX, i * sizeY, sizeX, sizeY, this);
                 }
             }
-        }    
+        }
         //g.drawImage(sprites.get("k"), startX * sizeX, startY*sizeY,sizeX,sizeY, this);    
     }
 
@@ -104,9 +109,8 @@ public class BoardView extends JPanel {
         highlights.clear();
         highlights.addAll(availableMoves);
     }
-    
-    
-    public final void loadSprites(){
+
+    public final void loadSprites() {
         BufferedImage bi;
         try {
             bi = ImageIO.read(new File("./files/BlackKing.png"));
@@ -121,7 +125,7 @@ public class BoardView extends JPanel {
             this.sprites.put("r", bi);
             bi = ImageIO.read(new File("./files/BlackPawn.png"));
             this.sprites.put("p", bi);
-            
+
             bi = ImageIO.read(new File("./files/WhiteKing.png"));
             this.sprites.put("K", bi);
             bi = ImageIO.read(new File("./files/WhiteQueen.png"));
@@ -134,7 +138,7 @@ public class BoardView extends JPanel {
             this.sprites.put("R", bi);
             bi = ImageIO.read(new File("./files/WhitePawn.png"));
             this.sprites.put("P", bi);
-            
+
         } catch (IOException e) {
             System.out.println("Image could not be read");
             e.printStackTrace();
@@ -150,45 +154,52 @@ public class BoardView extends JPanel {
     }
 
     private void drawHighlights(Graphics g) {
-        if (highlights.isEmpty()) return;
+        if (highlights.isEmpty()) {
+            return;
+        }
         g.setColor(HIGHLIGHT_COLOR);
-        for (Coordinates cell: highlights){
+        for (Coordinates cell : highlights) {
             int x = cell.x;
             int y = cell.y;
             int startOfCellX = x * sizeX;
             int startOFCellY = y * sizeY;
-            int middlePointX = sizeX/2;
-            int middlePointY = sizeY/2;
-            int circleWidth = sizeX/4;
-            int circleHeight = sizeY/4;
-            int centerX = startOfCellX + middlePointX - circleWidth/2;
-            int centerY = startOFCellY + middlePointY - circleHeight/2;
+            int middlePointX = sizeX / 2;
+            int middlePointY = sizeY / 2;
+            int circleWidth = sizeX / 4;
+            int circleHeight = sizeY / 4;
+            int centerX = startOfCellX + middlePointX - circleWidth / 2;
+            int centerY = startOFCellY + middlePointY - circleHeight / 2;
             g.fillOval(centerX, centerY, circleWidth, circleHeight);
         }
         highlights.clear();
     }
 
     private void drawCoordinates(Graphics g) {
-        int y = sizeY*8 - MARGIN;
+        int y = sizeY * 8 - MARGIN;
         int x = MARGIN;
-        
+
         String[] letters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"};
         g.setColor(COLOR2);
         g.setFont(new Font("TimesRoman", Font.BOLD, FONT_SIZE));
-        
-        for(int i = 0; i < 8;i++){
-            if (g.getColor()==COLOR1){ g.setColor(COLOR2);
-            } else {g.setColor(COLOR1);}
-            g.drawString(letters[i], x+i*sizeX,y);
+
+        for (int i = 0; i < 8; i++) {
+            if (g.getColor() == COLOR1) {
+                g.setColor(COLOR2);
+            } else {
+                g.setColor(COLOR1);
+            }
+            g.drawString(letters[i], x + i * sizeX, y);
         }
-        y = 5*MARGIN;
-        x = sizeX*8 - 3*MARGIN;
-        for(int i = 0; i < 9;i++){
-            g.drawString(Integer.toString(9-i), x,y+(i-1)*sizeY);
-            if (g.getColor()==COLOR1){ g.setColor(COLOR2);
-            } else {g.setColor(COLOR1);}
+        y = 5 * MARGIN;
+        x = sizeX * 8 - 3 * MARGIN;
+        for (int i = 0; i < 9; i++) {
+            g.drawString(Integer.toString(9 - i), x, y + (i - 1) * sizeY);
+            if (g.getColor() == COLOR1) {
+                g.setColor(COLOR2);
+            } else {
+                g.setColor(COLOR1);
+            }
         }
     }
-    
-}
 
+}

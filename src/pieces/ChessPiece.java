@@ -5,7 +5,6 @@
 
 package pieces;
 
-import java.util.Collection;
 import utilities.Coordinates;
 import java.util.List;
 import java.util.Set;

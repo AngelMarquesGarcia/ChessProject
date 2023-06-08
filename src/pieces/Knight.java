@@ -20,22 +20,22 @@ import utilities.WorB;
 public class Knight extends ChessPiece {
 
     public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pin) {
-        pin = Game.checkForPin(p,c);
+        pin = Game.checkForPin(p, c);
         List<Coordinates> coords = new ArrayList<>();
         Set<Coordinates> moves = getMoveset();
         ChessPiece.cullMoveSet(moves, pin);
-        Set<Coordinates> goodMoves = (Game.getCheckedKing() == c ? Game.getGoodMoves():null);
+        Set<Coordinates> goodMoves = (Game.getCheckedKing() == c ? Game.getGoodMoves() : null);
         for (Coordinates move : moves) {
             tryMoves(coords, move, p, c, goodMoves);
         }
         return coords;
     }
-    
+
     private static Set<Coordinates> getMoveset() {
         Set<Coordinates> moveset = new HashSet<>();
         moveset.add(new Coordinates(2, 1));
         moveset.add(new Coordinates(1, 2));
-        
+
         return moveset;
     }
 
@@ -52,8 +52,9 @@ public class Knight extends ChessPiece {
      * @param color
      */
     private static void tryMoves(List<Coordinates> coords, Coordinates move, Coordinates pos, WorB color, Set<Coordinates> goodMoves) {
-        if (move == null || move.equals(0,0))
+        if (move == null || move.equals(0, 0)) {
             return;
+        }
         Coordinates newPos = pos.clone();
         int x = move.x;
         int y = move.y;
@@ -68,8 +69,9 @@ public class Knight extends ChessPiece {
                     if (goodMoves == null || goodMoves.contains(newPos))
                         coords.add(newPos.clone());
                 }*/
-                if (goodMoves == null || goodMoves.contains(newPos))
-                        coords.add(newPos.clone());
+                if (goodMoves == null || goodMoves.contains(newPos)) {
+                    coords.add(newPos.clone());
+                }
             } catch (IndexOutOfBoundsException ex) {
             }
             newPos.copy(pos);

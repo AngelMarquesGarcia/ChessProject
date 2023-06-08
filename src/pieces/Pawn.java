@@ -19,19 +19,20 @@ import utilities.WorB;
 public class Pawn extends ChessPiece {
 
     public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pin) {
-        pin = Game.checkForPin(p,c);
+        pin = Game.checkForPin(p, c);
         List<Coordinates> coords = new ArrayList<>();
         int yMovement = (c == WorB.BLACK ? 1 : -1);
         Coordinates move = new Coordinates(0, yMovement);
-        if (pin != null && !(move.equals(pin) || move.equals(new Coordinates(pin.x, pin.y*-1))))
+        if (pin != null && !(move.equals(pin) || move.equals(new Coordinates(pin.x, pin.y * -1)))) {
             move = null;
-        Set<Coordinates> goodMoves = (Game.getCheckedKing() == c ? Game.getGoodMoves():null);
+        }
+        Set<Coordinates> goodMoves = (Game.getCheckedKing() == c ? Game.getGoodMoves() : null);
         tryMoves(coords, move, p, c, goodMoves);
 
         tryTake(coords, p, c);
         return coords;
     }
-    
+
     public static List<Coordinates> updateAttackedCells(Coordinates p, WorB c, Coordinates pin) {
         List<Coordinates> coords = new ArrayList<>();
         tryTake(coords, p, c);
@@ -54,10 +55,11 @@ public class Pawn extends ChessPiece {
             piece = gameBoard.at(newPos);
             if (piece != null /*&& !piece.isColor(c)*/) {
                 coords.add(newPos.clone());
-            } else if (newPos.equals(Game.getEnPassant())){
+            } else if (newPos.equals(Game.getEnPassant())) {
                 coords.add(newPos.clone());
             }
-        } catch (IndexOutOfBoundsException ex) {}
+        } catch (IndexOutOfBoundsException ex) {
+        }
         //try the other direction
         try {
             newPos = p.clone();
@@ -65,10 +67,11 @@ public class Pawn extends ChessPiece {
             piece = gameBoard.at(newPos);
             if (piece != null /*&& !piece.isColor(c)*/) {
                 coords.add(newPos.clone());
-            } else if (newPos.equals(Game.getEnPassant())){
+            } else if (newPos.equals(Game.getEnPassant())) {
                 coords.add(newPos.clone());
             }
-        } catch (IndexOutOfBoundsException ex) {}
+        } catch (IndexOutOfBoundsException ex) {
+        }
 
     }
 
@@ -85,19 +88,22 @@ public class Pawn extends ChessPiece {
      * @param color
      */
     private static void tryMoves(List<Coordinates> coords, Coordinates move, Coordinates pos, WorB color, Set<Coordinates> goodMoves) {
-        if (move == null || move.equals(0,0))
+        if (move == null || move.equals(0, 0)) {
             return;
+        }
         try {
             GameBoard gameBoard = Game.getGameBoard();
             Coordinates newPos = pos.clone();
             newPos.sum(move);
             if (gameBoard.at(newPos) == null) {
-                if (goodMoves == null || goodMoves.contains(newPos))
+                if (goodMoves == null || goodMoves.contains(newPos)) {
                     coords.add(newPos.clone());
+                }
                 newPos.sum(move);
                 if (isFirstMove(pos, color) && gameBoard.at(newPos) == null) {
-                    if (goodMoves == null || goodMoves.contains(newPos))
+                    if (goodMoves == null || goodMoves.contains(newPos)) {
                         coords.add(newPos.clone());
+                    }
                 }
             }
         } catch (IndexOutOfBoundsException ex) {
@@ -117,7 +123,7 @@ public class Pawn extends ChessPiece {
     public List<Coordinates> updateAvailableMoves() {
         return Pawn.updateAvailableMoves(pos, color, pinned);
     }
-    
+
     @Override
     public List<Coordinates> updateAttackedCells() {
         return Pawn.updateAttackedCells(pos, color, pinned);
