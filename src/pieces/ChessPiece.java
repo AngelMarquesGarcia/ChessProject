@@ -1,5 +1,6 @@
 package pieces;
 
+import chessproject.GameBoard;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -49,9 +50,7 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
         sprite = im;
         
     }
-    
-    public List<Coordinates> updateAvailableMoves(){return null;}
-    
+        
     public void move(Coordinates newPos){
         prevPos.copy(pos);
         pos.copy(newPos);
@@ -85,9 +84,5 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
     @Override
     public int compareTo(ChessPiece piece) {
         return Integer.compare(value, piece.value);
-    }
-
-    public List<Coordinates> updateAttackedCells() {
-        return updateAvailableMoves();
     }
 }

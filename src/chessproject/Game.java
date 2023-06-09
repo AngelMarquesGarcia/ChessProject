@@ -7,6 +7,7 @@ import java.util.Set;
 import pieces.Bishop;
 import pieces.ChessPiece;
 import pieces.Knight;
+import static pieces.MoveUpdater.getPossibleMoves;
 import pieces.Queen;
 import pieces.Rook;
 import utilities.Coordinates;
@@ -56,7 +57,7 @@ public class Game {
     public static void setSelectedPiece(ChessPiece p){
         if (!completed && p != null && p.isWhite() == whiteToPlay){ //the turn system is disabled if we remove the second condition
             selectedPiece = p;
-            availableMoves = p.updateAvailableMoves();
+            availableMoves = getPossibleMoves(p, gameBoard);
             cullAvailableMoves();
             highlightAvailableMoves();
             AppContainer.getAppContainer().repaint();
@@ -146,14 +147,14 @@ public class Game {
         ChessPiece king = gameBoard.getKing(color);
         boolean isCheck = false;
         
-        if (selectedPiece.updateAvailableMoves().contains(king.getPos())){
+        if (getPossibleMoves(selectedPiece, gameBoard).contains(king.getPos())){
             isCheck = true;
             checkers.add(selectedPiece);
         }
         List<Coordinates> line = Coordinates.getLine(selectedPiece.getPrevPos(), king.getPos(), true);
         ChessPiece piece = GameBoard.getClosestPiece(king.getPos(), line, gameBoard);
         
-        if (piece != null && ! piece.isColor(color) && piece.updateAvailableMoves().contains(king.getPos())){
+        if (piece != null && ! piece.isColor(color) && getPossibleMoves(piece, gameBoard).contains(king.getPos())){
             isCheck = true;
             checkers.add(piece);
         }
@@ -162,7 +163,7 @@ public class Game {
     
     public static boolean isCheckMate(WorB color){
         ChessPiece king = gameBoard.getKing(color);
-        if (!king.updateAvailableMoves().isEmpty())
+        if (!getPossibleMoves(king, gameBoard).isEmpty())
             return false; //false not checkmate, King moves available
         if (checkers.size()==2){
             return true; //true, checkmate. King is checked by two pieces and can't move

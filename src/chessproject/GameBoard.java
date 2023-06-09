@@ -9,6 +9,7 @@ import java.util.Set;
 import pieces.Bishop;
 import pieces.King;
 import pieces.Knight;
+import pieces.MoveUpdater;
 import pieces.Pawn;
 import pieces.Queen;
 import pieces.Rook;
@@ -73,7 +74,7 @@ public class GameBoard {
         List<ChessPiece> pieces = (color==WorB.WHITE ? whitePieces:blackPieces);
         Set<Coordinates> coords = new HashSet<>();
         for (ChessPiece piece: pieces){
-            coords.addAll(piece.updateAvailableMoves());
+            coords.addAll(MoveUpdater.getPossibleMoves(piece, this));
         }
         return coords;
     }
@@ -90,7 +91,7 @@ public class GameBoard {
         Set<Coordinates> coords = new HashSet<>();
         for (ChessPiece piece: pieces){
             if (piece != king) //this is so that it doesn't infinitely recurse
-               coords.addAll(piece.updateAttackedCells());
+               coords.addAll(MoveUpdater.getAttackedCells(piece, this));
         }
         return coords;
     }
