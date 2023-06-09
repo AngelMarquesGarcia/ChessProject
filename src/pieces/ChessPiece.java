@@ -50,7 +50,7 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
         
     }
     
-    public abstract List<Coordinates> updateAvailableMoves();
+    public List<Coordinates> updateAvailableMoves(){return null;}
     
     public void move(Coordinates newPos){
         prevPos.copy(pos);
