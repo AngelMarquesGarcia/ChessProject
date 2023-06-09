@@ -15,11 +15,11 @@ import utilities.WorB;
  */
 public class Rook extends ChessPiece {
 
-    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pin) {
-        pin = Game.checkForPin(p, c);
+    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c) {
+        Coordinates pin = Game.checkForPin(p, c);
         List<Coordinates> coords = new ArrayList<>();
         Set<Coordinates> moves = getMoveset();
-        ChessPiece.cullMoveSet(moves, pin);
+        MoveUpdater.considerPin(moves, pin);
         Set<Coordinates> goodMoves = (Game.getCheckedKing() == c ? Game.getGoodMoves() : null);
         for (Coordinates move : moves) {
             tryMoves(coords, move, p, c, goodMoves);
@@ -70,18 +70,20 @@ public class Rook extends ChessPiece {
         }
     }
 
-    private static final String className = "R";
-    private static final int v = 5;
+    private static final String CLASS_NAME = "Rook";
+    private static final String CLASS_REP = "R";
+    private static final String sprStart = "./files/";
+    private static final String sprEnd = ".png";
+    private static final int V = 5;
 
     public Rook(WorB color) {
-        super(color);
-        name = className;
-        value = v;
+        super(CLASS_NAME, CLASS_REP, sprStart+color+CLASS_NAME+sprEnd, color);
+        value = V;
     }
 
     @Override
     public List<Coordinates> updateAvailableMoves() {
-        return Rook.updateAvailableMoves(pos, color, pinned);
+        return Rook.updateAvailableMoves(pos, color);
     }
 
 }

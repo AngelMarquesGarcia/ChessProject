@@ -2,6 +2,7 @@ package pieces;
 
 import chessproject.Game;
 import chessproject.GameBoard;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -14,8 +15,8 @@ import utilities.WorB;
  */
 public class Pawn extends ChessPiece {
 
-    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pin) {
-        pin = Game.checkForPin(p, c);
+    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c) {
+        Coordinates pin = Game.checkForPin(p, c);
         List<Coordinates> coords = new ArrayList<>();
         int yMovement = (c == WorB.BLACK ? 1 : -1);
         Coordinates move = new Coordinates(0, yMovement);
@@ -29,7 +30,7 @@ public class Pawn extends ChessPiece {
         return coords;
     }
 
-    public static List<Coordinates> updateAttackedCells(Coordinates p, WorB c, Coordinates pin) {
+    public static List<Coordinates> updateAttackedCells(Coordinates p, WorB c) {
         List<Coordinates> coords = new ArrayList<>();
         tryTake(coords, p, c);
         return coords;
@@ -106,23 +107,25 @@ public class Pawn extends ChessPiece {
         }
     }
 
-    private static final String className = "P";
-    private static final int v = 1;
+    private static final String CLASS_NAME = "Pawn";
+    private static final String CLASS_REP = "P";
+    private static final String whiteSprite = "./files/WhitePawn.png";
+    private static final String blackSprite = "./files/BlackPawn.png";
+    private static final int V = 1;
 
     public Pawn(WorB color) {
-        super(color);
-        name = className;
-        value = v;
+        super(CLASS_NAME, CLASS_REP, (color==WorB.WHITE? whiteSprite:blackSprite), color);
+        value = V;
     }
 
     @Override
     public List<Coordinates> updateAvailableMoves() {
-        return Pawn.updateAvailableMoves(pos, color, pinned);
+        return Pawn.updateAvailableMoves(pos, color);
     }
 
     @Override
     public List<Coordinates> updateAttackedCells() {
-        return Pawn.updateAttackedCells(pos, color, pinned);
+        return Pawn.updateAttackedCells(pos, color);
     }
 
 }

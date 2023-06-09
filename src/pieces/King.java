@@ -2,6 +2,7 @@ package pieces;
 
 import chessproject.Game;
 import chessproject.GameBoard;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -14,10 +15,7 @@ import utilities.WorB;
  */
 public class King extends ChessPiece {
     
-    private static final String className = "K";
-    private static final int v = 4;
-    
-    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pinned){
+    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c){
         List<Coordinates> coords = new ArrayList<>();
         Coordinates[] moves = getMoveset();
         Set<Coordinates> attackedCells = Game.getGameBoard().getAllAttackedCells(WorB.not(c));
@@ -122,15 +120,20 @@ public class King extends ChessPiece {
     //////////////////////////////INSTANCE METHODS//////////////////////////////
     //////////////////////////////INSTANCE METHODS//////////////////////////////
     //////////////////////////////INSTANCE METHODS//////////////////////////////
+    private static final String CLASS_NAME = "King";
+    private static final String CLASS_REP = "K";
+    private static final String whiteSprite = "./files/WhiteKing.png";
+    private static final String blackSprite = "./files/BlackKing.png";
+    private static final int V = 4;
+
     public King(WorB color) {
-        super(color);
-        name = className;
-        value = v;
+        super(CLASS_NAME, CLASS_REP, (color==WorB.WHITE? whiteSprite:blackSprite), color);
+        value = V;
     }
     
     @Override
     public List<Coordinates> updateAvailableMoves() {
-        return King.updateAvailableMoves(pos, color, pinned);
+        return King.updateAvailableMoves(pos, color);
     }
 
 }

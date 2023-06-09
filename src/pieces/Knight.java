@@ -2,6 +2,7 @@ package pieces;
 
 import chessproject.Game;
 import chessproject.GameBoard;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,11 +16,11 @@ import utilities.WorB;
  */
 public class Knight extends ChessPiece {
 
-    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pin) {
-        pin = Game.checkForPin(p, c);
+    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c) {
+        Coordinates pin = Game.checkForPin(p, c);
         List<Coordinates> coords = new ArrayList<>();
         Set<Coordinates> moves = getMoveset();
-        ChessPiece.cullMoveSet(moves, pin);
+        MoveUpdater.considerPin(moves, pin);
         Set<Coordinates> goodMoves = (Game.getCheckedKing() == c ? Game.getGoodMoves() : null);
         for (Coordinates move : moves) {
             tryMoves(coords, move, p, c, goodMoves);
@@ -78,18 +79,20 @@ public class Knight extends ChessPiece {
         } while (b1 != 1 || b0 != 1);
     }
 
-    private static final String className = "N";
-    private static final int v = 3;
+    private static final String CLASS_NAME = "Knight";
+    private static final String CLASS_REP = "N";
+    private static final String sprStart = "./files/";
+    private static final String sprEnd = ".png";
+    private static final int V = 3;
 
     public Knight(WorB color) {
-        super(color);
-        name = className;
-        value = v;
+        super(CLASS_NAME, CLASS_REP, sprStart+color+CLASS_NAME+sprEnd, color);
+        value = V;
     }
 
     @Override
     public List<Coordinates> updateAvailableMoves() {
-        return Knight.updateAvailableMoves(pos, color, pinned);
+        return Knight.updateAvailableMoves(pos, color);
     }
 
 }

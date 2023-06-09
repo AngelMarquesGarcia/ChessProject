@@ -15,14 +15,14 @@ import utilities.WorB;
  */
 public class Bishop extends ChessPiece {
 
-    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c, Coordinates pin) {
-        pin = Game.checkForPin(p,c);
+    public static List<Coordinates> updateAvailableMoves(Coordinates p, WorB c) {
+        Coordinates pin = Game.checkForPin(p,c);
         List<Coordinates> coords = new ArrayList<>();
         if (Game.getCheckers().size() == 2){
             return coords;
         }
         Set<Coordinates> moves = getMoveset();
-        ChessPiece.cullMoveSet(moves, pin);
+        MoveUpdater.considerPin(moves, pin);
         Set<Coordinates> goodMoves = (Game.getCheckedKing() == c ? Game.getGoodMoves():null);
         for (Coordinates move : moves) {
             tryMoves(coords, move, p, c, goodMoves);
@@ -78,18 +78,20 @@ public class Bishop extends ChessPiece {
         }
     }
 
-    private static final String className = "B";
-    private static final int v = 3;
+    private static final String CLASS_NAME = "Bishop";
+    private static final String CLASS_REP = "B";
+    private static final String sprStart = "./files/";
+    private static final String sprEnd = ".png";
+    private static final int V = 3;
 
     public Bishop(WorB color) {
-        super(color);
-        name = className;
-        value = v;
+        super(CLASS_NAME, CLASS_REP, sprStart+color+CLASS_NAME+sprEnd, color);
+        value = V;
     }
 
     @Override
     public List<Coordinates> updateAvailableMoves() {
-        return Bishop.updateAvailableMoves(pos, color, pinned);
+        return Bishop.updateAvailableMoves(pos, color);
     }
 
 }
