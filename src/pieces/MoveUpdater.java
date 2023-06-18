@@ -50,16 +50,18 @@ public class MoveUpdater {
         Set<PieceMove> moveset = MovesetMaster.getMoveset(piece);
         moveset = removeMovesIfPinned(moveset, pin);
         for (PieceMove pieceMove: moveset){
+            newPos = piece.getPos();
             for (Coordinates move:pieceMove){
-                if (!ChessBoard.isLegal(move)) break;
-                ChessPiece pieceAt = board.at(move);
+                newPos = newPos.sum(move);
+                if (!GameBoard.isLegal(newPos)) break;
+                ChessPiece pieceAt = board.at(newPos);
                 if (pieceAt != null){
                     if (includeSameColor || pieceAt.isWhite() != piece.isWhite()){
-                        coords.add(move);
+                        coords.add(newPos);
                     }
                     break;
                 } else {
-                    coords.add(move);
+                    coords.add(newPos);
                 }
             }
         }
