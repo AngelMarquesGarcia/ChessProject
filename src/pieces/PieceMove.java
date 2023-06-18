@@ -38,12 +38,13 @@ public class PieceMove implements Iterable<Coordinates> {
 
         @Override
         public boolean hasNext() {
-            return counter < goal;
+            return counter <= goal;
         }
 
         @Override
         public Coordinates next() {
-            return move.clone().mult(counter++);
+            counter += 1;
+            return move.clone();
         }
     }
 

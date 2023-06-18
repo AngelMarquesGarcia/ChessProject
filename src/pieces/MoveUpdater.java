@@ -49,11 +49,12 @@ public class MoveUpdater {
         List<Coordinates> coords = new ArrayList<>();
         Set<PieceMove> moveset = MovesetMaster.getMoveset(piece);
         moveset = removeMovesIfPinned(moveset, pin);
+        Coordinates newPos;
         for (PieceMove pieceMove: moveset){
             newPos = piece.getPos();
             for (Coordinates move:pieceMove){
                 newPos = newPos.sum(move);
-                if (!GameBoard.isLegal(newPos)) break;
+                if (!ChessBoard.isLegal(newPos)) break;
                 ChessPiece pieceAt = board.at(newPos);
                 if (pieceAt != null){
                     if (includeSameColor || pieceAt.isWhite() != piece.isWhite()){

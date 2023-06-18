@@ -80,9 +80,17 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
     public Coordinates getPrevPos(){
         return prevPos.clone();
     }
+    
+    public String getRepresentation(){
+        return representation;
+    }
 
     @Override
     public int compareTo(ChessPiece piece) {
         return Integer.compare(value, piece.value);
+    }
+
+    public Image getSprite() {
+        return sprite;
     }
 }

@@ -6,14 +6,8 @@ import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import javax.imageio.ImageIO;
 import pieces.ChessPiece;
 import utilities.Coordinates;
 import utilities.MyMouseListener;
@@ -40,7 +34,6 @@ public class BoardView extends JPanel {
     /////////////////OTHER PROPERTIES/////////////////
     private int sizeX;
     private int sizeY;
-    private Map<String, BufferedImage> sprites = new HashMap<>();
     private List<Coordinates> highlights = new ArrayList<>();
 
     //////////////////////////////CONSTRUCTOR//////////////////////////////
@@ -50,7 +43,6 @@ public class BoardView extends JPanel {
         setVisible(true);
         //setOpaque(true);
         //setBorder(BorderFactory.createLineBorder(Color.black));
-        loadSprites();
         setSizes();
 
         addMouseListener(new MyMouseListener());
@@ -63,47 +55,8 @@ public class BoardView extends JPanel {
         sizeX = size.width / 8;
         sizeY = size.height / 8;
     }
-   
-    public final void loadSprites() {
-        //might not be needed. The idea would be, each piece has their sprite, and to show them
-        //BoardView is given the GameBoard with the actual ChessPiece objects, so it can access their sprites
-        //Or even better, it could use what's currently GameBoard.whitePieces and GameBoard.blackPieces
-        //and show all pieces on those lists/sets.
-        BufferedImage bi;
-        try {
-            bi = ImageIO.read(new File("./files/BlackKing.png"));
-            this.sprites.put("k", bi);
-            bi = ImageIO.read(new File("./files/BlackQueen.png"));
-            this.sprites.put("q", bi);
-            bi = ImageIO.read(new File("./files/BlackBishop.png"));
-            this.sprites.put("b", bi);
-            bi = ImageIO.read(new File("./files/BlackKnight.png"));
-            this.sprites.put("n", bi);
-            bi = ImageIO.read(new File("./files/BlackRook.png"));
-            this.sprites.put("r", bi);
-            bi = ImageIO.read(new File("./files/BlackPawn.png"));
-            this.sprites.put("p", bi);
-
-            bi = ImageIO.read(new File("./files/WhiteKing.png"));
-            this.sprites.put("K", bi);
-            bi = ImageIO.read(new File("./files/WhiteQueen.png"));
-            this.sprites.put("Q", bi);
-            bi = ImageIO.read(new File("./files/WhiteBishop.png"));
-            this.sprites.put("B", bi);
-            bi = ImageIO.read(new File("./files/WhiteKnight.png"));
-            this.sprites.put("N", bi);
-            bi = ImageIO.read(new File("./files/WhiteRook.png"));
-            this.sprites.put("R", bi);
-            bi = ImageIO.read(new File("./files/WhitePawn.png"));
-            this.sprites.put("P", bi);
-
-        } catch (IOException e) {
-            System.out.println("Image could not be read");
-            e.printStackTrace();
-        }
-    }
     
-    //////////////////////////////PAINTING//////////////////////////////
+//////////////////////////////PAINTING//////////////////////////////
     @Override
     public void paint(Graphics g) {
         drawBoard(g);
@@ -129,15 +82,16 @@ public class BoardView extends JPanel {
     }
 
     private void drawPosition(Graphics g) {
-        ChessApp game = ChessApp.getChessApp();
-        ChessPiece[][] gameBoard = game.getCurrentMatch().getChessBoard().getBoard();
+        ChessApp app = ChessApp.getChessApp();
+        ChessPiece[][] gameBoard = app.getCurrentMatch().getChessBoard().getBoard();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 //if (i == 8 || j == 8) continue;
                 ChessPiece piece = gameBoard[i][j];
                 if (piece != null) {
-                    String name = piece.getName();
-                    g.drawImage(sprites.get(name), j * sizeX, i * sizeY, sizeX, sizeY, this);
+                    //String name = piece.getRepresentation();
+                    //g.drawImage(sprites.get(name), j * sizeX, i * sizeY, sizeX, sizeY, this);
+                    g.drawImage(piece.getSprite(), j * sizeX, i * sizeY, sizeX, sizeY, this);
                 }
             }
         }
