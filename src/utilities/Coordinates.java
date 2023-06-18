@@ -1,6 +1,6 @@
 package utilities;
 
-import chessproject.GameBoard;
+import chessproject.ChessBoard;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class Coordinates {
 
     private static void addLine(List<Coordinates> coords, Coordinates pos1, Coordinates pos2, int xStep, int yStep) {
         Coordinates p1 = pos1.clone();
-        while (!p1.equals(pos2) && GameBoard.isLegal(p1)) {
+        while (!p1.equals(pos2) && ChessBoard.isLegal(p1)) {
             coords.add(p1.clone());
             p1.sum(xStep, yStep);
         }

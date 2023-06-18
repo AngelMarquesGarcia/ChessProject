@@ -1,6 +1,6 @@
 package pieces;
 
-import chessproject.GameBoard;
+import chessproject.ChessBoard;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;

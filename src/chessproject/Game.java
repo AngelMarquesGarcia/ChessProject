@@ -7,11 +7,13 @@ import java.util.Set;
 import pieces.Bishop;
 import pieces.ChessPiece;
 import pieces.Knight;
+import pieces.MoveUpdater;
 import static pieces.MoveUpdater.getPossibleMoves;
 import pieces.Queen;
 import pieces.Rook;
 import utilities.Coordinates;
 import utilities.WorB;
+import utilities.MyUtilities;
 import views.AppContainer;
 import views.BoardView;
 import views.GameMenu;
@@ -22,12 +24,12 @@ import views.GameMenu;
  */
 public class Game {
     private static List<ChessTurn> history = new ArrayList<>();
-    private static GameBoard gameBoard;
+    private static ChessBoard gameBoard;
     private static boolean[] whiteCastle = new boolean[]{true,true};
     private static boolean[] blackCastle = new boolean[]{true,true};
     private static int currentMoveNum = 0;
     private static int movesWithNoPawnOrCapture = 0;
-    private static Coordinates enPassant = null; //could potentially be Coordinates
+    private static Coordinates enPassant = null;
     private static boolean whiteToPlay = true;
     private static Set<Coordinates> goodMoves = null;
     private static WorB checkedKing = null;
@@ -43,6 +45,8 @@ public class Game {
     
     private static final String[] possiblePromotions =  new String[]{"Rook","Bishop","Knight", "Queen"};
 
+    
+    // <editor-fold desc="DONE // GETTERS & SETTERS">
     //////////////////////////////GETTERS & SETTERS//////////////////////////////
     //////////////////////////////GETTERS & SETTERS//////////////////////////////
     public static boolean[] getCastle(WorB color){
@@ -51,13 +55,13 @@ public class Game {
     public static Coordinates getEnPassant() {
         return enPassant;
     }
-    public static GameBoard getGameBoard(){
+    public static ChessBoard getGameBoard(){
         return gameBoard;
     }
     public static void setSelectedPiece(ChessPiece p){
         if (!completed && p != null && p.isWhite() == whiteToPlay){ //the turn system is disabled if we remove the second condition
             selectedPiece = p;
-            availableMoves = getPossibleMoves(p, gameBoard);
+            availableMoves = MoveUpdater.getPossibleMoves(p, gameBoard);
             cullAvailableMoves();
             highlightAvailableMoves();
             AppContainer.getAppContainer().repaint();
@@ -78,21 +82,23 @@ public class Game {
     public static boolean getWhiteToPlay() {
         return whiteToPlay;
     }
-
+    // </editor-fold>
+    
+    // <editor-fold desc="DONE // CONSTRUCTORS">
     ////////////////////////////////CONSTRUCTORS////////////////////////////////
     ////////////////////////////////CONSTRUCTORS////////////////////////////////
     public static void createGame() { 
         String configuration = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         createGame(configuration);
     }
-    
+
     public static void createGame(String configuration) {
         try{
             GameMenu.reset();
             history.clear();
             completed = false;
             String[] parts = configuration.split(" ");
-            gameBoard = new GameBoard(parts[0]);
+            gameBoard = new ChessBoard(parts[0]);
         
             setUpVariables(parts);
         } catch (RuntimeException e){
@@ -126,8 +132,9 @@ public class Game {
         startingMoveNum = Integer.parseInt(parts[5].strip());
         currentMoveNum = 1;
     }
+    // </editor-fold>
     
-    
+    // <editor-fold desc="DONE // CHECK DETECTION">
     ////////////////////////////////CHECK DETECTION////////////////////////////////
     ////////////////////////////////CHECK DETECTION////////////////////////////////
     /**
@@ -152,7 +159,7 @@ public class Game {
             checkers.add(selectedPiece);
         }
         List<Coordinates> line = Coordinates.getLine(selectedPiece.getPrevPos(), king.getPos(), true);
-        ChessPiece piece = GameBoard.getClosestPiece(king.getPos(), line, gameBoard);
+        ChessPiece piece = ChessBoard.getClosestPiece(king.getPos(), line, gameBoard);
         
         if (piece != null && ! piece.isColor(color) && getPossibleMoves(piece, gameBoard).contains(king.getPos())){
             isCheck = true;
@@ -211,7 +218,7 @@ public class Game {
 
     private static void check3FoldRepetition() {
         String currentPos = Game.toStringFEN();
-        currentPos = removeNumbers(currentPos);
+        currentPos = MyUtilities.removeNumbers(currentPos);
         int counter = 0;
         for (ChessTurn turn: history){
             if (counter >= 3) break;
@@ -229,13 +236,15 @@ public class Game {
     private static boolean checkEqualBoards(ChessMove move, String currentPos){
         if (move != null){
             String board = move.getFenBoardAfter();
-            board = removeNumbers(board);
+            board = MyUtilities.removeNumbers(board);
             if (board.equals(currentPos))
                 return true;
         }
         return false;
     }
-
+    //</editor-fold>
+    
+    // <editor-fold desc="DONE // INTERFACE">
     ////////////////////////////////INTERFACE////////////////////////////////
     ////////////////////////////////INTERFACE////////////////////////////////
     private static void pieceTaken(ChessPiece piece) {
@@ -256,7 +265,9 @@ public class Game {
             availableMoves.clear();    
         AppContainer.getAppContainer().repaint();
     }
-
+    // </editor-fold>
+    
+    // <editor-fold desc="DONE // MOVEMENT">
     ////////////////////////////////MOVEMENT////////////////////////////////
     ////////////////////////////////MOVEMENT////////////////////////////////
     public static void move(Coordinates cell) {
@@ -338,23 +349,24 @@ public class Game {
         System.out.println(toStringFEN());
     }
     
+    //Done
     /**
      * Iterates through availableMoves, and removes ilegal moves
      */
     private static void cullAvailableMoves() {
         //System.out.println("Game.cullAvailableMoves not supported yet. And most likely it will never be.");
-        GameBoard gameBoard = Game.getGameBoard();
+        ChessBoard gameBoard = Game.getGameBoard();
         ArrayList<Coordinates>  copy = (ArrayList<Coordinates>) availableMoves;
         copy = (ArrayList<Coordinates>) copy.clone();
         for (Coordinates move:copy){
             if (gameBoard.at(move) != null && gameBoard.at(move).isWhite() == selectedPiece.isWhite()){
                 availableMoves.remove(move);
-        }
+            }
         }
     }
 
     public static Coordinates checkForPin(Coordinates p, WorB c) {
-        GameBoard gameBoard = Game.getGameBoard();
+        ChessBoard gameBoard = Game.getGameBoard();
         
         Coordinates enemyKingPos = gameBoard.getKing(c).getPos();
         List<Coordinates> line = Coordinates.getLine(p, enemyKingPos, false);
@@ -389,6 +401,7 @@ public class Game {
         return null;
     }
 
+    //DONE
     public static void lock() {
         completed = true;
     }
@@ -465,7 +478,9 @@ public class Game {
         gameBoard.removePiece(pawn);
         return promotion;
     }
-
+    // </editor-fold>
+    
+    // <editor-fold desc="DONE // UNDO">
     ////////////////////////////////UNDO////////////////////////////////
     ////////////////////////////////UNDO////////////////////////////////
     public static void undoLastMove() {
@@ -544,7 +559,9 @@ public class Game {
         String enPassantString = parts[3];
         enPassant = interpretEnPassant(enPassantString);
     }
-
+    // </editor-fold>
+    
+    // <editor-fold desc="DONE // UTILITY">
     ////////////////////////////////UTILITY////////////////////////////////
     ////////////////////////////////UTILITY////////////////////////////////
     
@@ -659,14 +676,5 @@ public class Game {
         }
         return new Coordinates(x,y);
     }
-
-    private static String removeNumbers(String board) {
-        String[] parts = board.split(" ");
-        String newBoard = "";
-        for (int i=0; i<parts.length-3;i++){
-            newBoard += parts[i];
-        }
-        return newBoard;
-    }
-
+    // </editor-fold>
 }

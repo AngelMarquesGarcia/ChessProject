@@ -1,7 +1,7 @@
 package utilities;
 
-import chessproject.App;
-import chessproject.Game;
+import chessproject.ChessApp;
+import chessproject.UILauncher;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,10 +28,10 @@ public class RestartButton extends JButton implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Game.removeFocus();
+        ChessApp app = ChessApp.getChessApp();
+        app.removeFocusFromMatch();
         System.out.println("Restart Button Clicked");
-        String fenString = (String) JOptionPane.showInputDialog(
-                App.getFrame(),
+        String fenString = (String) JOptionPane.showInputDialog(UILauncher.getFrame(),
                 "Are you sure you want to restart?\nThe following board will be loaded",
                 "Confirm Restart",
                 JOptionPane.PLAIN_MESSAGE,
@@ -40,7 +40,7 @@ public class RestartButton extends JButton implements ActionListener {
                 "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         System.out.println(fenString);
         if (fenString != null) {
-            Game.restart(fenString);
+            app.restart(fenString);
         }
     }
 }

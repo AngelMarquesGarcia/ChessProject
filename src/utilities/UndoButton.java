@@ -1,7 +1,8 @@
 package utilities;
 
-import chessproject.App;
-import chessproject.Game;
+import Game.ChessMatch;
+import chessproject.ChessApp;
+import chessproject.UILauncher;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,21 +28,23 @@ public class UndoButton extends JButton implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Game.removeFocus();
-        if (!Game.canUndo()) {
-            JOptionPane.showMessageDialog(App.getFrame(), "It is not possible to undo, as there are no moves to undo", "Cannot Undo", 0);
+        ChessApp app = ChessApp.getChessApp();
+        app.removeFocusFromMatch();
+        ChessMatch match = app.getCurrentMatch();
+        if (!match.canUndo()) {
+            JOptionPane.showMessageDialog(UILauncher.getFrame(), "It is not possible to undo, as there are no moves to undo", "Cannot Undo", 0);
             return;
         }
         System.out.println("Undo Button Clicked");
-        boolean whiteResigns = Game.getWhiteToPlay();
+        boolean whiteResigns = match.getWhiteToPlay();
         String player = (!whiteResigns ? "White" : "Black");
         String opponent = (whiteResigns ? "White" : "Black");
         String msg = player + " wants to undo their last move. " + opponent + ", do you allow it?";
-        int option = JOptionPane.showConfirmDialog(App.getFrame(), msg, "titulo", 0, 2); //0 yes, 1 no
+        int option = JOptionPane.showConfirmDialog(UILauncher.getFrame(), msg, "titulo", 0, 2); //0 yes, 1 no
         System.out.println(option);
 
         if (option == 0) {
-            Game.undoLastMove();
+            match.undoLastMove();
         }
 
     }

@@ -1,6 +1,6 @@
 package views;
 
-import chessproject.Game;
+import chessproject.ChessApp;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -39,7 +39,7 @@ public class TakenPieces extends JPanel {
 
     @Override
     public void paint(Graphics g) {
-        List<ChessPiece> takenPieces = Game.getGameBoard().getTaken(color);
+        List<ChessPiece> takenPieces = ChessApp.getChessApp().getCurrentMatch().getChessBoard().getTaken(color);
         Collections.sort(takenPieces, Collections.reverseOrder());
         int y = 0;
         g.setColor(Color.red);

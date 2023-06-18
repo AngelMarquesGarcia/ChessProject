@@ -8,7 +8,7 @@ import javax.swing.*;
  * Contains the JFrame, initializes the GUI, and creates a Game.
  * @author Ángel Marqués García
  */
-public class App {
+public class UILauncher {
 
     private static JFrame frame;
 
@@ -16,7 +16,7 @@ public class App {
         return frame;
     }
 
-    public App() {
+    public void launch() {
         //Schedule a job for the event dispatch thread:
         //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -24,7 +24,6 @@ public class App {
                 createAndShowGUI();
             }
         });
-        Game.createGame();
     }
 
     /**

@@ -1,6 +1,6 @@
 package views;
 
-import chessproject.Game;
+import chessproject.ChessApp;
 import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.Color;
@@ -46,7 +46,7 @@ public class BoardView extends JPanel {
     //////////////////////////////CONSTRUCTOR//////////////////////////////
     public BoardView() {
         setPreferredSize(BOARDSIZE);
-        setSize(BOARDSIZE);
+        setSize(BOARDSIZE); //maybe removing this makes its size not fixed
         setVisible(true);
         //setOpaque(true);
         //setBorder(BorderFactory.createLineBorder(Color.black));
@@ -129,7 +129,8 @@ public class BoardView extends JPanel {
     }
 
     private void drawPosition(Graphics g) {
-        ChessPiece[][] gameBoard = Game.getGameBoard().getBoard();
+        ChessApp game = ChessApp.getChessApp();
+        ChessPiece[][] gameBoard = game.getCurrentMatch().getChessBoard().getBoard();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 //if (i == 8 || j == 8) continue;

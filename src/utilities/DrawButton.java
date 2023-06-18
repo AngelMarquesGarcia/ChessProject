@@ -1,7 +1,7 @@
 package utilities;
 
-import chessproject.App;
-import chessproject.Game;
+import chessproject.ChessApp;
+import chessproject.UILauncher;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,21 +27,22 @@ public class DrawButton extends JButton implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Game.removeFocus();
+        ChessApp app = ChessApp.getChessApp();
+        app.removeFocusFromMatch();
         System.out.println("Restart Button Clicked");
-        boolean whiteResigns = Game.getWhiteToPlay();
+        boolean whiteResigns = app.getCurrentMatch().getWhiteToPlay();
         String player = (whiteResigns ? "White" : "Black");
         String opponent = (!whiteResigns ? "White " : "Black");
-        int option = JOptionPane.showConfirmDialog(App.getFrame(),
+        int option = JOptionPane.showConfirmDialog(UILauncher.getFrame(),
                 player + " offers a draw. " + opponent + ", do you accept it?",
                 "Draw Offer",
                 0,
                 1); //0 yes, 1 no
         if (option == 0) {
-            JOptionPane.showMessageDialog(App.getFrame(), "Draw Accepted", "Draw Offer", 1);
-            Game.lock();
+            JOptionPane.showMessageDialog(UILauncher.getFrame(), "Draw Accepted", "Draw Offer", 1);
+            app.getCurrentMatch().lock();
         } else {
-            JOptionPane.showMessageDialog(App.getFrame(), "Draw Declined", "Draw Offer", 1);
+            JOptionPane.showMessageDialog(UILauncher.getFrame(), "Draw Declined", "Draw Offer", 1);
         }
         System.out.println(option);
 

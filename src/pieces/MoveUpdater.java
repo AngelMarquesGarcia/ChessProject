@@ -1,7 +1,9 @@
 package pieces;
 
-import chessproject.Game;
-import chessproject.GameBoard;
+import Game.ChessMatch;
+import Game.MovementManager;
+import chessproject.ChessApp;
+import chessproject.ChessBoard;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +19,7 @@ public class MoveUpdater {
     
     ////////////////////////////////GENERIC////////////////////////////////
     ////////////////////////////////GENERIC////////////////////////////////
-    public static List<Coordinates> getPossibleMoves(ChessPiece piece, GameBoard board){
+    public static List<Coordinates> getPossibleMoves(ChessPiece piece, ChessBoard board){
         if (piece.getName().equals("Pawn")){
             return getSeenCellsPawn(piece, board, false);
         } else if (piece.getName().equals("King")){
@@ -26,7 +28,7 @@ public class MoveUpdater {
         return getSeenCellsGeneric(piece, board, false);
     }
     
-    public static List<Coordinates> getAttackedCells(ChessPiece piece, GameBoard board){
+    public static List<Coordinates> getAttackedCells(ChessPiece piece, ChessBoard board){
         if (piece.getName().equals("Pawn")){
             return getSeenCellsPawn(piece, board, true);
         } else if (piece.getName().equals("King")){
@@ -35,19 +37,21 @@ public class MoveUpdater {
         return getSeenCellsGeneric(piece, board, true);
     }
     
-    private static List<Coordinates> getSeenCellsGeneric(ChessPiece piece, GameBoard board, boolean includeSameColor){
+    private static List<Coordinates> getSeenCellsGeneric(ChessPiece piece, ChessBoard board, boolean includeSameColor){
         //Still left to consider:
         //    1. pins (cullMoves)
         //    2. check (goodMoves)
         //    3. and maybe other stuff
-        Coordinates pin = Game.checkForPin(piece.getPos(), piece.color);
+        ChessMatch match = ChessApp.getChessApp().getCurrentMatch();
+        MovementManager mover = new MovementManager(match);
+        Coordinates pin = mover.checkForPin(piece.getPos(), piece.color);
         
         List<Coordinates> coords = new ArrayList<>();
         Set<PieceMove> moveset = MovesetMaster.getMoveset(piece);
         moveset = removeMovesIfPinned(moveset, pin);
         for (PieceMove pieceMove: moveset){
             for (Coordinates move:pieceMove){
-                if (!GameBoard.isLegal(move)) break;
+                if (!ChessBoard.isLegal(move)) break;
                 ChessPiece pieceAt = board.at(move);
                 if (pieceAt != null){
                     if (includeSameColor || pieceAt.isWhite() != piece.isWhite()){
@@ -59,7 +63,7 @@ public class MoveUpdater {
                 }
             }
         }
-        Set<Coordinates> goodMoves = (Game.getCheckedKing() == piece.color ? Game.getGoodMoves() : null);
+        Set<Coordinates> goodMoves = (match.getCheckedKing() == piece.color ? match.getGoodMoves() : null);
         if (goodMoves != null){
             coords.retainAll(goodMoves); //this is leaves in coords the intersection of coords and goodMoves.
         }
@@ -96,7 +100,7 @@ public class MoveUpdater {
      * @param includeSameColor
      * @return 
      */
-    private static List<Coordinates> getSeenCellsPawn(ChessPiece piece, GameBoard board, boolean includeSameColor) {
+    private static List<Coordinates> getSeenCellsPawn(ChessPiece piece, ChessBoard board, boolean includeSameColor) {
         List<Coordinates> coords = getSeenCellsGeneric(piece, board, includeSameColor);
         int yMovement = (piece.getColor() == WorB.BLACK ? 1 : -1);
         // try one direction
@@ -110,12 +114,13 @@ public class MoveUpdater {
         return coords;
     }
     
-    private static void tryTakePawn(List<Coordinates> coords, Coordinates newPos, ChessPiece piece, GameBoard board, boolean includeSameColor) {
-        if (!GameBoard.isLegal(newPos)){return;}
+    private static void tryTakePawn(List<Coordinates> coords, Coordinates newPos, ChessPiece piece, ChessBoard board, boolean includeSameColor) {
+        if (!ChessBoard.isLegal(newPos)){return;}
+        ChessMatch match = ChessApp.getChessApp().getCurrentMatch();
         ChessPiece pieceToTake = board.at(newPos);
         if (pieceToTake != null && (includeSameColor || pieceToTake.isWhite() != piece.isWhite())) {
             coords.add(newPos.clone());
-        } else if (newPos.equals(Game.getEnPassant())) {
+        } else if (newPos.equals(match.getEnPassant())) {
             coords.add(newPos.clone());
         }
         
@@ -123,14 +128,15 @@ public class MoveUpdater {
 
     ////////////////////////////////KING////////////////////////////////
     ////////////////////////////////KING////////////////////////////////
-    private static List<Coordinates> getSeenCellsKing(ChessPiece piece, GameBoard board, boolean includeSameColor) {
-        Set<Coordinates> attackedCells = Game.getGameBoard().getAllAttackedCells(WorB.not(piece.getColor()));
+    private static List<Coordinates> getSeenCellsKing(ChessPiece piece, ChessBoard board, boolean includeSameColor) {
+        ChessMatch match = ChessApp.getChessApp().getCurrentMatch();
+        Set<Coordinates> attackedCells = match.getChessBoard().getAllAttackedCells(WorB.not(piece.getColor()));
         cantBeCloseToEnemyKing(attackedCells, piece.getColor(), board);
         List<Coordinates> coords = new ArrayList<>();
         Set<PieceMove> moveset = MovesetMaster.getMoveset(piece);
   
         for (PieceMove pieceMove: moveset){
-            if (!GameBoard.isLegal(pieceMove.move)) break;
+            if (!ChessBoard.isLegal(pieceMove.move)) break;
             if (attackedCells.contains(pieceMove.move)) break;
             ChessPiece pieceAt = board.at(pieceMove.move);
             if (pieceAt != null){
@@ -146,7 +152,7 @@ public class MoveUpdater {
         return coords;
     }
     
-    private static void cantBeCloseToEnemyKing(Set<Coordinates> attackedCells, WorB c, GameBoard board) {
+    private static void cantBeCloseToEnemyKing(Set<Coordinates> attackedCells, WorB c, ChessBoard board) {
         ChessPiece enemyKing = board.getKing(WorB.not(c));
         Coordinates kingPos = enemyKing.getPos();
         Set<PieceMove> coords = MovesetMaster.getMoveset(enemyKing);
@@ -155,9 +161,10 @@ public class MoveUpdater {
         }
     }
     
-    private static void tryCastle(List<Coordinates> coords, ChessPiece piece, GameBoard board, Set<Coordinates> attackedCells) {
-        if (Game.getCheckedKing() == piece.getColor()) return;
-        boolean[] castlingRights = Game.getCastle(piece.getColor());
+    private static void tryCastle(List<Coordinates> coords, ChessPiece piece, ChessBoard board, Set<Coordinates> attackedCells) {
+        ChessMatch match = ChessApp.getChessApp().getCurrentMatch();
+        if (match.getCheckedKing() == piece.getColor()) return;
+        boolean[] castlingRights = match.getCastle(piece.getColor());
         int y = (piece.isWhite() ? 7:0);
         List<Coordinates> line;
         boolean canCastle = true;
@@ -195,6 +202,22 @@ public class MoveUpdater {
         }
     }
 
-    
+    /**
+     * Iterates through availableMoves, and removes ilegal moves
+     * @param availableMoves
+     * @param selectedPiece
+     */
+    public static void cullAvailableMoves(List<Coordinates> availableMoves, ChessPiece selectedPiece) {
+        //System.out.println("Game.cullAvailableMoves not supported yet. And most likely it will never be.");
+        ChessMatch match = ChessApp.getChessApp().getCurrentMatch();
+        ChessBoard gameBoard = match.getChessBoard();
+        ArrayList<Coordinates>  copy = (ArrayList<Coordinates>) availableMoves;
+        copy = (ArrayList<Coordinates>) copy.clone();
+        for (Coordinates move:copy){
+            if (gameBoard.at(move) != null && gameBoard.at(move).isWhite() == selectedPiece.isWhite()){
+                availableMoves.remove(move);
+            }
+        }
+    }
 
 }

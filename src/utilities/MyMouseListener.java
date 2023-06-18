@@ -1,6 +1,8 @@
 package utilities;
 
-import chessproject.Game;
+import Game.ChessMatch;
+import Game.MovementManager;
+import chessproject.ChessApp;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -32,17 +34,18 @@ public class MyMouseListener implements MouseListener {
     }
     
     private void cellClicked(Coordinates cell) {
-        ChessPiece[][] gameBoard = Game.getGameBoard().getBoard();
+        ChessMatch match = ChessApp.getChessApp().getCurrentMatch();
+        ChessPiece[][] gameBoard = match.getChessBoard().getBoard();
         ChessPiece piece = gameBoard[cell.y][cell.x];
-        if (Game.getSelectedPiece() == null) {
-            Game.setSelectedPiece(piece);
+        if (match.getSelectedPiece() == null) {
+            match.setSelectedPiece(piece);
         } else {
             //if we selected another of our pieces, change the selected piece to that
             //else, try to move there.
-            if (piece != null && piece.isWhite() == Game.getSelectedPiece().isWhite()) {
-                Game.setSelectedPiece(piece);
+            if (piece != null && piece.isWhite() == match.getSelectedPiece().isWhite()) {
+                match.setSelectedPiece(piece);
             } else {
-                Game.move(cell);
+                new MovementManager(match).move(cell);
             }
         }
 

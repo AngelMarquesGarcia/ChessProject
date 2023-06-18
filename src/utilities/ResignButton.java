@@ -1,7 +1,7 @@
 package utilities;
 
-import chessproject.App;
-import chessproject.Game;
+import chessproject.ChessApp;
+import chessproject.UILauncher;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,20 +27,21 @@ public class ResignButton extends JButton implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Game.removeFocus();
+        ChessApp app = ChessApp.getChessApp();
+        app.removeFocusFromMatch();
         System.out.println("Restart Button Clicked");
-        boolean whiteResigns = Game.getWhiteToPlay();
+        boolean whiteResigns = app.getCurrentMatch().getWhiteToPlay();
         String player = (whiteResigns ? "White" : "Black");
         String opponent = (!whiteResigns ? "White " : "Black");
-        int option = JOptionPane.showConfirmDialog(App.getFrame(),
+        int option = JOptionPane.showConfirmDialog(UILauncher.getFrame(),
                 player + ", are you sure you want to resign?",
                 "Resignation Letter",
                 0,
                 3); //0 yes, 1 no
         if (option == 0) {
             String msg = player + " has resigned, " + opponent + " wins"; //String msg = (whiteResigns ? "White has resigned, Black wins":"Black has resigned, White wins");
-            JOptionPane.showMessageDialog(App.getFrame(), msg, "Resignation", 1);
-            Game.lock();
+            JOptionPane.showMessageDialog(UILauncher.getFrame(), msg, "Resignation", 1);
+            app.getCurrentMatch().lock();
         } else {
             //JOptionPane.showMessageDialog(this, "Draw Declined", "Resignation", 1);
         }
