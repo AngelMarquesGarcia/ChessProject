@@ -22,6 +22,7 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
     protected final String representation;
     protected final Image sprite; 
     protected int value;
+    protected boolean takesSameAsMoves;
     
     /**
      * In its children, sp is calculated one of two ways. Either have the full path to both sprites and choose the correct one, or
@@ -40,6 +41,7 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
         color = c;
         representation = (color == WorB.WHITE ? rep:rep.toLowerCase());
         name = n;
+        takesSameAsMoves = true;
         Image im;
         try {
             im = ImageIO.read(new File(sp));
@@ -70,7 +72,7 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
     }
 
     public String getName() {
-        return (isWhite() ? name:name.toLowerCase());
+        return name;
     }
     
     public Coordinates getPos(){
@@ -92,5 +94,9 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
 
     public Image getSprite() {
         return sprite;
+    }
+
+    public boolean getTakesSameAsMoves() {
+        return takesSameAsMoves;
     }
 }

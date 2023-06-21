@@ -3,6 +3,7 @@ package utilities;
 import Game.ChessMatch;
 import Game.MovementManager;
 import chessproject.ChessApp;
+import chessproject.ChessBoard;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -35,8 +36,8 @@ public class MyMouseListener implements MouseListener {
     
     private void cellClicked(Coordinates cell) {
         ChessMatch match = ChessApp.getChessApp().getCurrentMatch();
-        ChessPiece[][] gameBoard = match.getChessBoard().getBoard();
-        ChessPiece piece = gameBoard[cell.y][cell.x];
+        ChessBoard gameBoard = match.getChessBoard();
+        ChessPiece piece = gameBoard.at(cell);
         if (match.getSelectedPiece() == null) {
             match.setSelectedPiece(piece);
         } else {

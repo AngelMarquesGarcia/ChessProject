@@ -46,7 +46,7 @@ public class GameBoardTest {
         ChessBoard gameBoard = new ChessBoard("rnbqkbnr/ppp1pppp/3p4/4P3/8/8/PPPP1PPP/RNBQKBNR");
         ChessPiece piece = gameBoard.at(new Coordinates(4, 3));
         assertNotNull(piece);
-        assertEquals(piece.getName(), "P");
+        assertEquals(piece.getName(), "Pawn");
         
     }
     /**

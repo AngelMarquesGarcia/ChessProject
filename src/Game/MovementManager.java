@@ -49,7 +49,7 @@ public class MovementManager {
         match.updateEnPassant(cell, currentMove);
         
         ChessPiece pieceToMove = st.selectedPiece;
-        if (st.selectedPiece.getName().toLowerCase().equals("p")){
+        if (st.selectedPiece.getName().equals("Pawn")){
             f.movesWithNoPawnOrCapture = 0;
         }
 
@@ -72,7 +72,7 @@ public class MovementManager {
 
         
         ChessPiece promoted = null;
-        if (((f.whiteToPlay && cell.y == 0) || (!f.whiteToPlay && cell.y == 7)) && st.selectedPiece.getName().toUpperCase().equals("P")){
+        if (((f.whiteToPlay && cell.y == 0) || (!f.whiteToPlay && cell.y == 7)) && st.selectedPiece.getName().equals("Pawn")){
             promoted = promotePawn(st.selectedPiece);
             st.selectedPiece = promoted;
         }
@@ -83,6 +83,7 @@ public class MovementManager {
             currentTurn = new ChessTurn(f.currentMoveNum);
             match.getHistory().add(currentTurn);
             currentTurn.setWhiteMove(currentMove);
+            match.setCurrentTurn(currentTurn);
         } else {
             currentTurn.setBlackMove(currentMove);
         }
@@ -139,10 +140,10 @@ public class MovementManager {
                 if (piece.isColor(c)) {
                     break;
                 } else {
-                    String pieceName = piece.getName().toUpperCase();
-                    if ((dir.x == 0 || dir.y == 0) && (pieceName.equals("R") || "Q".equals(pieceName))) {
+                    String pieceName = piece.getName();
+                    if ((dir.x == 0 || dir.y == 0) && (pieceName.equals("Rook") || "Queen".equals(pieceName))) {
                         return dir;
-                    } else if ((Math.abs(dir.x) == 1 && Math.abs(dir.y) == 1) && (pieceName.equals("B") || "Q".equals(pieceName))) {
+                    } else if ((Math.abs(dir.x) == 1 && Math.abs(dir.y) == 1) && (pieceName.equals("Bishop") || "Queen".equals(pieceName))) {
                         return dir;
                     }
                 }
@@ -161,7 +162,7 @@ public class MovementManager {
     public int checkCastle(ChessPiece selectedPiece) {
         boolean[] castlingRights = (f.whiteToPlay ? f.whiteCastle:f.blackCastle);
         if (!castlingRights[0] && !castlingRights[1]) return 0; //if can't castle return 0
-        if (!selectedPiece.getName().toUpperCase().equals("K")) return 0; //if selected is not a king, return 0
+        if (!selectedPiece.getName().equals("King")) return 0; //if selected is not a king, return 0
         //we just moved a king, so we can no longer castle
         castlingRights[0] = false;
         castlingRights[1] = false;

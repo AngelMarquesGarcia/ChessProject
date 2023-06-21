@@ -13,9 +13,17 @@ import utilities.WorB;
  * @author Ángel Marqués García 
  */
 public class MatchState {
-    public ChessPiece selectedPiece = null;
-    public List<Coordinates> availableMoves = new ArrayList<>();
-    public Set<Coordinates> goodMoves = new HashSet<>();
-    public List<ChessPiece> checkers = new ArrayList<>();
-    public WorB checkedKing = null;
+    public ChessPiece selectedPiece;
+    public List<Coordinates> availableMoves;
+    public Set<Coordinates> goodMoves;
+    public List<ChessPiece> checkers;
+    public WorB checkedKing;
+    
+    public MatchState(){
+        selectedPiece = null;
+        availableMoves = new ArrayList<>();
+        goodMoves = new HashSet<>();
+        checkers = new ArrayList<>();
+        checkedKing = null;
+    }
 }

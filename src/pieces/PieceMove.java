@@ -38,7 +38,7 @@ public class PieceMove implements Iterable<Coordinates> {
 
         @Override
         public boolean hasNext() {
-            return counter <= goal;
+            return counter < goal;
         }
 
         @Override

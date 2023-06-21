@@ -84,7 +84,7 @@ public class ChessBoard {
     
     /**
      * returns a set of all Coordinates that are being attacked by a piece or pawn.
-     * It does not take into consideration Coordinates being attacked by the enemy king.
+     * It does not take into consideration Coordinates being attacked by the enemy king so as to not create a loop.
      * @param color
      * @return 
      */
@@ -246,7 +246,7 @@ public class ChessBoard {
                         conf += Integer.toString(empties);
                         empties = 0;
                     }
-                    conf += piece.getName();
+                    conf += piece.getRepresentation();
         }   }   }
         return conf.substring(1);
     }

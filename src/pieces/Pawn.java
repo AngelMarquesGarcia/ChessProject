@@ -17,5 +17,6 @@ public class Pawn extends ChessPiece {
     public Pawn(WorB color) {
         super(CLASS_NAME, CLASS_REP, (color==WorB.WHITE? whiteSprite:blackSprite), color);
         value = V;
+        takesSameAsMoves = false;
     }
 }

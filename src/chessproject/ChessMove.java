@@ -31,8 +31,8 @@ public class ChessMove {
     public String toString(){
         if (isShortCastle){return "O-O";}
         if (isLongCastle){return "O-O-O";}
-        if (promotion != null){return finPos.toString() + promotion.getName().toUpperCase(); }
-        String pieceName = movedPiece.getName().toUpperCase();
+        if (promotion != null){return finPos.toString() + promotion.getRepresentation().toUpperCase(); }
+        String pieceName = movedPiece.getRepresentation().toUpperCase();
         String from = iniPos.toString();
         String takes = (takenPiece==null? "":"x");
         String takenName = finPos.toString();

@@ -46,8 +46,8 @@ public class TakenPieces extends JPanel {
         g.fillRect(0, 0, 200, 50);
         int i = 0;
         for (ChessPiece piece : takenPieces) {
-            BufferedImage bi = sprites.get(piece.getName());
-            g.drawImage(bi, i * PIECEWIDTH, y, PIECEWIDTH, PIECEWIDTH, this);
+            //BufferedImage bi = sprites.get(piece.getName());
+            g.drawImage(piece.getSprite(), i * PIECEWIDTH, y, PIECEWIDTH, PIECEWIDTH, this);
             i++;
             if ((i + 1) * PIECEWIDTH > BOXSIZE.width) {
                 y = 25;

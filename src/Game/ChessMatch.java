@@ -42,6 +42,8 @@ public class ChessMatch {
     }
     
     public ChessMatch(String configuration) {
+        flags = new Flags();
+        matchState = new MatchState();
         mover = new MovementManager(this);
         history = new ArrayList<>();
         completed = false;
@@ -113,6 +115,9 @@ public class ChessMatch {
     }
     public ChessTurn getCurrentTurn() {
         return currentTurn;
+    }
+    public void setCurrentTurn(ChessTurn currentTurn) {
+        this.currentTurn = currentTurn;
     }
     public List<ChessTurn> getHistory() {
         return history;
@@ -300,7 +305,7 @@ public class ChessMatch {
             return;
         }
         flags.enPassant = null;
-        if (!matchState.selectedPiece.getName().toUpperCase().equals("P")) return;
+        if (!matchState.selectedPiece.getName().equals("Pawn")) return;
         Coordinates pos = matchState.selectedPiece.getPos();
         if (Math.abs(pos.y-cell.y) > 1){
             int y = (flags.whiteToPlay ? cell.y+1:cell.y-1);
@@ -332,5 +337,4 @@ public class ChessMatch {
         completed = true;
     }
     // </editor-fold>
-
 }

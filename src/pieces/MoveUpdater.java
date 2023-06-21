@@ -51,18 +51,18 @@ public class MoveUpdater {
         moveset = removeMovesIfPinned(moveset, pin);
         Coordinates newPos;
         for (PieceMove pieceMove: moveset){
-            newPos = piece.getPos();
-            for (Coordinates move:pieceMove){
+            newPos = piece.getPos().clone();
+            for (Coordinates move:pieceMove){ //each of these is a new direction
                 newPos = newPos.sum(move);
                 if (!ChessBoard.isLegal(newPos)) break;
                 ChessPiece pieceAt = board.at(newPos);
-                if (pieceAt != null){
-                    if (includeSameColor || pieceAt.isWhite() != piece.isWhite()){
-                        coords.add(newPos);
+                if (pieceAt != null){ //this might allow pawns to take when a piece is in front of them
+                    if (includeSameColor || (pieceAt.isWhite() != piece.isWhite()) && piece.getTakesSameAsMoves()){
+                        coords.add(newPos.clone());
                     }
-                    break;
+                    break; //removing this break gives pieces x-ray vision
                 } else {
-                    coords.add(newPos);
+                    coords.add(newPos.clone());
                 }
             }
         }
@@ -121,12 +121,11 @@ public class MoveUpdater {
         if (!ChessBoard.isLegal(newPos)){return;}
         ChessMatch match = ChessApp.getChessApp().getCurrentMatch();
         ChessPiece pieceToTake = board.at(newPos);
-        if (pieceToTake != null && (includeSameColor || pieceToTake.isWhite() != piece.isWhite())) {
+        if (includeSameColor || pieceToTake != null && (pieceToTake.isWhite() != piece.isWhite())) {
             coords.add(newPos.clone());
-        } else if (newPos.equals(match.getEnPassant())) {
+        } else if (pieceToTake == null && newPos.equals(match.getEnPassant())) {
             coords.add(newPos.clone());
         }
-        
     }
 
     ////////////////////////////////KING////////////////////////////////
@@ -139,16 +138,17 @@ public class MoveUpdater {
         Set<PieceMove> moveset = MovesetMaster.getMoveset(piece);
   
         for (PieceMove pieceMove: moveset){
-            if (!ChessBoard.isLegal(pieceMove.move)) break;
-            if (attackedCells.contains(pieceMove.move)) break;
-            ChessPiece pieceAt = board.at(pieceMove.move);
+            Coordinates newPos = piece.getPos().clone().sum(pieceMove.move);
+            if (!ChessBoard.isLegal(newPos)) continue;
+            if (attackedCells.contains(newPos)) continue;
+            ChessPiece pieceAt = board.at(newPos);
             if (pieceAt != null){
                 if (includeSameColor || pieceAt.isWhite() != piece.isWhite()){
-                    coords.add(pieceMove.move);
+                    coords.add(newPos);
                 }
-                break;
+                //break; probably a continue or nothing
             } else {
-                coords.add(pieceMove.move);
+                coords.add(newPos);
             }
         }
         tryCastle(coords, piece, board, attackedCells);
@@ -184,6 +184,7 @@ public class MoveUpdater {
                 coords.add(new Coordinates(6,y));
             }
         }
+        canCastle = true;
         if (castlingRights[1]){
             line = Coordinates.getLine(piece.getPos(), new Coordinates(0,y), false);
             line.remove(0);
