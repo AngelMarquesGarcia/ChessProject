@@ -44,7 +44,6 @@ public class ChessMatch {
     public ChessMatch(String configuration) {
         flags = new Flags();
         matchState = new MatchState();
-        mover = new MovementManager(this);
         history = new ArrayList<>();
         completed = false;
         String[] parts = configuration.split(" ");
@@ -55,8 +54,8 @@ public class ChessMatch {
             System.out.println(e.getClass().getName());
             board = new ChessBoard(ChessGame.defaultConfig);
         }
+        mover = new MovementManager(this);
         setUpVariables(parts);
-
     }
     
     private void setUpVariables(String[] parts) {
@@ -279,10 +278,16 @@ public class ChessMatch {
                 case 'q' -> flags.blackCastle[1] = true;
         }   }
     }
-
+    
+    /**
+     * Evaluates wether a piece is moving from or to any of the corners of the board.
+     * If that is true, then it's not possible to castle on that side.
+     * It might be better to do this by checking name instead of position
+     * @param finPos 
+     */
     public void updateCastlingRightsAfterMove(Coordinates finPos) {
-        Coordinates iniPos = matchState.selectedPiece.getPos();
-        if (iniPos.equals(0,0) || finPos.equals(0,0)) 
+        Coordinates iniPos = matchState.selectedPiece.getPrevPos();
+        if (iniPos.equals(0,0) || finPos.equals(0,0))
             flags.blackCastle[1] = false;
         if (iniPos.equals(7,0) || finPos.equals(7,0)) 
             flags.blackCastle[0] = false;
