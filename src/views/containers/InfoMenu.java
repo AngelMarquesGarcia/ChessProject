@@ -1,18 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-package views;
+package views.containers;
 
 import javax.swing.*;
 import utilities.WorB;
 
 /**
  *
- * @author Ángel Marqués García 
+ * @author Ángel Marqués García
  */
 public class InfoMenu extends JPanel {
+
     private static JPanel takenByBlack;
     private static JPanel takenByWhite;
 
@@ -22,22 +18,24 @@ public class InfoMenu extends JPanel {
         takenByBlack = new TakenPieces(WorB.BLACK);
         takenByWhite = new TakenPieces(WorB.WHITE);
         JPanel menu = new GameMenu();
-        
+
         add(takenByBlack);
         add(menu);
         add(takenByWhite);
     }
     
-    public static TakenPieces getTakenByBlack(){
+    public static TakenPieces getTakenBy(WorB color) {
+        return (TakenPieces) (color == WorB.WHITE ? takenByWhite : takenByBlack);
+    }
+
+    //useless
+    public static TakenPieces getTakenByBlack() {
         return (TakenPieces) takenByBlack;
     }
-    
-    public static TakenPieces getTakenByWhite(){
+
+    //useless
+    public static TakenPieces getTakenByWhite() {
         return (TakenPieces) takenByWhite;
-    }
-    
-    public static TakenPieces getTakenBy(WorB color){
-        return (TakenPieces) (color == WorB.WHITE ? takenByWhite:takenByBlack);
     }
 
 }

@@ -1,14 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 package pieces;
 
-import java.util.Collection;
+import chessproject.ChessBoard;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
 import utilities.Coordinates;
 import java.util.List;
-import java.util.Set;
+import javax.imageio.ImageIO;
 import utilities.WorB;
 
 /**
@@ -17,38 +15,52 @@ import utilities.WorB;
  */
 public abstract class ChessPiece implements Comparable<ChessPiece>{
 
-    static void cullMoveSet(Set<Coordinates> moves, Coordinates pin) {
-        if (pin != null){
-            if (moves.contains(pin) || moves.contains(pin.mult(-1))){
-                moves.clear();
-                moves.add(pin.clone());
-                moves.add(pin.clone().mult(-1));
-            } else{
-                moves.clear();
-            }
-        }
-    }
     protected Coordinates pos;
     private Coordinates prevPos;
-    protected WorB color;
-    protected String name;
+    protected final WorB color;
+    protected final String name;
+    protected final String representation;
+    protected final Image sprite; 
     protected int value;
-    protected Coordinates pinned;
+    protected boolean takesSameAsMoves;
     
-    public ChessPiece(WorB c){
+    /**
+     * In its children, sp is calculated one of two ways. Either have the full path to both sprites and choose the correct one, or
+     * Have the beggining and the end of the path as a constant, generating the file name from the color and piece name
+     * I'm not super sure which would be best, so I left a couple of both.
+     * King, Queen, Pawn, have both sprites.
+     * Bishop, Knight, Rook, have start and end.
+     * @param n
+     * @param rep
+     * @param sp
+     * @param c 
+     */
+    public ChessPiece(String n, String rep, String sp, WorB c){
         pos = new Coordinates(9,9);
         prevPos = new Coordinates(9,9);
         color = c;
-        name = "";
-        pinned = null;
+        representation = (color == WorB.WHITE ? rep:rep.toLowerCase());
+        name = n;
+        takesSameAsMoves = true;
+        Image im;
+        try {
+            im = ImageIO.read(new File(sp));
+        } catch (IOException ex) {
+            im = null;
+            System.out.println("Couldn't find the file at " + sp);
+        }
+        sprite = im;
+        
     }
-    
-    public abstract List<Coordinates> updateAvailableMoves();
-    
+        
     public void move(Coordinates newPos){
         prevPos.copy(pos);
         pos.copy(newPos);
         //updateAvailableMoves();
+    }
+    
+    public WorB getColor(){
+        return color;
     }
     
     public boolean isWhite(){
@@ -60,7 +72,7 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
     }
 
     public String getName() {
-        return (isWhite() ? name:name.toLowerCase());
+        return name;
     }
     
     public Coordinates getPos(){
@@ -70,13 +82,21 @@ public abstract class ChessPiece implements Comparable<ChessPiece>{
     public Coordinates getPrevPos(){
         return prevPos.clone();
     }
+    
+    public String getRepresentation(){
+        return representation;
+    }
 
     @Override
     public int compareTo(ChessPiece piece) {
         return Integer.compare(value, piece.value);
     }
 
-    public List<Coordinates> updateAttackedCells() {
-        return updateAvailableMoves();
+    public Image getSprite() {
+        return sprite;
+    }
+
+    public boolean getTakesSameAsMoves() {
+        return takesSameAsMoves;
     }
 }

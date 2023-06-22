@@ -43,10 +43,10 @@ public class GameBoardTest {
 
     @Test
     public void testConstructors(){
-        GameBoard gameBoard = new GameBoard("rnbqkbnr/ppp1pppp/3p4/4P3/8/8/PPPP1PPP/RNBQKBNR");
+        ChessBoard gameBoard = new ChessBoard("rnbqkbnr/ppp1pppp/3p4/4P3/8/8/PPPP1PPP/RNBQKBNR");
         ChessPiece piece = gameBoard.at(new Coordinates(4, 3));
         assertNotNull(piece);
-        assertEquals(piece.getName(), "P");
+        assertEquals(piece.getName(), "Pawn");
         
     }
     /**
@@ -57,9 +57,9 @@ public class GameBoardTest {
         System.out.println("getClosestPiece");
         Coordinates pos = null;
         List<Coordinates> line = null;
-        GameBoard gameBoard = null;
+        ChessBoard gameBoard = null;
         ChessPiece expResult = null;
-        ChessPiece result = GameBoard.getClosestPiece(pos, line, gameBoard);
+        ChessPiece result = ChessBoard.getClosestPiece(pos, line, gameBoard);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -73,7 +73,7 @@ public class GameBoardTest {
         System.out.println("isLegal");
         Coordinates c = null;
         boolean expResult = false;
-        boolean result = GameBoard.isLegal(c);
+        boolean result = ChessBoard.isLegal(c);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -85,7 +85,7 @@ public class GameBoardTest {
     @Test
     public void testGetBoard() {
         System.out.println("getBoard");
-        GameBoard instance = null;
+        ChessBoard instance = null;
         ChessPiece[][] expResult = null;
         ChessPiece[][] result = instance.getBoard();
         assertArrayEquals(expResult, result);
@@ -100,7 +100,7 @@ public class GameBoardTest {
     public void testGetPieces() {
         System.out.println("getPieces");
         WorB color = null;
-        GameBoard instance = null;
+        ChessBoard instance = null;
         List<ChessPiece> expResult = null;
         List<ChessPiece> result = instance.getPieces(color);
         assertEquals(expResult, result);
@@ -115,7 +115,7 @@ public class GameBoardTest {
     public void testGetTaken() {
         System.out.println("getTaken");
         WorB color = null;
-        GameBoard instance = null;
+        ChessBoard instance = null;
         List<ChessPiece> expResult = null;
         List<ChessPiece> result = instance.getTaken(color);
         assertEquals(expResult, result);
@@ -130,7 +130,7 @@ public class GameBoardTest {
     public void testGetKing() {
         System.out.println("getKing");
         WorB color = null;
-        GameBoard instance = null;
+        ChessBoard instance = null;
         ChessPiece expResult = null;
         ChessPiece result = instance.getKing(color);
         assertEquals(expResult, result);
@@ -145,7 +145,7 @@ public class GameBoardTest {
     public void testGetAllMoves() {
         System.out.println("getAllMoves");
         WorB color = null;
-        GameBoard instance = null;
+        ChessBoard instance = null;
         Set<Coordinates> expResult = null;
         Set<Coordinates> result = instance.getAllMoves(color);
         assertEquals(expResult, result);
@@ -160,7 +160,7 @@ public class GameBoardTest {
     public void testGetAllAttackedCells() {
         System.out.println("getAllAttackedCells");
         WorB color = null;
-        GameBoard instance = null;
+        ChessBoard instance = null;
         Set<Coordinates> expResult = null;
         Set<Coordinates> result = instance.getAllAttackedCells(color);
         assertEquals(expResult, result);
@@ -176,7 +176,7 @@ public class GameBoardTest {
         System.out.println("move");
         Coordinates pos1 = null;
         Coordinates pos2 = null;
-        GameBoard instance = null;
+        ChessBoard instance = null;
         instance.move(pos1, pos2);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -189,7 +189,7 @@ public class GameBoardTest {
     public void testAt() {
         System.out.println("at");
         Coordinates c = null;
-        GameBoard instance = null;
+        ChessBoard instance = null;
         ChessPiece expResult = null;
         ChessPiece result = instance.at(c);
         assertEquals(expResult, result);
@@ -204,7 +204,7 @@ public class GameBoardTest {
     public void testAddTakenPiece() {
         System.out.println("addTakenPiece");
         ChessPiece piece = null;
-        GameBoard instance = null;
+        ChessBoard instance = null;
         instance.addTakenPiece(piece);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

@@ -1,11 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+package views.containers;
 
-package views;
-
-import chessproject.Game;
+import chessproject.ChessApp;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -23,7 +18,7 @@ import utilities.WorB;
 
 /**
  *
- * @author Ángel Marqués García 
+ * @author Ángel Marqués García
  */
 public class TakenPieces extends JPanel {
 
@@ -31,30 +26,30 @@ public class TakenPieces extends JPanel {
     private Map<String, BufferedImage> sprites = new HashMap<>();
     private final int PIECEWIDTH = 25;
     private final WorB color;
-    
+
     public TakenPieces(WorB c) {
         color = c;
         setPreferredSize(BOXSIZE);
         setSize(BOXSIZE);
         setVisible(true);
         loadSprites();
-        
+
         this.setBackground(Color.red);
     }
-    
+
     @Override
-    public void paint(Graphics g){
-        List<ChessPiece> takenPieces = Game.getGameBoard().getTaken(color);
+    public void paint(Graphics g) {
+        List<ChessPiece> takenPieces = ChessApp.getChessApp().getCurrentMatch().getChessBoard().getTaken(color);
         Collections.sort(takenPieces, Collections.reverseOrder());
         int y = 0;
         g.setColor(Color.red);
         g.fillRect(0, 0, 200, 50);
         int i = 0;
-        for (ChessPiece piece: takenPieces){
-            BufferedImage bi = sprites.get(piece.getName());
-            g.drawImage(bi, i * PIECEWIDTH, y,PIECEWIDTH,PIECEWIDTH, this);   
+        for (ChessPiece piece : takenPieces) {
+            //BufferedImage bi = sprites.get(piece.getName());
+            g.drawImage(piece.getSprite(), i * PIECEWIDTH, y, PIECEWIDTH, PIECEWIDTH, this);
             i++;
-            if ((i+1) * PIECEWIDTH > BOXSIZE.width){
+            if ((i + 1) * PIECEWIDTH > BOXSIZE.width) {
                 y = 25;
                 i = 0;
             }
@@ -62,8 +57,9 @@ public class TakenPieces extends JPanel {
         //g.setColor(Color.BLUE);
         //g.drawString("+JUAN", i * PIECEWIDTH, 45);
     }
-    
-    public final void loadSprites(){
+
+    public final void loadSprites() {
+        //same as with BoardView, might not be neccesary if we use GameBoard.whiteTaken
         BufferedImage bi;
         try {
             bi = ImageIO.read(new File("./files/BlackKing.png"));
@@ -78,7 +74,7 @@ public class TakenPieces extends JPanel {
             this.sprites.put("r", bi);
             bi = ImageIO.read(new File("./files/BlackPawn.png"));
             this.sprites.put("p", bi);
-            
+
             bi = ImageIO.read(new File("./files/WhiteKing.png"));
             this.sprites.put("K", bi);
             bi = ImageIO.read(new File("./files/WhiteQueen.png"));
@@ -91,7 +87,7 @@ public class TakenPieces extends JPanel {
             this.sprites.put("R", bi);
             bi = ImageIO.read(new File("./files/WhitePawn.png"));
             this.sprites.put("P", bi);
-            
+
         } catch (IOException e) {
             System.out.println("Image could not be read");
             e.printStackTrace();

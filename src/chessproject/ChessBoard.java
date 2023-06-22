@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package chessproject;
 
 import java.util.ArrayList;
@@ -13,6 +9,7 @@ import java.util.Set;
 import pieces.Bishop;
 import pieces.King;
 import pieces.Knight;
+import pieces.MoveUpdater;
 import pieces.Pawn;
 import pieces.Queen;
 import pieces.Rook;
@@ -27,11 +24,12 @@ import utilities.WorB;
  * 
  * @author Ángel Marqués García
  */
-public class GameBoard {
+public class ChessBoard {
+    // <editor-fold desc="STATIC">
     public static final int BOARD_WIDTH = 8;
     public static final int BOARD_HEIGHT = 8;
 
-    public static ChessPiece getClosestPiece(Coordinates pos, List<Coordinates> line, GameBoard gameBoard) {
+    public static ChessPiece getClosestPiece(Coordinates pos, List<Coordinates> line, ChessBoard gameBoard) {
         int bestDistance = 18;
         ChessPiece bestPiece = null;
         for (Coordinates c: line){
@@ -49,7 +47,9 @@ public class GameBoard {
         return (c.y >= 0 && c.y < BOARD_HEIGHT) && (c.x >= 0 && c.x < BOARD_WIDTH);
     }
   
-    private ChessPiece[][] gameBoard = new ChessPiece[BOARD_HEIGHT][BOARD_WIDTH];
+    // </editor-fold>
+    
+    private ChessPiece[][] chessBoard = new ChessPiece[BOARD_HEIGHT][BOARD_WIDTH];
     private List<ChessPiece> whitePieces = new ArrayList<>(); 
     private List<ChessPiece> blackPieces = new ArrayList<>();
     private List<ChessPiece> whiteTaken = new ArrayList<>(); 
@@ -57,26 +57,34 @@ public class GameBoard {
     private ChessPiece whiteKing;
     private ChessPiece blackKing;
     
-    public ChessPiece[][] getBoard(){ return gameBoard;}
+    
+    //////////////////////////////GETTERS & SETTERS//////////////////////////////
+    //////////////////////////////GETTERS & SETTERS//////////////////////////////
+    public ChessPiece[][] getBoard(){
+        return chessBoard;
+    }
     public List<ChessPiece> getPieces(WorB color){
-        return (color==WorB.WHITE ? whitePieces:blackPieces);}
+        return (color==WorB.WHITE ? whitePieces:blackPieces);
+    }
     public List<ChessPiece> getTaken(WorB color){ 
-        return (color==WorB.WHITE ? whiteTaken:blackTaken);}
+        return (color==WorB.WHITE ? whiteTaken:blackTaken);
+    }
     public ChessPiece getKing(WorB color){ 
-        return (color==WorB.WHITE ? whiteKing:blackKing);}
+        return (color==WorB.WHITE ? whiteKing:blackKing);
+    }
     
     public Set<Coordinates> getAllMoves(WorB color){
         List<ChessPiece> pieces = (color==WorB.WHITE ? whitePieces:blackPieces);
         Set<Coordinates> coords = new HashSet<>();
         for (ChessPiece piece: pieces){
-            coords.addAll(piece.updateAvailableMoves());
+            coords.addAll(MoveUpdater.getPossibleMoves(piece, this));
         }
         return coords;
     }
     
     /**
      * returns a set of all Coordinates that are being attacked by a piece or pawn.
-     * It does not take into consideration Coordinates being attacked by the enemy king.
+     * It does not take into consideration Coordinates being attacked by the enemy king so as to not create a loop.
      * @param color
      * @return 
      */
@@ -86,12 +94,22 @@ public class GameBoard {
         Set<Coordinates> coords = new HashSet<>();
         for (ChessPiece piece: pieces){
             if (piece != king) //this is so that it doesn't infinitely recurse
-               coords.addAll(piece.updateAttackedCells());
+               coords.addAll(MoveUpdater.getAttackedCells(piece, this));
         }
         return coords;
     }
     
-    public GameBoard(String board){
+    public ChessPiece at(Coordinates c){
+        return chessBoard[c.y][c.x];
+    }
+    public ChessPiece at(int x, int y) {
+        return chessBoard[y][x];
+    }
+
+    //////////////////////////////CONSTRUCTORS//////////////////////////////
+    //////////////////////////////CONSTRUCTORS//////////////////////////////
+    
+    public ChessBoard(String board){
         setUpBoard(board);
     }
     
@@ -114,7 +132,7 @@ public class GameBoard {
                         whitePieces.add(p);
                     else blackPieces.add(p);
                 }
-                gameBoard[i][x] = p;
+                chessBoard[i][x] = p;
                 x++;
             }
         }
@@ -147,16 +165,26 @@ public class GameBoard {
         return value;
     }
     
+    //////////////////////////////BOARD//////////////////////////////
+    //////////////////////////////BOARD//////////////////////////////
     public void move(Coordinates pos1, Coordinates pos2){
-        ChessPiece piece = gameBoard[pos1.y][pos1.x];
-        gameBoard[pos1.y][pos1.x] = null;
-        gameBoard[pos2.y][pos2.x] = piece;
+        ChessPiece piece = chessBoard[pos1.y][pos1.x];
+        chessBoard[pos1.y][pos1.x] = null;
+        chessBoard[pos2.y][pos2.x] = piece;
     }
-    
-    public ChessPiece at(Coordinates c){
-        return gameBoard[c.y][c.x];
+    public void place(ChessPiece takenPiece, Coordinates finPos) {
+        //maybe this should be private, and only replace be public
+        chessBoard[finPos.y][finPos.x] = takenPiece;
     }
-    
+    public void replace(Coordinates pos, ChessPiece piece) {
+        ChessPiece pieceToReplace = at(pos);
+        place(piece, pos);
+        addPiece(piece);
+        removePiece(pieceToReplace);
+    }
+
+    //////////////////////////////PIECES//////////////////////////////
+    //////////////////////////////PIECES//////////////////////////////
     public void addTakenPiece(ChessPiece piece) {
         if (piece.isWhite()){
             whiteTaken.add(piece);
@@ -167,21 +195,6 @@ public class GameBoard {
         }
     }
     
-    /*
-    public  void createBoard() {
-        String configuration = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        createBoard(configuration);
-    }
-    
-    public void createBoard(String board) {
-        setUpBoard(board);
-    }
-    */  
-
-    public void place(ChessPiece takenPiece, Coordinates finPos) {
-        gameBoard[finPos.y][finPos.x] = takenPiece;
-    }
-
     public void removeTakenPiece(ChessPiece piece) {
         if (piece.isWhite()){
             whiteTaken.remove(piece);
@@ -189,20 +202,18 @@ public class GameBoard {
             blackTaken.remove(piece);
        
     }
-
-    ChessPiece at(int x, int y) {
-        return gameBoard[y][x];
-    }
-
-    public void addPiece(ChessPiece promotion) {
-        if (promotion.isWhite()){
-            whitePieces.add(promotion);
+    
+    public void addPiece(ChessPiece piece) {
+        if (piece == null){return;}
+        if (piece.isWhite()){
+            whitePieces.add(piece);
         } else {
-            blackPieces.add(promotion);
+            blackPieces.add(piece);
         }
     }
 
     public void removePiece(ChessPiece piece) {
+        if (piece == null){return;}
         if (piece.isWhite()){
             whitePieces.remove(piece);
         } else {
@@ -210,10 +221,33 @@ public class GameBoard {
         }
     }
 
-    public void replace(Coordinates pos, ChessPiece piece) {
-        ChessPiece pieceToReplace = at(pos);
-        place(piece, pos);
-        addPiece(piece);
-        removePiece(pieceToReplace);
+    
+    
+    ///UTILITY
+    @Override
+    public String toString(){
+        String conf = "";
+        int empties = 0;
+        for (ChessPiece[] row: chessBoard){
+            if (empties != 0){
+                    conf += empties;
+                    empties = 0;
+                }
+                conf += "/";
+            for (ChessPiece piece: row){
+                if (piece==null){
+                    empties++;
+                    if (empties == 8){ 
+                        conf += Integer.toString(empties);
+                        empties = 0;
+                    }
+                } else {
+                    if (empties != 0){
+                        conf += Integer.toString(empties);
+                        empties = 0;
+                    }
+                    conf += piece.getRepresentation();
+        }   }   }
+        return conf.substring(1);
     }
 }

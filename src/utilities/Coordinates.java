@@ -1,15 +1,9 @@
 package utilities;
 
-import chessproject.GameBoard;
-import java.awt.Dimension;
+import chessproject.ChessBoard;
 import java.util.ArrayList;
 import java.util.List;
-import views.BoardView;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 /**
  *
  * @author Ángel Marqués García
@@ -17,21 +11,24 @@ import views.BoardView;
 public class Coordinates {
 
     /**
-     * returns a list of coordinates that span from pos1 to pos2.
-     * pos1 is included, pos2 is excluded.
-     * <p>If inverted is true, it gives a list of all coordinates along the line between pos1 and pos2
-     * that are behind pos2.
-     * <p> ORDER is ALWAYS away from pos1. It starts at pos1 and creeps toward pos2.
+     * returns a list of coordinates that span from pos1 to pos2. pos1 is
+     * included, pos2 is excluded.
+     * <p>
+     * If inverted is true, it gives a list of all coordinates along the line
+     * between pos1 and pos2 that are behind pos2.
+     * <p>
+     * ORDER is ALWAYS away from pos1. It starts at pos1 and creeps toward pos2.
+     *
      * @param pos1
      * @param pos2
      * @param inverted
-     * @return 
+     * @return
      */
     public static List<Coordinates> getLine(Coordinates pos1, Coordinates pos2, boolean inverted) {
-        int mod = (inverted ? -1:1);
+        int mod = (inverted ? -1 : 1);
         List<Coordinates> coords = new ArrayList<>();
-        checkHorizontalLine(coords, pos1, pos2,mod);
-        checkDiagonalLine(coords,pos1,pos2,mod);
+        checkHorizontalLine(coords, pos1, pos2, mod);
+        checkDiagonalLine(coords, pos1, pos2, mod);
         //if (!inverted)
         //    coords.add(pos1.clone());
         return coords;
@@ -39,48 +36,53 @@ public class Coordinates {
 
     private static void addLine(List<Coordinates> coords, Coordinates pos1, Coordinates pos2, int xStep, int yStep) {
         Coordinates p1 = pos1.clone();
-        while (!p1.equals(pos2) && GameBoard.isLegal(p1)){
+        while (!p1.equals(pos2) && ChessBoard.isLegal(p1)) {
             coords.add(p1.clone());
-            p1.sum(xStep,yStep);
+            p1.sum(xStep, yStep);
         }
     }
 
     private static void checkHorizontalLine(List<Coordinates> coords, Coordinates pos1, Coordinates pos2, int mod) {
         Coordinates c = pos2.clone().sub(pos1);
-        if (c.x == 0 || c.y == 0){ 
+        if (c.x == 0 || c.y == 0) {
             int xStep = 0;
             int yStep = 0;
-            if (pos1.x == pos2.x)
-                yStep = (pos1.y > pos2.y ? -1:1);
-            else if (pos1.y == pos2.y)
-                xStep = (pos1.x > pos2.x ? -1:1);
-            addLine(coords, pos1, pos2, mod*xStep, mod*yStep);
+            if (pos1.x == pos2.x) {
+                yStep = (pos1.y > pos2.y ? -1 : 1);
+            } else if (pos1.y == pos2.y) {
+                xStep = (pos1.x > pos2.x ? -1 : 1);
+            }
+            addLine(coords, pos1, pos2, mod * xStep, mod * yStep);
         }
     }
 
     private static void checkDiagonalLine(List<Coordinates> coords, Coordinates pos1, Coordinates pos2, int mod) {
         Coordinates c = pos2.clone().sub(pos1);
-        if (Math.abs(c.x) == Math.abs(c.y)){ //they are in the same diagonal
-            int xStep = (c.x < 0 ? -1:1);
-            int yStep = (c.y < 0 ? -1:1);
-            addLine(coords, pos1, pos2, mod*xStep, mod*yStep);
+        if (Math.abs(c.x) == Math.abs(c.y)) { //they are in the same diagonal
+            int xStep = (c.x < 0 ? -1 : 1);
+            int yStep = (c.y < 0 ? -1 : 1);
+            addLine(coords, pos1, pos2, mod * xStep, mod * yStep);
         }
     }
-    
+
     public static Coordinates getDir(Coordinates pos1, Coordinates pos2) {
         Coordinates dir = pos2.sub(pos1);
         int min = Math.min(dir.x, dir.y);
-        if (min == 0)
-            min = Math.max(dir.x,dir.y);
-        dir.x = dir.x/min;
-        dir.y = dir.y/min;
+        if (min == 0) {
+            min = Math.max(dir.x, dir.y);
+        }
+        dir.x = dir.x / min;
+        dir.y = dir.y / min;
         return dir;
     }
-
-
+    
+    //////////////////////////////PROPERTIES//////////////////////////////
+    //////////////////////////////PROPERTIES//////////////////////////////
     public int x;
     public int y;
 
+    //////////////////////////////CONSTRUCTOR//////////////////////////////
+    //////////////////////////////CONSTRUCTOR//////////////////////////////
     public Coordinates(int xCoord, int yCoord) {
         x = xCoord;
         y = yCoord;
@@ -98,17 +100,33 @@ public class Coordinates {
         }*/
     }
 
+    //////////////////////////////OPERATIONS//////////////////////////////
+    //////////////////////////////OPERATIONS//////////////////////////////
     public Coordinates sum(Coordinates c) {
         x += c.x;
         y += c.y;
         return this;
     }
-    
+
     public void sum(int xCoord, int yCoord) {
         x += xCoord;
         y += yCoord;
     }
 
+    public Coordinates sub(Coordinates c) {
+        x -= c.x;
+        y -= c.y;
+        return this;
+    }
+
+    public Coordinates mult(int i) {
+        x *= i;
+        y *= i;
+        return this;
+    }
+
+    //////////////////////////////UTILITY//////////////////////////////
+    //////////////////////////////UTILITY//////////////////////////////
     @Override
     public Coordinates clone() {
         return new Coordinates(x, y);
@@ -121,12 +139,24 @@ public class Coordinates {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        final Coordinates other = (Coordinates)obj;
-        if (x != other.x) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Coordinates other = (Coordinates) obj;
+        if (x != other.x) {
+            return false;
+        }
         return y == other.y;
+    }
+
+    public boolean equals(int xCoord, int yCoord) {
+        return (x == xCoord && y == yCoord);
     }
 
     @Override
@@ -141,32 +171,26 @@ public class Coordinates {
     public String toString() {
         String row;
         switch (x) {
-            case 0 -> row = "a";
-            case 1 -> row = "b";
-            case 2 -> row = "c";
-            case 3 -> row = "d";
-            case 4 -> row = "e";
-            case 5 -> row = "f";
-            case 6 -> row = "g";
-            case 7 -> row = "h";
-            default -> row = "";
+            case 0 ->
+                row = "a";
+            case 1 ->
+                row = "b";
+            case 2 ->
+                row = "c";
+            case 3 ->
+                row = "d";
+            case 4 ->
+                row = "e";
+            case 5 ->
+                row = "f";
+            case 6 ->
+                row = "g";
+            case 7 ->
+                row = "h";
+            default ->
+                row = "";
         }
-        return row + Integer.toString(8-y);
+        return row + Integer.toString(8 - y);
     }
-
-    public boolean equals(int xCoord, int yCoord) {
-        return (x==xCoord && y==yCoord);
-    }
-
-    public Coordinates sub(Coordinates c) {
-        x -= c.x;
-        y -= c.y;
-        return this;
-    }
-
-    public Coordinates mult(int i) {
-        x *= i;
-        y *= i;
-        return this;
-    }
-}
+    
+ }
