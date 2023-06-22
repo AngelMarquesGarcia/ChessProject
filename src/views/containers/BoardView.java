@@ -1,4 +1,4 @@
-package views;
+package views.containers;
 
 import chessproject.ChessApp;
 import javax.swing.*;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import pieces.ChessPiece;
 import utilities.Coordinates;
-import utilities.MyMouseListener;
+import views.listeners.MyMouseListener;
 
 public class BoardView extends JPanel {
     private static final Dimension BOARDSIZE = new Dimension(500, 500);

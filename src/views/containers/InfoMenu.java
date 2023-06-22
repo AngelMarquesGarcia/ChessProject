@@ -1,4 +1,4 @@
-package views;
+package views.containers;
 
 import javax.swing.*;
 import utilities.WorB;

@@ -11,7 +11,7 @@ import static pieces.MoveUpdater.getPossibleMoves;
 import utilities.Coordinates;
 import utilities.MyUtilities;
 import utilities.WorB;
-import views.AppContainer;
+import views.containers.AppContainer;
 
 /**
  *

@@ -8,7 +8,7 @@ package chessproject;
 import Game.ChessMatch;
 import java.io.Serializable;
 import java.util.List;
-import views.AppContainer;
+import views.containers.AppContainer;
 
 /**
  * This is a singleton.

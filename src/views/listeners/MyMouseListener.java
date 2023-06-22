@@ -1,4 +1,4 @@
-package utilities;
+package views.listeners;
 
 import Game.ChessMatch;
 import Game.MovementManager;
@@ -8,7 +8,8 @@ import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import pieces.ChessPiece;
-import views.BoardView;
+import utilities.Coordinates;
+import views.containers.BoardView;
 
 /**
  *

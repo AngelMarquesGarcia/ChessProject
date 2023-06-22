@@ -1,4 +1,4 @@
-package utilities;
+package views.buttons;
 
 import chessproject.ChessApp;
 import chessproject.UILauncher;

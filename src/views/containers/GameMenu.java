@@ -1,4 +1,4 @@
-package views;
+package views.containers;
 
 import chessproject.ChessMove;
 import java.awt.Color;
@@ -10,10 +10,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import utilities.DrawButton;
-import utilities.ResignButton;
-import utilities.RestartButton;
-import utilities.UndoButton;
+import views.buttons.DrawButton;
+import views.buttons.ResignButton;
+import views.buttons.RestartButton;
+import views.buttons.UndoButton;
 
 /**
  *

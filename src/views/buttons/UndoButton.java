@@ -1,4 +1,4 @@
-package utilities;
+package views.buttons;
 
 import Game.ChessMatch;
 import chessproject.ChessApp;

@@ -1,4 +1,4 @@
-package views;
+package views.containers;
 
 import java.awt.*;
 import javax.swing.*;

@@ -1,4 +1,4 @@
-package views;
+package views.containers;
 
 import chessproject.ChessApp;
 import java.awt.Color;

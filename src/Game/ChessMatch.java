@@ -11,9 +11,9 @@ import pieces.ChessPiece;
 import pieces.MoveUpdater;
 import utilities.Coordinates;
 import utilities.WorB;
-import views.AppContainer;
-import views.BoardView;
-import views.GameMenu;
+import views.containers.AppContainer;
+import views.containers.BoardView;
+import views.containers.GameMenu;
 
 /**
  *

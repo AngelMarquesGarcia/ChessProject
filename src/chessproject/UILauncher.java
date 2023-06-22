@@ -1,7 +1,7 @@
 package chessproject;
 
 import java.awt.Dimension;
-import views.AppContainer;
+import views.containers.AppContainer;
 import javax.swing.*;
 
 /**

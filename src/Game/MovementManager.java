@@ -16,8 +16,8 @@ import pieces.Queen;
 import pieces.Rook;
 import utilities.Coordinates;
 import utilities.WorB;
-import views.AppContainer;
-import views.GameMenu;
+import views.containers.AppContainer;
+import views.containers.GameMenu;
 
 /**
  *
