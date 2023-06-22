@@ -12,6 +12,10 @@ import pieces.ChessPiece;
 import utilities.Coordinates;
 import views.listeners.MyMouseListener;
 
+/**
+ * Appears to be a singleton
+ * @author Ángel Marqués García
+ */
 public class BoardView extends JPanel {
     private static final Dimension BOARDSIZE = new Dimension(500, 500);
     private static BoardView boardView;
@@ -163,5 +167,11 @@ public class BoardView extends JPanel {
         return BOARDSIZE;
     }
 
+    @Override
+    public final void setPreferredSize(Dimension dim){
+        BOARDSIZE.setSize(dim);
+        setSizes();
+        super.setPreferredSize(BOARDSIZE);
+    }
     
 }

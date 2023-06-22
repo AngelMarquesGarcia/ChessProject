@@ -5,8 +5,10 @@
 
 package views.listeners;
 
+import java.awt.Component;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import views.containers.AppContainer;
 
 /**
  *
@@ -16,7 +18,13 @@ public class MyComponentListener extends ComponentAdapter {
     
     @Override
     public void componentResized(ComponentEvent e){
-        e.getComponent();
+        System.out.println("Component Resized");
+        System.out.println(e.getComponent().getSize());
+        Component frame = e.getComponent();
+        AppContainer appContainer = AppContainer.getAppContainer();
+        appContainer.scaleTo(frame.getSize());
+        //repaint the frame, which will repaint everything contained in it
+        frame.repaint();
         
     }
 }

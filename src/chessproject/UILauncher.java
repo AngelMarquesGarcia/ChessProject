@@ -3,6 +3,8 @@ package chessproject;
 import java.awt.Dimension;
 import views.containers.AppContainer;
 import javax.swing.*;
+import views.listeners.MyComponentListener;
+import views.listeners.MyWindowStateListener;
 
 /**
  * Contains the JFrame, initializes the GUI, and creates a Game.
@@ -11,6 +13,9 @@ import javax.swing.*;
 public class UILauncher {
 
     private static JFrame frame;
+    private static final Dimension MINIMUM_SIZE = new Dimension(663,516);
+    private static final Dimension PREFERRED_SIZE = new Dimension(800,600);
+    private static final Dimension SIZE = new Dimension(800,600);
 
     public static JFrame getFrame() {
         return frame;
@@ -33,9 +38,12 @@ public class UILauncher {
     private static void createAndShowGUI() {
         //Create and set up the window.
         frame = new JFrame("Chess App");
-        frame.setSize(800, 800);
-        frame.setPreferredSize(new Dimension(800, 600));
-        //frame.setResizable(false);
+        frame.setSize(SIZE);
+        frame.setMinimumSize(MINIMUM_SIZE);
+        frame.setPreferredSize(PREFERRED_SIZE);
+        frame.addComponentListener(new MyComponentListener());
+        frame.addWindowStateListener(new MyWindowStateListener());
+        
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.

@@ -24,7 +24,7 @@ public class TakenPieces extends JPanel {
 
     private final Dimension BOXSIZE = new Dimension(200, 50);
     private Map<String, BufferedImage> sprites = new HashMap<>();
-    private final int PIECEWIDTH = 25;
+    private int PIECEWIDTH = 25;
     private final WorB color;
 
     public TakenPieces(WorB c) {
@@ -43,14 +43,14 @@ public class TakenPieces extends JPanel {
         Collections.sort(takenPieces, Collections.reverseOrder());
         int y = 0;
         g.setColor(Color.red);
-        g.fillRect(0, 0, 200, 50);
+        g.fillRect(0, 0, BOXSIZE.width, BOXSIZE.height);
         int i = 0;
         for (ChessPiece piece : takenPieces) {
             //BufferedImage bi = sprites.get(piece.getName());
             g.drawImage(piece.getSprite(), i * PIECEWIDTH, y, PIECEWIDTH, PIECEWIDTH, this);
             i++;
             if ((i + 1) * PIECEWIDTH > BOXSIZE.width) {
-                y = 25;
+                y = BOXSIZE.height/2;
                 i = 0;
             }
         }
@@ -94,4 +94,11 @@ public class TakenPieces extends JPanel {
         }
     }
 
+    @Override
+    public final void setPreferredSize(Dimension dim){
+        BOXSIZE.setSize(dim);
+        PIECEWIDTH = dim.height/2;
+        super.setPreferredSize(BOXSIZE);
+        setSize(BOXSIZE);
+    }
 }

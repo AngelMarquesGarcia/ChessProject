@@ -13,12 +13,13 @@ import javax.swing.JOptionPane;
  *
  * @author Ángel Marqués García
  */
-public class DrawButton extends JButton implements ActionListener {
+public class DrawButton extends ParentButton implements ActionListener {
 
-    private static final String RESIGN_PATH = "./files/draw.png";
+    private static final String DRAW_PATH = "./files/draw.png";
 
     public DrawButton() {
-        ImageIcon imageIcon = new ImageIcon(RESIGN_PATH); // load the image to a imageIcon
+        super(DRAW_PATH);
+        ImageIcon imageIcon = new ImageIcon(DRAW_PATH); // load the image to a imageIcon
         Image image = imageIcon.getImage(); // transform it 
         Image newimg = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH); // scale it the smooth way  
         imageIcon = new ImageIcon(newimg);  // transform it back

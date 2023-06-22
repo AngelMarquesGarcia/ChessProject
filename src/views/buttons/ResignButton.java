@@ -13,11 +13,12 @@ import javax.swing.JOptionPane;
  *
  * @author Ángel Marqués García
  */
-public class ResignButton extends JButton implements ActionListener {
+public class ResignButton extends ParentButton implements ActionListener {
 
     private static final String RESIGN_PATH = "./files/resign.png";
 
     public ResignButton() {
+        super(RESIGN_PATH);
         ImageIcon imageIcon = new ImageIcon(RESIGN_PATH); // load the image to a imageIcon
         Image image = imageIcon.getImage(); // transform it 
         Image newimg = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH); // scale it the smooth way  

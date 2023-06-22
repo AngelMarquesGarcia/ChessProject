@@ -57,8 +57,18 @@ public class AppContainer extends JPanel {
         infoMenu = new InfoMenu();
         add(infoMenu);
 
-        setPreferredSize(new Dimension(450, 450));
+        setPreferredSize(new Dimension(800, 600));
         appContainer = this;
+    }
+
+    public void scaleTo(Dimension size) {
+        int min = (size.height-100 < size.width*5/8 ? size.height-100:size.width*5/8);
+        board.setPreferredSize(new Dimension(min, min));
+        
+        int infoWidth = min*2/5;
+        int infoHeight = min*9/10;
+        infoMenu.setPreferredSize(new Dimension(infoWidth, infoHeight));
+        
     }
 
 }

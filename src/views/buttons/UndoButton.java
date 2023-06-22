@@ -14,12 +14,13 @@ import javax.swing.JOptionPane;
  *
  * @author Ángel Marqués García
  */
-public class UndoButton extends JButton implements ActionListener {
+public class UndoButton extends ParentButton implements ActionListener {
 
-    private static final String RESIGN_PATH = "./files/undo.png";
+    private static final String UNDO_PATH = "./files/undo.png";
 
     public UndoButton() {
-        ImageIcon imageIcon = new ImageIcon(RESIGN_PATH); // load the image to a imageIcon
+        super(UNDO_PATH);
+        ImageIcon imageIcon = new ImageIcon(UNDO_PATH); // load the image to a imageIcon
         Image image = imageIcon.getImage(); // transform it 
         Image newimg = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH); // scale it the smooth way  
         imageIcon = new ImageIcon(newimg);  // transform it back

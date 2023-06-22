@@ -13,13 +13,14 @@ import javax.swing.JOptionPane;
  *
  * @author Ángel Marqués García
  */
-public class RestartButton extends JButton implements ActionListener {
+public class RestartButton extends ParentButton implements ActionListener {
 
-    private static final String RESIGN_PATH = "./files/restart.png";
+    private static final String RESTART_PATH = "./files/restart.png";
     private ImageIcon imageIcon;
 
     public RestartButton() {
-        imageIcon = new ImageIcon(RESIGN_PATH); // load the image to a imageIcon
+        super(RESTART_PATH);
+        imageIcon = new ImageIcon(RESTART_PATH); // load the image to a imageIcon
         Image image = imageIcon.getImage(); // transform it 
         Image newimg = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH); // scale it the smooth way  
         imageIcon = new ImageIcon(newimg);  // transform it back

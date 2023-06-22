@@ -1,5 +1,6 @@
 package views.containers;
 
+import java.awt.Dimension;
 import javax.swing.*;
 import utilities.WorB;
 
@@ -38,4 +39,11 @@ public class InfoMenu extends JPanel {
         return (TakenPieces) takenByWhite;
     }
 
+    @Override
+    public void setPreferredSize(Dimension size) {
+        super.setPreferredSize(size);
+        this.getComponent(0).setPreferredSize(new Dimension(size.width, size.height/9));
+        this.getComponent(2).setPreferredSize(new Dimension(size.width, size.height/9));
+        this.getComponent(1).setPreferredSize(new Dimension(size.width, size.height*7/9));
+    }
 }
