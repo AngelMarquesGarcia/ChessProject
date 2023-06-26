@@ -135,7 +135,8 @@ public class ChessMatch {
         matchState.checkedKing = color;
         if (CheckDrawDetector.isCheckMate(color, matchState, board)){
             checkMate(color);
-        } else if (matchState.goodMoves == null){
+        } else if (matchState.goodMoves.isEmpty()){ //what is this if for. Are we considering double checks?
+            if (matchState.checkers.size() > 1) return; 
             ChessPiece attacker = matchState.checkers.get(0);
             matchState.goodMoves = new HashSet<>();
             matchState.goodMoves.addAll(Coordinates.getLine(attacker.getPos(), board.getKing(color).getPos(), false));
@@ -147,9 +148,14 @@ public class ChessMatch {
         */ 
     }
     
-    private static void checkMate(WorB color) {
+    private void checkMate(WorB color) {
         System.out.println("-------------------------------Game Over-------------------------------");
         System.out.println("-------------------------------Game Over-------------------------------");
+        ChessMove lastMove = currentTurn.getBlackMove();
+        if (lastMove == null){
+            lastMove = currentTurn.getWhiteMove();
+        }
+        lastMove.setIsCheckMate(true);
         AppContainer.showCheckMate(color);
     }
     // </editor-fold>

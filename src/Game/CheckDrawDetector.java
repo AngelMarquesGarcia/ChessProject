@@ -30,6 +30,8 @@ public class CheckDrawDetector {
      * Out of those, we take the one which is closest to the king AND has a piece,
      * and we check if that piece is delivering a check.
      * @param color
+     * @param matchState
+     * @param gameBoard
      * @return 
      */
     public static boolean isInCheck(WorB color, MatchState matchState, ChessBoard gameBoard){
@@ -39,10 +41,12 @@ public class CheckDrawDetector {
         ChessPiece king = gameBoard.getKing(color);
         boolean isCheck = false;
         
+        //we check the piece we just moved
         if (getPossibleMoves(selectedPiece, gameBoard).contains(king.getPos())){
             isCheck = true;
             checkers.add(selectedPiece);
         }
+        //we check any pieces that might have been behind it
         List<Coordinates> line = Coordinates.getLine(selectedPiece.getPrevPos(), king.getPos(), true);
         ChessPiece piece = ChessBoard.getClosestPiece(king.getPos(), line, gameBoard);
         

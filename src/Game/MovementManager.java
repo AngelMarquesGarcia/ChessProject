@@ -89,7 +89,7 @@ public class MovementManager {
         }
         
         st.checkedKing = null;
-        st.goodMoves = null;
+        st.goodMoves.clear();
         
         WorB color = (pieceToMove.isWhite() ? WorB.BLACK:WorB.WHITE);
         if (gameBoard.getAllMoves(color).isEmpty()){
@@ -118,7 +118,7 @@ public class MovementManager {
     }
     
     //Good
-    public Coordinates checkForPin(Coordinates p, WorB c) {        
+     public Coordinates checkForPin(Coordinates p, WorB c) {        
         Coordinates enemyKingPos = gameBoard.getKing(c).getPos();
         List<Coordinates> line = Coordinates.getLine(p, enemyKingPos, false);
         if (!line.isEmpty()) line.remove(0);
@@ -146,6 +146,7 @@ public class MovementManager {
                     } else if ((Math.abs(dir.x) == 1 && Math.abs(dir.y) == 1) && (pieceName.equals("Bishop") || "Queen".equals(pieceName))) {
                         return dir;
                     }
+                    break;
                 }
             }
         }

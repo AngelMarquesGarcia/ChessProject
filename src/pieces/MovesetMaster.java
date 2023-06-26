@@ -1,8 +1,6 @@
 package pieces;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import utilities.Coordinates;
 
@@ -102,7 +100,7 @@ public class MovesetMaster {
         moveset.add(new PieceMove(n, 0, 1));
         moveset.add(new PieceMove(n, 0, -1));
         moveset.add(new PieceMove(n, -1, 0));
-        moveset.add(new PieceMove(n, -1, 0));
+        moveset.add(new PieceMove(n, 1, 0));
         moveset.add(new PieceMove(n, 1, 1));
         moveset.add(new PieceMove(n, 1, -1));
         moveset.add(new PieceMove(n, -1, 1));

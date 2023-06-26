@@ -1,6 +1,7 @@
 package pieces;
 
 import java.util.Iterator;
+import java.util.Objects;
 import utilities.Coordinates;
 
 /**
@@ -24,6 +25,32 @@ public class PieceMove implements Iterable<Coordinates> {
     @Override
     public Iterator<Coordinates> iterator() {
         return new PieceMoveIterator(n); //pasarle this es una opción atractiva
+    }
+    
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PieceMove other = (PieceMove) obj;
+        if (n != other.n) {
+            return false;
+        }
+        return move.equals(other.move);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 83 * hash + this.n;
+        hash = 83 * hash + Objects.hashCode(this.move);
+        return hash;
     }
     
     class PieceMoveIterator implements Iterator<Coordinates> {

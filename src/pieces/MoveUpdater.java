@@ -16,7 +16,7 @@ import utilities.WorB;
  * @author Ángel Marqués García 
  */
 public class MoveUpdater {
-    
+    // <editor-fold desc="GENERIC">
     ////////////////////////////////GENERIC////////////////////////////////
     ////////////////////////////////GENERIC////////////////////////////////
     public static List<Coordinates> getPossibleMoves(ChessPiece piece, ChessBoard board){
@@ -57,11 +57,14 @@ public class MoveUpdater {
                 if (!ChessBoard.isLegal(newPos)) break;
                 ChessPiece pieceAt = board.at(newPos);
                 if (pieceAt != null){ //this might allow pawns to take when a piece is in front of them
-                    if (includeSameColor || (pieceAt.isWhite() != piece.isWhite()) && piece.getTakesSameAsMoves()){
+                    if (piece.getTakesSameAsMoves() && (includeSameColor || (pieceAt.isWhite() != piece.isWhite()) && piece.getTakesSameAsMoves())){
                         coords.add(newPos.clone());
                     }
                     break; //removing this break gives pieces x-ray vision
                 } else {
+                    if (!piece.takesSameAsMoves && includeSameColor){ //for pawns and potential new pieces
+                        break;
+                    }
                     coords.add(newPos.clone());
                 }
             }
@@ -91,8 +94,9 @@ public class MoveUpdater {
         }
     return moves;
     }
-
-    ////////////////////////////////PAWN////////////////////////////////
+// </editor-fold>
+    
+    // <editor-fold desc="PAWN">
     ////////////////////////////////PAWN////////////////////////////////
     /**
      * it would be interesting to implement something like a getAttackMoveset on the MovesetMaster 
@@ -118,17 +122,28 @@ public class MoveUpdater {
     }
     
     private static void tryTakePawn(List<Coordinates> coords, Coordinates newPos, ChessPiece piece, ChessBoard board, boolean includeSameColor) {
+        
         if (!ChessBoard.isLegal(newPos)){return;}
         ChessMatch match = ChessApp.getChessApp().getCurrentMatch();
+        Set<Coordinates> goodMoves = (match.getCheckedKing() == piece.color ? match.getGoodMoves() : null);
+        
+        if (goodMoves != null && !goodMoves.contains(newPos)){
+            return;
+        }
+        
         ChessPiece pieceToTake = board.at(newPos);
         if (includeSameColor || pieceToTake != null && (pieceToTake.isWhite() != piece.isWhite())) {
             coords.add(newPos.clone());
         } else if (pieceToTake == null && newPos.equals(match.getEnPassant())) {
             coords.add(newPos.clone());
         }
-    }
 
-    ////////////////////////////////KING////////////////////////////////
+        
+        
+    }
+    // </editor-fold>
+    
+    // <editor-fold desc="KING">
     ////////////////////////////////KING////////////////////////////////
     private static List<Coordinates> getSeenCellsKing(ChessPiece piece, ChessBoard board, boolean includeSameColor) {
         ChessMatch match = ChessApp.getChessApp().getCurrentMatch();
@@ -136,6 +151,9 @@ public class MoveUpdater {
         cantBeCloseToEnemyKing(attackedCells, piece.getColor(), board);
         List<Coordinates> coords = new ArrayList<>();
         Set<PieceMove> moveset = MovesetMaster.getMoveset(piece);
+        if (match.getCheckedKing() == piece.getColor()) {
+            cullKingMoveset(moveset, match, piece);
+        }
   
         for (PieceMove pieceMove: moveset){
             Coordinates newPos = piece.getPos().clone().sum(pieceMove.move);
@@ -206,6 +224,8 @@ public class MoveUpdater {
         }
     }
 
+    // </editor-fold>
+    
     /**
      * Iterates through availableMoves, and removes ilegal moves
      * @param availableMoves
@@ -222,6 +242,24 @@ public class MoveUpdater {
                 availableMoves.remove(move);
             }
         }
+    }
+
+    private static void cullKingMoveset(Set<PieceMove> moveset, ChessMatch match, ChessPiece king) {
+        Coordinates dir;
+        List<ChessPiece> checkers = match.getCheckers();
+        ChessPiece checker = checkers.get(0);
+        if (!checker.getName().equals("Pawn")){
+            dir = Coordinates.getDir(king.getPos(), checker.getPos());
+            moveset.remove(new PieceMove(1,dir.mult(-1)));
+        }
+        if (checkers.size() > 1){
+            checker = checkers.get(1);
+            if (!checker.getName().equals("Pawn")){
+                dir = Coordinates.getDir(king.getPos(), checker.getPos());
+                moveset.remove(new PieceMove(1,dir.mult(-1)));
+            }
+        }
+
     }
 
 }

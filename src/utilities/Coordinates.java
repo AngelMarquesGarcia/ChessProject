@@ -29,6 +29,9 @@ public class Coordinates {
         List<Coordinates> coords = new ArrayList<>();
         checkHorizontalLine(coords, pos1, pos2, mod);
         checkDiagonalLine(coords, pos1, pos2, mod);
+        if (coords.isEmpty()){
+            coords.add(pos1.clone());
+        }
         //if (!inverted)
         //    coords.add(pos1.clone());
         return coords;
