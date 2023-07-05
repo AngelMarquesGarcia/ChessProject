@@ -1,8 +1,9 @@
 package views.containers;
 
+import views.information.BoardView;
 import java.awt.*;
 import javax.swing.*;
-import pieces.ChessPiece;
+import chess.pieces.ChessPiece;
 import utilities.WorB;
 
 /**

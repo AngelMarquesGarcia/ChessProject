@@ -1,4 +1,4 @@
-package pieces;
+package chess.pieces.movement;
 
 import java.util.Iterator;
 import java.util.Objects;

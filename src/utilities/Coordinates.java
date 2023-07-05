@@ -1,6 +1,6 @@
 package utilities;
 
-import chessproject.ChessBoard;
+import chess.match.ChessBoard;
 import java.util.ArrayList;
 import java.util.List;
 

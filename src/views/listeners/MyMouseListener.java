@@ -1,15 +1,15 @@
 package views.listeners;
 
-import Game.ChessMatch;
-import Game.MovementManager;
+import chess.match.ChessMatch;
+import chess.utilities.MovementManager;
 import chessproject.ChessApp;
-import chessproject.ChessBoard;
+import chess.match.ChessBoard;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import pieces.ChessPiece;
+import chess.pieces.ChessPiece;
 import utilities.Coordinates;
-import views.containers.BoardView;
+import views.information.BoardView;
 
 /**
  *

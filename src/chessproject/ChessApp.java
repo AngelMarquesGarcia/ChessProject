@@ -5,7 +5,7 @@
 
 package chessproject;
 
-import Game.ChessMatch;
+import chess.match.ChessMatch;
 import java.io.Serializable;
 import java.util.List;
 import views.containers.AppContainer;

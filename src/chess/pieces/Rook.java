@@ -1,4 +1,4 @@
-package pieces;
+package chess.pieces;
 
 import utilities.WorB;
 
@@ -6,15 +6,14 @@ import utilities.WorB;
  *
  * @author Ángel Marqués García
  */
-public class Knight extends ChessPiece {
-    
-    private static final String CLASS_NAME = "Knight";
-    private static final String CLASS_REP = "N";
+public class Rook extends ChessPiece {
+    private static final String CLASS_NAME = "Rook";
+    private static final String CLASS_REP = "R";
     private static final String sprStart = "./files/";
     private static final String sprEnd = ".png";
-    private static final int V = 3;
+    private static final int V = 5;
 
-    public Knight(WorB color) {
+    public Rook(WorB color) {
         super(CLASS_NAME, CLASS_REP, sprStart+color+CLASS_NAME+sprEnd, color);
         value = V;
     }

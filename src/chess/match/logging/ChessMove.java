@@ -1,6 +1,6 @@
-package chessproject;
+package chess.match.logging;
 
-import pieces.ChessPiece;
+import chess.pieces.ChessPiece;
 import utilities.Coordinates;
 
 /**

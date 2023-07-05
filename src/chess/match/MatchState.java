@@ -1,10 +1,10 @@
-package Game;
+package chess.match;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import pieces.ChessPiece;
+import chess.pieces.ChessPiece;
 import utilities.Coordinates;
 import utilities.WorB;
 

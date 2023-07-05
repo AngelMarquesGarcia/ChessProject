@@ -3,21 +3,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package Game;
+package chess.utilities;
 
-import chessproject.ChessBoard;
-import chessproject.ChessMove;
-import chessproject.ChessTurn;
+import chess.match.Flags;
+import chess.match.ChessMatch;
+import chess.match.MatchState;
+import chess.ChessGame;
+import chess.match.ChessBoard;
+import chess.match.logging.ChessMove;
+import chess.match.logging.ChessTurn;
 import java.util.List;
-import pieces.Bishop;
-import pieces.ChessPiece;
-import pieces.Knight;
-import pieces.Queen;
-import pieces.Rook;
+import chess.pieces.Bishop;
+import chess.pieces.ChessPiece;
+import chess.pieces.Knight;
+import chess.pieces.Queen;
+import chess.pieces.Rook;
 import utilities.Coordinates;
 import utilities.WorB;
 import views.containers.AppContainer;
-import views.containers.GameMenu;
+import views.information.GameMenu;
 
 /**
  *

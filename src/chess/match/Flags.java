@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package Game;
+package chess.match;
 
 import utilities.Coordinates;
 
@@ -11,7 +11,7 @@ import utilities.Coordinates;
  * This is basically a strut.
  * @author Ángel Marqués García 
  */
-class Flags {
+public class Flags {
     public boolean whiteToPlay;
     public final boolean[] whiteCastle = new boolean[]{true,true};
     public final boolean[] blackCastle = new boolean[]{true,true};

@@ -4,6 +4,7 @@
  */
 package chessproject;
 
+import chess.match.ChessBoard;
 import java.util.List;
 import java.util.Set;
 import org.junit.After;
@@ -12,7 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import pieces.ChessPiece;
+import chess.pieces.ChessPiece;
 import utilities.Coordinates;
 import utilities.WorB;
 

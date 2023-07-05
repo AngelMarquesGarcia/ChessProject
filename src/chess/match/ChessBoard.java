@@ -1,18 +1,18 @@
-package chessproject;
+package chess.match;
 
 import java.util.ArrayList;
-import pieces.ChessPiece;
+import chess.pieces.ChessPiece;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import pieces.Bishop;
-import pieces.King;
-import pieces.Knight;
-import pieces.MoveUpdater;
-import pieces.Pawn;
-import pieces.Queen;
-import pieces.Rook;
+import chess.pieces.Bishop;
+import chess.pieces.King;
+import chess.pieces.Knight;
+import chess.pieces.movement.MoveUpdater;
+import chess.pieces.Pawn;
+import chess.pieces.Queen;
+import chess.pieces.Rook;
 import utilities.Coordinates;
 import utilities.WorB;
 

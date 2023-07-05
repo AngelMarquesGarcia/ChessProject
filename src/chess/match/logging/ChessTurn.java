@@ -1,4 +1,4 @@
-package chessproject;
+package chess.match.logging;
 
 import utilities.WorB;
 

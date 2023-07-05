@@ -1,4 +1,4 @@
-package views.containers;
+package views.information;
 
 import chessproject.ChessApp;
 import javax.swing.*;
@@ -8,7 +8,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
-import pieces.ChessPiece;
+import chess.pieces.ChessPiece;
 import utilities.Coordinates;
 import views.listeners.MyMouseListener;
 

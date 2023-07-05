@@ -1,5 +1,6 @@
-package pieces;
+package chess.pieces.movement;
 
+import chess.pieces.ChessPiece;
 import java.util.HashSet;
 import java.util.Set;
 import utilities.Coordinates;

@@ -1,4 +1,4 @@
-package views.containers;
+package views.information;
 
 import chessproject.ChessApp;
 import java.awt.Color;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-import pieces.ChessPiece;
+import chess.pieces.ChessPiece;
 import utilities.WorB;
 
 /**

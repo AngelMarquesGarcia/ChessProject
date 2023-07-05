@@ -1,6 +1,6 @@
-package views.containers;
+package views.information;
 
-import chessproject.ChessMove;
+import chess.match.logging.ChessMove;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;

@@ -1,6 +1,6 @@
 package views.buttons;
 
-import Game.ChessMatch;
+import chess.match.ChessMatch;
 import chessproject.ChessApp;
 import chessproject.UILauncher;
 import java.awt.Image;

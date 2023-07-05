@@ -1,6 +1,6 @@
-package pieces;
+package chess.pieces;
 
-import chessproject.ChessBoard;
+import chess.match.ChessBoard;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;

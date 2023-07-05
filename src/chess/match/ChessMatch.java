@@ -1,19 +1,22 @@
-package Game;
+package chess.match;
 
-import chessproject.ChessBoard;
-import chessproject.ChessMove;
-import chessproject.ChessTurn;
+import chess.utilities.CheckDrawDetector;
+import chess.utilities.MovementManager;
+import chess.ChessGame;
+import chess.match.ChessBoard;
+import chess.match.logging.ChessMove;
+import chess.match.logging.ChessTurn;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import pieces.ChessPiece;
-import pieces.MoveUpdater;
+import chess.pieces.ChessPiece;
+import chess.pieces.movement.MoveUpdater;
 import utilities.Coordinates;
 import utilities.WorB;
 import views.containers.AppContainer;
-import views.containers.BoardView;
-import views.containers.GameMenu;
+import views.information.BoardView;
+import views.information.GameMenu;
 
 /**
  *

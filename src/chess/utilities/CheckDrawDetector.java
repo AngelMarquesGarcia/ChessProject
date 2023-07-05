@@ -1,13 +1,14 @@
-package Game;
+package chess.utilities;
 
+import chess.match.MatchState;
 import chessproject.ChessApp;
-import chessproject.ChessBoard;
-import chessproject.ChessMove;
-import chessproject.ChessTurn;
+import chess.match.ChessBoard;
+import chess.match.logging.ChessMove;
+import chess.match.logging.ChessTurn;
 import java.util.List;
 import java.util.Set;
-import pieces.ChessPiece;
-import static pieces.MoveUpdater.getPossibleMoves;
+import chess.pieces.ChessPiece;
+import static chess.pieces.movement.MoveUpdater.getPossibleMoves;
 import utilities.Coordinates;
 import utilities.MyUtilities;
 import utilities.WorB;

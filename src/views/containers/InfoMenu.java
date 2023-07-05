@@ -1,5 +1,7 @@
 package views.containers;
 
+import views.information.TakenPieces;
+import views.information.GameMenu;
 import java.awt.Dimension;
 import javax.swing.*;
 import utilities.WorB;

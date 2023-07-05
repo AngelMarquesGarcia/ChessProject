@@ -1,9 +1,10 @@
-package pieces;
+package chess.pieces.movement;
 
-import Game.ChessMatch;
-import Game.MovementManager;
+import chess.pieces.ChessPiece;
+import chess.match.ChessMatch;
+import chess.utilities.MovementManager;
 import chessproject.ChessApp;
-import chessproject.ChessBoard;
+import chess.match.ChessBoard;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -44,7 +45,7 @@ public class MoveUpdater {
         //    3. and maybe other stuff
         ChessMatch match = ChessApp.getChessApp().getCurrentMatch();
         MovementManager mover = new MovementManager(match);
-        Coordinates pin = mover.checkForPin(piece.getPos(), piece.color);
+        Coordinates pin = mover.checkForPin(piece.getPos(), piece.getColor());
         
         List<Coordinates> coords = new ArrayList<>();
         Set<PieceMove> moveset = MovesetMaster.getMoveset(piece);
@@ -62,14 +63,14 @@ public class MoveUpdater {
                     }
                     break; //removing this break gives pieces x-ray vision
                 } else {
-                    if (!piece.takesSameAsMoves && includeSameColor){ //for pawns and potential new pieces
-                        break;
+                    if (!piece.getTakesSameAsMoves() && includeSameColor){ //for pawns and potential new pieces
+                        break; 
                     }
                     coords.add(newPos.clone());
                 }
             }
         }
-        Set<Coordinates> goodMoves = (match.getCheckedKing() == piece.color ? match.getGoodMoves() : null);
+        Set<Coordinates> goodMoves = (match.getCheckedKing() == piece.getColor() ? match.getGoodMoves() : null);
         if (goodMoves != null){
             coords.retainAll(goodMoves); //this is leaves in coords the intersection of coords and goodMoves.
         }
@@ -125,7 +126,7 @@ public class MoveUpdater {
         
         if (!ChessBoard.isLegal(newPos)){return;}
         ChessMatch match = ChessApp.getChessApp().getCurrentMatch();
-        Set<Coordinates> goodMoves = (match.getCheckedKing() == piece.color ? match.getGoodMoves() : null);
+        Set<Coordinates> goodMoves = (match.getCheckedKing() == piece.getColor() ? match.getGoodMoves() : null);
         
         if (goodMoves != null && !goodMoves.contains(newPos)){
             return;
