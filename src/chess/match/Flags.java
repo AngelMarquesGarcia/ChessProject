@@ -16,14 +16,14 @@ public class Flags {
     public final boolean[] whiteCastle = new boolean[]{true,true};
     public final boolean[] blackCastle = new boolean[]{true,true};
     public Coordinates enPassant;
-    public int movesWithNoPawnOrCapture;
+    public int movesWithNoDev;
     public int startingMoveNum;
     public int currentMoveNum;
     
     public Flags(){
         whiteToPlay = true;
         enPassant = null;
-        movesWithNoPawnOrCapture = 0;
+        movesWithNoDev = 0;
         startingMoveNum = 0;
         currentMoveNum = 1;
     }
@@ -58,7 +58,7 @@ public class Flags {
         if (blackCastle[1]) conf += "q";
         if (conf.endsWith(" ")) conf += "-";
         conf += " " + (enPassant==null ? "-":enPassant.toString()); //enPassant;
-        conf += " " + Integer.toString(movesWithNoPawnOrCapture);
+        conf += " " + Integer.toString(movesWithNoDev);
         conf += " " + Integer.toString(currentMoveNum+startingMoveNum);
         return conf;
     }

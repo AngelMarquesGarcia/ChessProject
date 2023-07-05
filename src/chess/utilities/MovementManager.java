@@ -48,18 +48,18 @@ public class MovementManager {
             return; 
         } 
         
-        f.movesWithNoPawnOrCapture++;
+        f.movesWithNoDev++;
         ChessMove currentMove = new ChessMove(st.selectedPiece.getPos(), cell, st.selectedPiece);
         match.updateEnPassant(cell, currentMove);
         
         ChessPiece pieceToMove = st.selectedPiece;
         if (st.selectedPiece.getName().equals("Pawn")){
-            f.movesWithNoPawnOrCapture = 0;
+            f.movesWithNoDev = 0;
         }
 
         ChessPiece pieceAtCell = gameBoard.at(cell);
         if (pieceAtCell != null){
-            f.movesWithNoPawnOrCapture = 0;
+            f.movesWithNoDev = 0;
             match.pieceTaken(pieceAtCell);
             currentMove.setTakenPiece(pieceAtCell);
         }
@@ -114,15 +114,14 @@ public class MovementManager {
         
         GameMenu.addHalfMove(currentMove);
                
-        CheckDrawDetector.check50MoveRule(f.movesWithNoPawnOrCapture);
+        CheckDrawDetector.check50MoveRule(f.movesWithNoDev);
         CheckDrawDetector.check3FoldRepetition(match.getHistory());
         
         //System.out.println("Just did a move. Current move: " + Integer.toString(currentMoveNum));
         System.out.println(match.toString());
     }
     
-    //Good
-     public Coordinates checkForPin(Coordinates p, WorB c) {        
+    public Coordinates checkForPin(Coordinates p, WorB c) {        
         Coordinates enemyKingPos = gameBoard.getKing(c).getPos();
         List<Coordinates> line = Coordinates.getLine(p, enemyKingPos, false);
         if (!line.isEmpty()) line.remove(0);
@@ -156,8 +155,7 @@ public class MovementManager {
         }
         return null;
     }
-
-    //Good
+    
     /**
      * Checks if the move that was just done is castling. if it is not, returns 0.
      * If it is a short castle, returns 1. If it is a long castle, returns 2.
@@ -181,8 +179,7 @@ public class MovementManager {
         }
         return 0;
     }
-
-    //Good
+    
     public void doCastling(int castle) {
         if (castle == 0) return;
         Coordinates kingPos = st.selectedPiece.getPos();

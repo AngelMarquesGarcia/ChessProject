@@ -71,7 +71,7 @@ public class ChessMatch {
                 case 'q' -> flags.blackCastle[1] = true;
         }   }
         flags.enPassant = Flags.interpretEnPassant(parts[3].strip());
-        flags.movesWithNoPawnOrCapture = Integer.parseInt(parts[4].strip());
+        flags.movesWithNoDev = Integer.parseInt(parts[4].strip());
         flags.startingMoveNum = Integer.parseInt(parts[5].strip());
         flags.currentMoveNum = 1;
     }
@@ -83,15 +83,33 @@ public class ChessMatch {
     public ChessBoard getChessBoard(){
         return board;
     }
+    public List<ChessTurn> getHistory() {
+        return history;
+    }
+    public Flags getFlags() {
+        return flags;
+    }
+    public MatchState getState() {
+        return matchState;
+    }
+    public ChessTurn getCurrentTurn() {
+        return currentTurn;
+    }
+    public void setCurrentTurn(ChessTurn currentTurn) {
+        this.currentTurn = currentTurn;
+    }
     //Flags
+    public boolean getWhiteToPlay() {
+        return flags.whiteToPlay;
+    }
     public boolean[] getCastle(WorB color){
         return (color==WorB.WHITE ? flags.whiteCastle:flags.blackCastle);
     }
     public Coordinates getEnPassant() {
         return flags.enPassant;
     }
-    public boolean getWhiteToPlay() {
-        return flags.whiteToPlay;
+    public int getMovesWithNoDev(){
+        return flags.movesWithNoDev;
     }
     //MatchState
     public void setSelectedPiece(ChessPiece p){
@@ -106,6 +124,9 @@ public class ChessMatch {
     public ChessPiece getSelectedPiece(){
         return matchState.selectedPiece;
     }
+    public List<Coordinates> getAvailableMoves(){
+        return matchState.availableMoves;
+    }
     public Set<Coordinates> getGoodMoves(){
         return matchState.goodMoves;
     }
@@ -115,22 +136,6 @@ public class ChessMatch {
     public WorB getCheckedKing() {
         return matchState.checkedKing;
     }
-    public ChessTurn getCurrentTurn() {
-        return currentTurn;
-    }
-    public void setCurrentTurn(ChessTurn currentTurn) {
-        this.currentTurn = currentTurn;
-    }
-    public List<ChessTurn> getHistory() {
-        return history;
-    }
-    public Flags getFlags() {
-        return flags;
-    }
-    public MatchState getState() {
-        return matchState;
-    }
-
     // </editor-fold>
 
     // <editor-fold desc="CHECK & CHECKMATE">
@@ -182,8 +187,8 @@ public class ChessMatch {
                 history.remove(history.size()-1);
             currentTurn = history.get(history.size()-1);
         }
-        if (flags.movesWithNoPawnOrCapture > 0)
-            flags.movesWithNoPawnOrCapture--;
+        if (flags.movesWithNoDev > 0)
+            flags.movesWithNoDev--;
         
         matchState.selectedPiece = moveToUndo.getMovedPiece();
         if (moveToUndo.isPromotion()){
@@ -243,7 +248,6 @@ public class ChessMatch {
         flags.enPassant = interpretEnPassant(enPassantString);
     }
     // </editor-fold>
-    
     
     // <editor-fold desc="UTILITY">
     /**Orders BoardView to highlight the availableMoves */
