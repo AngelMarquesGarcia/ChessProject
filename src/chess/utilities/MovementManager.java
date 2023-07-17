@@ -5,9 +5,7 @@
 
 package chess.utilities;
 
-import chess.match.Flags;
 import chess.match.ChessMatch;
-import chess.match.MatchState;
 import chess.ChessGame;
 import chess.match.ChessBoard;
 import chess.match.logging.ChessMove;
@@ -29,37 +27,35 @@ import views.information.GameMenu;
  */
 public class MovementManager {
     private final ChessMatch match;
-    private final Flags f;
-    private final MatchState st;
+    
     private final ChessBoard gameBoard;
     
     public MovementManager(ChessMatch m){
         match = m;
-        f = match.getFlags();
-        st = match.getState();
         gameBoard = match.getChessBoard();
     }
 
     public void move(Coordinates cell) {
+        boolean whiteToPlay = match.getWhiteToPlay();
         ChessTurn currentTurn = match.getCurrentTurn();
-        if (!st.availableMoves.contains(cell)){ //does this ever happen? I don't think it should. It does happen, and I think it's wrong
-            st.selectedPiece = null;
+        if (!match.getAvailableMoves().contains(cell)){ //does this ever happen? I don't think it should. It does happen, and I think it's wrong
+            match.setSelectedPiece(null);
             AppContainer.getAppContainer().repaint();
             return; 
         } 
         
-        f.movesWithNoDev++;
-        ChessMove currentMove = new ChessMove(st.selectedPiece.getPos(), cell, st.selectedPiece);
+        match.setMovesWithNoDev(match.getMovesWithNoDev()+1);
+        ChessMove currentMove = new ChessMove(match.getSelectedPiece().getPos(), cell, match.getSelectedPiece());
         match.updateEnPassant(cell, currentMove);
         
-        ChessPiece pieceToMove = st.selectedPiece;
-        if (st.selectedPiece.getName().equals("Pawn")){
-            f.movesWithNoDev = 0;
+        ChessPiece pieceToMove = match.getSelectedPiece();
+        if (pieceToMove.getName().equals("Pawn")){
+            match.setMovesWithNoDev(0);
         }
 
         ChessPiece pieceAtCell = gameBoard.at(cell);
         if (pieceAtCell != null){
-            f.movesWithNoDev = 0;
+            match.setMovesWithNoDev(0);
             match.pieceTaken(pieceAtCell);
             currentMove.setTakenPiece(pieceAtCell);
         }
@@ -67,24 +63,24 @@ public class MovementManager {
         gameBoard.move(pieceToMove.getPos(), cell);
         AppContainer.getAppContainer().repaint();
         pieceToMove.move(cell);
-        int isCastle = checkCastle(st.selectedPiece);
+        int isCastle = checkCastle(pieceToMove); //previously st.selectedPiece
         doCastling(isCastle);
         currentMove.setCastle(isCastle);
-        f.whiteToPlay = !f.whiteToPlay;
+        match.toggleWhiteToPlay();
         currentMove.setFenBoardAfter(match.toString());
-        f.whiteToPlay = !f.whiteToPlay;
+        match.toggleWhiteToPlay();
 
         
         ChessPiece promoted = null;
-        if (((f.whiteToPlay && cell.y == 0) || (!f.whiteToPlay && cell.y == 7)) && st.selectedPiece.getName().equals("Pawn")){
-            promoted = promotePawn(st.selectedPiece);
-            st.selectedPiece = promoted;
+        if (((whiteToPlay && cell.y == 0) || (!whiteToPlay && cell.y == 7)) && pieceToMove.getName().equals("Pawn")){
+            promoted = promotePawn(pieceToMove);
+            match.setSelectedPiece(promoted);
         }
         currentMove.setPromotion(promoted);
         
-        if (f.whiteToPlay){
-            f.currentMoveNum++;
-            currentTurn = new ChessTurn(f.currentMoveNum);
+        if (match.getWhiteToPlay()){
+            match.incrementCurrentMoveNum();
+            currentTurn = new ChessTurn(match.getCurrentMoveNum());
             match.getHistory().add(currentTurn);
             currentTurn.setWhiteMove(currentMove);
             match.setCurrentTurn(currentTurn);
@@ -92,29 +88,29 @@ public class MovementManager {
             currentTurn.setBlackMove(currentMove);
         }
         
-        st.checkedKing = null;
-        st.goodMoves.clear();
+        match.setCheckedKing(null);
+        match.getGoodMoves().clear();
         
         WorB color = (pieceToMove.isWhite() ? WorB.BLACK:WorB.WHITE);
         if (gameBoard.getAllMoves(color).isEmpty()){
             CheckDrawDetector.staleMate(color);
         } 
-        if (f.whiteToPlay && CheckDrawDetector.isInCheck(WorB.BLACK, st, gameBoard)){
+        if (whiteToPlay && CheckDrawDetector.isInCheck(WorB.BLACK, gameBoard, match.getCheckers(), match.getSelectedPiece())){
             currentMove.setIsCheck(true);
             match.kingChecked(WorB.BLACK);
-        } else if (!f.whiteToPlay && CheckDrawDetector.isInCheck(WorB.WHITE, st, gameBoard)){
+        } else if (!whiteToPlay && CheckDrawDetector.isInCheck(WorB.WHITE, gameBoard, match.getCheckers(), match.getSelectedPiece())){
             currentMove.setIsCheck(true);
             match.kingChecked(WorB.WHITE);
         }
         match.updateCastlingRightsAfterMove(cell);
         
-        st.selectedPiece = null; //goodMoves = null;
-        st.availableMoves.clear();
-        f.whiteToPlay = ! f.whiteToPlay;
+        match.setSelectedPiece(null); //goodMoves = null;
+        match.getAvailableMoves().clear();
+        match.toggleWhiteToPlay();
         
         GameMenu.addHalfMove(currentMove);
                
-        CheckDrawDetector.check50MoveRule(f.movesWithNoDev);
+        CheckDrawDetector.check50MoveRule(match.getMovesWithNoDev());
         CheckDrawDetector.check3FoldRepetition(match.getHistory());
         
         //System.out.println("Just did a move. Current move: " + Integer.toString(currentMoveNum));
@@ -163,7 +159,7 @@ public class MovementManager {
      * @return 
      */
     public int checkCastle(ChessPiece selectedPiece) {
-        boolean[] castlingRights = (f.whiteToPlay ? f.whiteCastle:f.blackCastle);
+        boolean[] castlingRights = match.getCastle(selectedPiece.getColor());
         if (!castlingRights[0] && !castlingRights[1]) return 0; //if can't castle return 0
         if (!selectedPiece.getName().equals("King")) return 0; //if selected is not a king, return 0
         //we just moved a king, so we can no longer castle
@@ -182,7 +178,7 @@ public class MovementManager {
     
     public void doCastling(int castle) {
         if (castle == 0) return;
-        Coordinates kingPos = st.selectedPiece.getPos();
+        Coordinates kingPos = match.getSelectedPiece().getPos();
         Coordinates from;
         Coordinates to;
         if (castle == 1){
@@ -199,12 +195,12 @@ public class MovementManager {
 
     //Good
     public void takenEnPassant(Coordinates cell, ChessMove currentMove) {
-        int x = f.enPassant.x;
-        int y = f.enPassant.y + (f.whiteToPlay ? 1:-1);
+        int x = match.getEnPassant().x;
+        int y = match.getEnPassant().y + (match.getWhiteToPlay() ? 1:-1);
         ChessPiece takenPiece = gameBoard.at(x,y);
         match.pieceTaken(takenPiece);
         currentMove.setTakenPiece(takenPiece);
-        f.enPassant = null;
+        match.setEnPassant(null);
         gameBoard.place(null, new Coordinates(x,y));
     }
 

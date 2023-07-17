@@ -1,6 +1,5 @@
 package chess.utilities;
 
-import chess.match.MatchState;
 import chessproject.ChessApp;
 import chess.match.ChessBoard;
 import chess.match.logging.ChessMove;
@@ -31,13 +30,12 @@ public class CheckDrawDetector {
      * Out of those, we take the one which is closest to the king AND has a piece,
      * and we check if that piece is delivering a check.
      * @param color
-     * @param matchState
+     * @param checkers
+     * @param selectedPiece
      * @param gameBoard
      * @return 
      */
-    public static boolean isInCheck(WorB color, MatchState matchState, ChessBoard gameBoard){
-        List<ChessPiece> checkers = matchState.checkers;
-        ChessPiece selectedPiece = matchState.selectedPiece;
+    public static boolean isInCheck(WorB color, ChessBoard gameBoard, List<ChessPiece> checkers, ChessPiece selectedPiece){
         checkers.clear();
         ChessPiece king = gameBoard.getKing(color);
         boolean isCheck = false;
@@ -58,9 +56,7 @@ public class CheckDrawDetector {
         return isCheck;
     }
     
-    public static boolean isCheckMate(WorB color, MatchState matchState, ChessBoard gameBoard){
-        List<ChessPiece> checkers = matchState.checkers;
-        Set<Coordinates> goodMoves = matchState.goodMoves;
+    public static boolean isCheckMate(WorB color, ChessBoard gameBoard, List<ChessPiece> checkers, Set<Coordinates> goodMoves){
         ChessPiece king = gameBoard.getKing(color);
         if (!getPossibleMoves(king, gameBoard).isEmpty())
             return false; //false not checkmate, King moves available

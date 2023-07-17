@@ -12,7 +12,7 @@ import utilities.WorB;
  * This is basically a strut.
  * @author Ángel Marqués García 
  */
-public class MatchState {
+class MatchState {
     public ChessPiece selectedPiece;
     public List<Coordinates> availableMoves;
     public Set<Coordinates> goodMoves;

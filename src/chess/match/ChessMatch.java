@@ -3,7 +3,6 @@ package chess.match;
 import chess.utilities.CheckDrawDetector;
 import chess.utilities.MovementManager;
 import chess.ChessGame;
-import chess.match.ChessBoard;
 import chess.match.logging.ChessMove;
 import chess.match.logging.ChessTurn;
 import java.util.ArrayList;
@@ -102,14 +101,29 @@ public class ChessMatch {
     public boolean getWhiteToPlay() {
         return flags.whiteToPlay;
     }
+    public void toggleWhiteToPlay() {
+        flags.whiteToPlay = !flags.whiteToPlay;
+    }
     public boolean[] getCastle(WorB color){
         return (color==WorB.WHITE ? flags.whiteCastle:flags.blackCastle);
     }
     public Coordinates getEnPassant() {
         return flags.enPassant;
     }
+    public void setEnPassant(Coordinates c) {
+        flags.enPassant = c;
+    }
     public int getMovesWithNoDev(){
         return flags.movesWithNoDev;
+    }
+    public void setMovesWithNoDev(int num){
+        flags.movesWithNoDev = num;
+    }
+    public int getCurrentMoveNum(){
+        return flags.currentMoveNum;
+    }
+    public void incrementCurrentMoveNum(){
+        flags.currentMoveNum++;
     }
     //MatchState
     public void setSelectedPiece(ChessPiece p){
@@ -119,6 +133,8 @@ public class ChessMatch {
             MoveUpdater.cullAvailableMoves(matchState.availableMoves, matchState.selectedPiece);
             highlightAvailableMoves();
             AppContainer.getAppContainer().repaint();
+        } else if (p == null){
+            matchState.selectedPiece = null;
         }
     }
     public ChessPiece getSelectedPiece(){
@@ -136,12 +152,15 @@ public class ChessMatch {
     public WorB getCheckedKing() {
         return matchState.checkedKing;
     }
+    public void setCheckedKing(WorB king) {
+        matchState.checkedKing = king;
+    }
     // </editor-fold>
 
     // <editor-fold desc="CHECK & CHECKMATE">
     public void kingChecked(WorB color) {
         matchState.checkedKing = color;
-        if (CheckDrawDetector.isCheckMate(color, matchState, board)){
+        if (CheckDrawDetector.isCheckMate(color, board, matchState.checkers, matchState.goodMoves)){
             checkMate(color);
         } else if (matchState.goodMoves.isEmpty()){ //what is this if for. Are we considering double checks?
             if (matchState.checkers.size() > 1) return; 

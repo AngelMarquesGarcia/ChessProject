@@ -1,11 +1,9 @@
 package chess.pieces;
 
-import chess.match.ChessBoard;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import utilities.Coordinates;
-import java.util.List;
 import javax.imageio.ImageIO;
 import utilities.WorB;
 

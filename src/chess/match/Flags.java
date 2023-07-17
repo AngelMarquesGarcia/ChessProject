@@ -11,7 +11,7 @@ import utilities.Coordinates;
  * This is basically a strut.
  * @author Ángel Marqués García 
  */
-public class Flags {
+class Flags {
     public boolean whiteToPlay;
     public final boolean[] whiteCastle = new boolean[]{true,true};
     public final boolean[] blackCastle = new boolean[]{true,true};
