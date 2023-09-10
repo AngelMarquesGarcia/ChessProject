@@ -86,7 +86,8 @@ public class MovementManager {
         ChessPiece promoted = null;
         if (((whiteToPlay && cell.y == 0) || (!whiteToPlay && cell.y == 7)) && pieceToMove.getName().equals("Pawn")){
             promoted = promotePawn(pieceToMove);
-            match.setSelectedPiece(promoted); // I think this line should be left out. 
+            match.setSelectedPieceSimple(promoted); // I think this line should be left out. 
+            AppContainer.getAppContainer().repaint();
             //It might cause a bug where the promoted piece's movements are shown when they shouldn't be.
             //Though if removed, it might cause trouble with undoing
         }

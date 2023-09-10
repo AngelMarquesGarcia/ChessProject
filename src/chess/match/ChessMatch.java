@@ -137,6 +137,16 @@ public class ChessMatch {
             matchState.selectedPiece = null;
         }
     }
+    /**
+     * This method works as a simple setter for matchState.selectedPiece. It should be used with care, 
+     * as most of the times changing this attribute demands others change as well.
+     * Thus, one should consider in depth wether this method or setSelectedPiece is the correct one to use
+     * @param p the ChessPiece to be set as selectedPiece
+     */
+    public void setSelectedPieceSimple(ChessPiece p){
+        matchState.selectedPiece = p;
+        
+    }
     public ChessPiece getSelectedPiece(){
         return matchState.selectedPiece;
     }
