@@ -38,12 +38,16 @@ public class MovementManager {
     public void move(Coordinates cell) {
         boolean whiteToPlay = match.getWhiteToPlay();
         ChessTurn currentTurn = match.getCurrentTurn();
+        //First we check if the selected piece can move to the given cell
+        // <editor-fold desc="1st">
         if (!match.getAvailableMoves().contains(cell)){ //does this ever happen? I don't think it should. It does happen, and I think it's wrong
             match.setSelectedPiece(null);
             AppContainer.getAppContainer().repaint();
             return; 
         } 
-        
+        // </editor-fold>
+        //Second, we update flags, and create a new ChessMove (the one the user just did)
+        // <editor-fold desc="2nd">
         match.setMovesWithNoDev(match.getMovesWithNoDev()+1);
         ChessMove currentMove = new ChessMove(match.getSelectedPiece().getPos(), cell, match.getSelectedPiece());
         match.updateEnPassant(cell, currentMove);
@@ -52,32 +56,44 @@ public class MovementManager {
         if (pieceToMove.getName().equals("Pawn")){
             match.setMovesWithNoDev(0);
         }
-
+        // </editor-fold>
+        //Third, we check if this move is taking a piece
+        // <editor-fold desc="3rd">
         ChessPiece pieceAtCell = gameBoard.at(cell);
         if (pieceAtCell != null){
             match.setMovesWithNoDev(0);
             match.pieceTaken(pieceAtCell);
             currentMove.setTakenPiece(pieceAtCell);
         }
-        
+        // </editor-fold>
+        //Fourth, we move the piece (checking to see if the move was castling)
+        // <editor-fold desc="4th">
         gameBoard.move(pieceToMove.getPos(), cell);
         AppContainer.getAppContainer().repaint();
         pieceToMove.move(cell);
         int isCastle = checkCastle(pieceToMove); //previously st.selectedPiece
         doCastling(isCastle);
         currentMove.setCastle(isCastle);
+        // </editor-fold>
+        //Fifth, we save the board to currentMove
+        // <editor-fold desc="5th">
         match.toggleWhiteToPlay();
         currentMove.setFenBoardAfter(match.toString());
         match.toggleWhiteToPlay();
-
-        
+        // </editor-fold>
+        //Sixth, we check if the move is promoting a pawn
+        // <editor-fold desc="6th">
         ChessPiece promoted = null;
         if (((whiteToPlay && cell.y == 0) || (!whiteToPlay && cell.y == 7)) && pieceToMove.getName().equals("Pawn")){
             promoted = promotePawn(pieceToMove);
-            match.setSelectedPiece(promoted);
+            match.setSelectedPiece(promoted); // I think this line should be left out. 
+            //It might cause a bug where the promoted piece's movements are shown when they shouldn't be.
+            //Though if removed, it might cause trouble with undoing
         }
         currentMove.setPromotion(promoted);
-        
+        // </editor-fold>
+        //Seventh, we update CurrentTurn
+        // <editor-fold desc="7th">
         if (match.getWhiteToPlay()){
             match.incrementCurrentMoveNum();
             currentTurn = new ChessTurn(match.getCurrentMoveNum());
@@ -87,10 +103,14 @@ public class MovementManager {
         } else {
             currentTurn.setBlackMove(currentMove);
         }
-        
+        // </editor-fold>
+        //Eighth, we reset move-based variables
+        // <editor-fold desc="8th">
         match.setCheckedKing(null);
         match.getGoodMoves().clear();
-        
+        // </editor-fold>
+        //Ninth, we check for stalemate and/or checks
+        // <editor-fold desc="9th">
         WorB color = (pieceToMove.isWhite() ? WorB.BLACK:WorB.WHITE);
         if (gameBoard.getAllMoves(color).isEmpty()){
             CheckDrawDetector.staleMate(color);
@@ -102,17 +122,22 @@ public class MovementManager {
             currentMove.setIsCheck(true);
             match.kingChecked(WorB.WHITE);
         }
-        match.updateCastlingRightsAfterMove(cell);
+        // </editor-fold>
+        //Tenth, we update/reset some more move-based variables
+        // <editor-fold desc="10th">
+        match.updateCastlingRightsAfterMove(cell); //this one should most likely be taken up to the eighth step
         
         match.setSelectedPiece(null); //goodMoves = null;
         match.getAvailableMoves().clear();
         match.toggleWhiteToPlay();
         
         GameMenu.addHalfMove(currentMove);
-               
+        // </editor-fold>
+        //Lastly, we check for draw
+        // <editor-fold desc="Last">
         CheckDrawDetector.check50MoveRule(match.getMovesWithNoDev());
         CheckDrawDetector.check3FoldRepetition(match.getHistory());
-        
+        // </editor-fold>
         //System.out.println("Just did a move. Current move: " + Integer.toString(currentMoveNum));
         System.out.println(match.toString());
     }
